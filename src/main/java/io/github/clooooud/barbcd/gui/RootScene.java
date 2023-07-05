@@ -1,23 +1,23 @@
-package io.github.clooooud.barbcd.vue;
+package io.github.clooooud.barbcd.gui;
 
 import io.github.clooooud.barbcd.BarBCD;
-import io.github.clooooud.barbcd.javafx.Style;
+import io.github.clooooud.barbcd.gui.content.ContentBox;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 
 import java.io.InputStream;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class RootScene extends Scene {
 
@@ -27,12 +27,36 @@ public class RootScene extends Scene {
 
     protected BarBCD app;
     protected HBox headerBox;
+    protected ContentBox contentBox;
 
     public RootScene(BarBCD app) {
+        this(app, null);
+    }
+
+    public RootScene(BarBCD app, ContentBox contentBox) {
         super(new VBox());
         this.app = app;
         this.getStylesheets().add(this.getClass().getResource("style.css").toExternalForm());
+
         initHeader();
+        setAndUpdateContent(contentBox);
+    }
+
+    public void setAndUpdateContent(ContentBox contentBox) {
+        this.contentBox = contentBox;
+        updateContent();
+    }
+
+    private void updateContent() {
+        getParent().getChildren().setAll(Stream.of(getParent().getChildren().get(0), this.contentBox == null ? null : this.contentBox.getContent())
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList()));
+
+        if (getParent().getChildren().size() >= 2) {
+            Node node = getParent().getChildren().get(1);
+            node.setId("page-content");
+            VBox.setVgrow(node, Priority.ALWAYS);
+        }
     }
 
     private VBox getParent() {
@@ -46,11 +70,10 @@ public class RootScene extends Scene {
         headerBox.setMaxHeight(100);
         headerBox.setAlignment(Pos.CENTER_LEFT);
         headerBox.setPadding(new Insets(0, 20, 0, 20));
-        headerBox.getStyleClass().add("header-bg");
+        headerBox.setId("header-box");
 
         Label label = new Label("BarBCD");
-        label.setFont(Font.font("Roboto", 48));
-        label.setTextFill(Color.WHITE);
+        label.setId("title");
         label.setMaxWidth(Double.MAX_VALUE);
 
         headerBox.getChildren().add(label);
@@ -59,24 +82,9 @@ public class RootScene extends Scene {
         // TODO: connecté pas connecté, variation de bouton
 
         Button button = new Button("Administration");
-        button.setTextFill(Color.WHITE);
-        button.setFont(Font.font("Roboto", FontWeight.BOLD, 14));
-        button.setStyle(new Style()
-                .set("-fx-background-color: transparent;")
-                .set("-fx-border-color: derive(#97719d, -20%);")
-                .set("-fx-border-radius: 20;")
-                .set("-fx-background-radius: 20;")
-                .toString()
-        );
+        button.setId("header-auth-btn");
         button.setPrefHeight(40);
-        button.setContentDisplay(ContentDisplay.LEFT);
         button.setGraphic(new ImageView(new Image(getResource("assets/lock.png"))));
-        button.setOnMouseEntered(event -> {
-            button.setStyle(Style.get(button.getStyle()).set("-fx-background-color: derive(#97719d, -20%);").toString());
-        });
-        button.setOnMouseExited(event -> {
-            button.setStyle(Style.get(button.getStyle()).set("-fx-background-color: transparent").toString());
-        });
 
         headerBox.getChildren().add(button);
 

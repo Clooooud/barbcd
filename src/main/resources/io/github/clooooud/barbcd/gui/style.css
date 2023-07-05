@@ -1,0 +1,48 @@
+#header-box {
+    -fx-background-color: #97719d;
+}
+
+.root {
+    -fx-font-family: 'Roboto';
+}
+
+#title {
+    -fx-font-size: 48;
+    -fx-text-fill: white;
+}
+
+#header-auth-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: derive(#97719d, -20%);
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-text-fill: white;
+    -fx-content-display: left;
+    -fx-font: normal Bold 14 'Roboto';
+}
+
+#header-auth-btn:hover {
+    -fx-background-color: derive(#97719d, -20%);
+}
+
+Button {
+    -fx-cursor: hand;
+}
+
+VBox {
+    -fx-background-color: white;
+}
+
+#page-content {
+    -fx-background-color: #deeaba;
+}
+
+#search-bar {
+    -fx-background-radius: 100;
+    -fx-background-color: #779d71;
+    -fx-cursor: hand;
+}
+
+#search-bar:hover {
+    -fx-background-color: derive(#779d71, -20%);
+}

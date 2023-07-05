@@ -1,13 +1,9 @@
 package io.github.clooooud.barbcd;
 
-import io.github.clooooud.barbcd.vue.RootScene;
+import io.github.clooooud.barbcd.gui.RootScene;
+import io.github.clooooud.barbcd.gui.content.MainPage;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-
-import java.io.IOException;
 
 public class BarBCD extends Application {
 
@@ -18,7 +14,9 @@ public class BarBCD extends Application {
         stage.setMinWidth(800);
         stage.setMinHeight(600);
         stage.setTitle("BarBCD");
-        stage.setScene(new RootScene(this));
+        RootScene rootScene = new RootScene(this);
+        rootScene.setAndUpdateContent(new MainPage());
+        stage.setScene(rootScene);
         stage.show();
     }
 

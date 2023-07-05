@@ -1,0 +1,11 @@
+.header-bg {
+    -fx-background-color: #97719d;
+}
+
+Button {
+    -fx-cursor: hand;
+}
+
+VBox {
+    -fx-background-color: white;
+}

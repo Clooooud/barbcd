@@ -13,7 +13,10 @@ public class Library {
     private final Set<OeuvreType> oeuvreTypeList;
     private final Set<MagazineSerie> magazineSerieList;
 
-    public Library() {
+    private String name;
+
+    public Library(String name) {
+        this.name = name;
         oeuvreList = new HashSet<>();
         magazineList = new HashSet<>();
         editorList = new HashSet<>();

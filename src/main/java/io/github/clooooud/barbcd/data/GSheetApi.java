@@ -47,6 +47,9 @@ public class GSheetApi {
             }
             driveService.files().delete(file.getId()).execute();
         }
+
+        this.publicCredentials.setSpreadsheetId("");
+        this.publicCredentials.save();
     }
 
     public void save(Library library, String adminPassword) throws IOException {
@@ -61,6 +64,7 @@ public class GSheetApi {
         if (firstSetup) {
             Spreadsheet spreadsheet = initializeSpreadsheet(driveService, sheetsService);
             this.publicCredentials.setSpreadsheetId(spreadsheet.getSpreadsheetId());
+            this.publicCredentials.save();
 
             // Default Magazine OeuvreType
             library.addOeuvreType(OeuvreType.MAGAZINE);

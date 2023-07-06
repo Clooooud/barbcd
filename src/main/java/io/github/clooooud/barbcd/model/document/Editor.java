@@ -4,8 +4,8 @@ import java.util.List;
 
 public class Editor implements Saveable {
 
-    private int id;
-    private String nom;
+    private final int id;
+    private final String nom;
 
     private boolean needUpdate = false;
 

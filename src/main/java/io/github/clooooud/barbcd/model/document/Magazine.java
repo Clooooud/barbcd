@@ -4,10 +4,13 @@ import java.util.List;
 
 public class Magazine implements ViewableDocument, Saveable {
 
-    private int id;
-    private String title;
-    private int magazineNumber, quantity, year, month;
-    private MagazineSerie magazineSerie;
+    private final int id;
+    private final String title;
+    private final int magazineNumber;
+    private final int quantity;
+    private final int year;
+    private final int month;
+    private final MagazineSerie magazineSerie;
 
     private boolean needUpdate = false;
 

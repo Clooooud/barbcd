@@ -24,8 +24,8 @@ public class AESUtil {
         }
     }
 
-    private Cipher cipher;
-    private SecretKey secretKey;
+    private final Cipher cipher;
+    private final SecretKey secretKey;
 
     AESUtil(String password) {
         this.secretKey = getKeyFromPassword(password, "salt123+");

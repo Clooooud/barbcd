@@ -13,7 +13,7 @@ public class Library {
     private final Set<OeuvreType> oeuvreTypeList;
     private final Set<MagazineSerie> magazineSerieList;
 
-    private String name;
+    private final String name;
 
     public Library(String name) {
         this.name = name;

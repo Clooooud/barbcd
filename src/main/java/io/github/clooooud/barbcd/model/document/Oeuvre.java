@@ -4,11 +4,14 @@ import java.util.List;
 
 public class Oeuvre implements ViewableDocument, Saveable {
 
-    private int id;
-    private String title, author, isbn;
-    private Editor editor;
-    private OeuvreType oeuvreType;
-    private int quantity, year;
+    private final int id;
+    private final String title;
+    private final String author;
+    private final String isbn;
+    private final Editor editor;
+    private final OeuvreType oeuvreType;
+    private final int quantity;
+    private final int year;
 
     private boolean needUpdate = false;
 

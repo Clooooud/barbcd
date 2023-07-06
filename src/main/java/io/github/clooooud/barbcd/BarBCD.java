@@ -11,8 +11,8 @@ import javafx.stage.Stage;
 
 public class BarBCD extends Application {
 
-    private Library library = new Library("");
-    private String adminPassword = "";
+    private final Library library = new Library("");
+    private final String adminPassword = "";
 
     @Override
     public void start(Stage stage) {

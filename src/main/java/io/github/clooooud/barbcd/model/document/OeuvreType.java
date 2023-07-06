@@ -7,8 +7,8 @@ public class OeuvreType implements Saveable {
 
     public static final OeuvreType MAGAZINE = new OeuvreType(1, "Périodique");
 
-    private int id;
-    private String nom;
+    private final int id;
+    private final String nom;
 
     private boolean needUpdate = false;
 

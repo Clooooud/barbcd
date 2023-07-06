@@ -4,9 +4,10 @@ import java.util.List;
 
 public class MagazineSerie implements Saveable {
 
-    private int id;
-    private String title, isbn;
-    private Editor editor;
+    private final int id;
+    private final String title;
+    private final String isbn;
+    private final Editor editor;
 
     private boolean needUpdate = false;
 

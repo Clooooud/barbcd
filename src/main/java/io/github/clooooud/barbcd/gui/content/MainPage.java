@@ -174,12 +174,7 @@ public class MainPage extends ContentBox {
         searchField.setId("search-field");
         searchField.setFocusTraversable(false);
         searchField.setCursor(Cursor.HAND);
-        searchField.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observableValue, String oldVal, String newVal) {
-                Platform.runLater(() -> updateResearchBox());
-            }
-        });
+        searchField.textProperty().addListener((observableValue, oldVal, newVal) -> Platform.runLater(this::updateResearchBox));
 
         searchBar.setOnMouseClicked(event -> searchField.requestFocus());
 

@@ -1,8 +1,5 @@
 package io.github.clooooud.barbcd.model.document;
 
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 public interface ViewableDocument {
 
     default String getSearchString() {

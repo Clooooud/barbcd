@@ -2,8 +2,6 @@ package io.github.clooooud.barbcd.gui;
 
 import io.github.clooooud.barbcd.BarBCD;
 import io.github.clooooud.barbcd.gui.content.ContentBox;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;

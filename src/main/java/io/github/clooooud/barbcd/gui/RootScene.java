@@ -1,7 +1,9 @@
 package io.github.clooooud.barbcd.gui;
 
 import io.github.clooooud.barbcd.BarBCD;
-import io.github.clooooud.barbcd.gui.content.ContentBox;
+import javafx.application.Platform;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -17,7 +19,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class RootScene extends Scene {
+public abstract class RootScene extends Scene {
 
     public static InputStream getResource(String url) {
         return RootScene.class.getResourceAsStream(url);
@@ -25,37 +27,32 @@ public class RootScene extends Scene {
 
     protected BarBCD app;
     protected HBox headerBox;
-    protected ContentBox contentBox;
+    protected HBox clickableTitle;
 
     public RootScene(BarBCD app) {
-        this(app, null);
-    }
-
-    public RootScene(BarBCD app, ContentBox contentBox) {
         super(new VBox());
         this.app = app;
-        this.getStylesheets().add(this.getClass().getResource("style.css").toExternalForm());
+        this.getStylesheets().add(RootScene.class.getResource("style.css").toExternalForm());
 
         initHeader();
-        setAndUpdateContent(contentBox);
-    }
-
-    public void setAndUpdateContent(ContentBox contentBox) {
-        this.contentBox = contentBox;
         updateContent();
     }
 
-    private void updateContent() {
-        getParent().getChildren().setAll(Stream.of(getParent().getChildren().get(0), this.contentBox == null ? null : this.contentBox.getContent())
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList()));
+    public void updateContent() {
+        getParent().getChildren().clear();
 
-        if (getParent().getChildren().size() >= 2) {
-            Node node = getParent().getChildren().get(1);
-            node.setId("page-content");
-            VBox.setVgrow(node, Priority.ALWAYS);
-        }
+        Platform.runLater(() -> {
+            Node content = this.getContent();
+            getParent().getChildren().setAll(Stream.of(headerBox, content)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList()));
+
+            content.setId("page-content");
+            VBox.setVgrow(content, Priority.ALWAYS);
+        });
     }
+
+    protected abstract Node getContent();
 
     private VBox getParent() {
         return (VBox) this.getRoot();
@@ -68,12 +65,20 @@ public class RootScene extends Scene {
         headerBox.setMaxHeight(100);
         headerBox.setId("header-box");
 
+        HBox labelBox = new HBox();
+        this.clickableTitle = new HBox();
+        clickableTitle.setAlignment(Pos.CENTER_LEFT);
+        labelBox.setAlignment(Pos.CENTER_LEFT);
         Label label = new Label("BarBCD");
         label.setId("title");
         label.setMaxWidth(Double.MAX_VALUE);
+        clickableTitle.setCursor(Cursor.HAND);
+        clickableTitle.setOnMouseClicked(event -> updateContent());
 
-        headerBox.getChildren().add(label);
-        HBox.setHgrow(label, Priority.ALWAYS);
+        clickableTitle.getChildren().add(label);
+        labelBox.getChildren().add(clickableTitle);
+        headerBox.getChildren().add(labelBox);
+        HBox.setHgrow(labelBox, Priority.ALWAYS);
 
         // TODO: connecté pas connecté, variation de bouton
 

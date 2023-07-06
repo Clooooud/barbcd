@@ -1,13 +1,12 @@
 package io.github.clooooud.barbcd.gui.content;
 
+import io.github.clooooud.barbcd.BarBCD;
 import io.github.clooooud.barbcd.gui.RootScene;
 import io.github.clooooud.barbcd.model.Library;
 import io.github.clooooud.barbcd.model.document.ViewableDocument;
 import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -21,6 +20,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.util.Duration;
 
 import java.util.Comparator;
@@ -28,17 +29,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class MainPage extends ContentBox {
+public class MainScene extends RootScene {
 
     private final Library library;
 
     private VBox contentBox;
+    private HBox searchBar;
     private VBox researchBox;
     private TextField searchField;
     private boolean searchBarMoving = false;
 
-    public MainPage(Library library) {
+    public MainScene(BarBCD app, Library library) {
+        super(app);
         this.library = library;
+
+        clickableTitle.setOnMouseClicked(null); // Can't refresh this page
+        clickableTitle.setCursor(Cursor.DEFAULT);
     }
 
     public static boolean isNodeClicked(double clickX, double clickY, Region node) {
@@ -55,7 +61,7 @@ public class MainPage extends ContentBox {
                 .collect(Collectors.toList());
     }
 
-    private void updateSearchBar(VBox contentBox, HBox searchBar, boolean refresh, boolean focused) {
+    public void updateSearchBar(boolean refresh, boolean focused) {
         if (!focused && !refresh) {
             contentBox.getChildren().subList(1, contentBox.getChildren().size()).clear();
             researchBox = null;
@@ -147,7 +153,9 @@ public class MainPage extends ContentBox {
         hBox.getChildren().add(vBox);
         HBox.setHgrow(vBox, Priority.ALWAYS);
 
-        hBox.getChildren().add(new Label(document.isAvailable() ? "Disponible" : "Indisponible"));
+        Label availableLabel = new Label(document.isAvailable() ? "Disponible" : "Indisponible");
+        availableLabel.setFont(Font.font(null, FontWeight.BOLD,14));
+        hBox.getChildren().add(availableLabel);
         ImageView availability = new ImageView(new Image(RootScene.getResource(document.isAvailable() ? "assets/check.png" : "assets/x.png")));
         hBox.getChildren().add(availability);
 
@@ -158,10 +166,11 @@ public class MainPage extends ContentBox {
     @Override
     public Parent getContent() {
         this.contentBox = new VBox();
+        contentBox.setAccessibleText("Main Page");
         contentBox.setAlignment(Pos.TOP_CENTER);
         contentBox.setPadding(new Insets(20, 75, 20, 75));
 
-        HBox searchBar = new HBox();
+        this.searchBar = new HBox();
         searchBar.setId("search-bar");
         searchBar.setMinSize(500, 120);
         searchBar.setPrefSize(500, 120);
@@ -190,28 +199,20 @@ public class MainPage extends ContentBox {
             contentBox.requestFocus();
         });
 
-        Platform.runLater(
-                () -> contentBox.getScene()
-                        .getWindow()
-                        .heightProperty()
-                        .addListener(
-                                (observableValue, oldVal, newVal) -> Platform.runLater(
-                                        () -> updateSearchBar(
-                                                contentBox,
-                                                searchBar,
-                                                true,
-                                                searchField.isFocused()
-                                        )
-                                )
+        this.getWindow()
+                .heightProperty()
+                .addListener(
+                        (observableValue, oldVal, newVal) -> Platform.runLater(
+                                () -> updateSearchBar(true, searchField.isFocused())
                         )
-        );
+                );
 
         searchField.focusedProperty().addListener((observableValue, oldVal, newVal) -> {
             if (!contentBox.getScene().getWindow().isFocused()) { // Prevent weird thing when using alt-tab / reducing the window
                 return;
             }
 
-            updateSearchBar(contentBox, searchBar, false, newVal);
+            updateSearchBar(false, newVal);
             if (!newVal) {
                 searchBar.setTranslateY(0);
             }

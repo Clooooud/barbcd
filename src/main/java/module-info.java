@@ -10,6 +10,7 @@ module io.github.clooooud.barbcd {
     requires com.google.common;
     requires com.google.api.client.json.gson;
     requires google.api.services.drive.v3.rev197;
+    requires com.google.api.services.books;
 
     requires com.dlsc.formsfx;
     requires org.controlsfx.controls;

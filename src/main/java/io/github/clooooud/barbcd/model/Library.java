@@ -14,6 +14,7 @@ public class Library {
     private final Set<MagazineSerie> magazineSerieList;
 
     private final String name;
+    private String adminPassword;
 
     public Library(String name) {
         this.name = name;
@@ -22,6 +23,22 @@ public class Library {
         editorList = new HashSet<>();
         oeuvreTypeList = new HashSet<>();
         magazineSerieList = new HashSet<>();
+    }
+
+    public void setAdminPassword(String adminPassword) {
+        this.adminPassword = adminPassword;
+    }
+
+    public void clearAdminPassword() {
+        setAdminPassword("");
+    }
+
+    public String getAdminPassword() {
+        return adminPassword;
+    }
+
+    public boolean isAdmin() {
+        return !adminPassword.isEmpty();
     }
 
     public Set<Oeuvre> getOeuvreList() {

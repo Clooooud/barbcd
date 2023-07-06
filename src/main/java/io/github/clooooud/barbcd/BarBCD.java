@@ -12,7 +12,6 @@ import javafx.stage.Stage;
 public class BarBCD extends Application {
 
     private final Library library = new Library("");
-    private final String adminPassword = "";
 
     @Override
     public void start(Stage stage) {
@@ -37,9 +36,5 @@ public class BarBCD extends Application {
 
     public static void main(String[] args) {
         launch();
-    }
-
-    public boolean isAdmin() {
-        return !adminPassword.isEmpty();
     }
 }

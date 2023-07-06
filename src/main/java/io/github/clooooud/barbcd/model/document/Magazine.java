@@ -6,7 +6,7 @@ public class Magazine implements ViewableDocument, Saveable {
 
     private int id;
     private String title;
-    private int magazineNumber, quantity;
+    private int magazineNumber, quantity, year, month;
     private MagazineSerie magazineSerie;
 
     private boolean needUpdate = false;
@@ -21,12 +21,19 @@ public class Magazine implements ViewableDocument, Saveable {
         return needUpdate;
     }
 
-    public Magazine(int id, String title, int magazineNumber, int quantity, MagazineSerie magazineSerie) {
+    public Magazine(int id, String title, int magazineNumber, int quantity, int year, int month, MagazineSerie magazineSerie) {
         this.id = id;
         this.title = title;
         this.magazineNumber = magazineNumber;
         this.quantity = quantity;
         this.magazineSerie = magazineSerie;
+        this.year = year;
+        this.month = month;
+    }
+
+    @Override
+    public String getDate() {
+        return month + "/" + year;
     }
 
     public int getId() {
@@ -65,11 +72,11 @@ public class Magazine implements ViewableDocument, Saveable {
 
     @Override
     public List<Object> getValues() {
-        return List.of(this.id, this.title, this.magazineNumber, this.magazineSerie.getId(), this.quantity);
+        return List.of(this.id, this.title, this.magazineNumber, this.quantity, this.year, this.month, this.magazineSerie.getId());
     }
 
     @Override
     public List<Object> getHeaders() {
-        return List.of("id", "title", "magazine number", "magazine serie id", "quantity");
+        return List.of("id", "title", "magazine number", "quantity", "year", "month", "magazine serie id");
     }
 }

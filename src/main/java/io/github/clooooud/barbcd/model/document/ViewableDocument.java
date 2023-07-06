@@ -1,6 +1,13 @@
 package io.github.clooooud.barbcd.model.document;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public interface ViewableDocument {
+
+    default String getSearchString() {
+        return String.join(" ", getAuthor(), getTitle(), getISBN(), getType().getNom(), getEditor().getNom(), isAvailable() ? "Disponible" : "Indisponible");
+    }
 
     String getISBN();
 
@@ -11,6 +18,8 @@ public interface ViewableDocument {
     OeuvreType getType();
 
     Editor getEditor();
+
+    String getDate();
 
     int getQuantity();
 

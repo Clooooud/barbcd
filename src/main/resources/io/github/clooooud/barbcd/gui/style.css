@@ -1,5 +1,7 @@
 #header-box {
     -fx-background-color: #97719d;
+    -fx-alignment: center-left;
+    -fx-padding: 0 20 0 20;
 }
 
 .root {
@@ -29,18 +31,60 @@ Button {
     -fx-cursor: hand;
 }
 
-VBox {
-    -fx-background-color: white;
-}
-
 #page-content {
     -fx-background-color: #deeaba;
+}
+
+/* Main page */
+
+.scroll-bar:vertical {
+
+}
+
+.scroll-pane, .scroll-pane > .viewport {
+   -fx-background-color: transparent;
+}
+
+.document-title {
+    -fx-font: normal Bold 20 'Roboto';
+}
+
+.document-author {
+    -fx-font-size: 16;
+}
+
+.document-line {
+    -fx-background-color: white;
+    -fx-border-width: 0 1 1 1;
+    -fx-border-color: derive(white, -20%);
+}
+
+.document-line:hover {
+    -fx-background-color: derive(white, -20%);
+}
+
+#search-field {
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #e9e9e9;
+    -fx-padding: 0 0 5 0;
+    -fx-text-fill: white;
+    -fx-font-size: 24;
+    -fx-font-weight: bold;
+}
+
+#search-field:focused {
+    -fx-border-color: lightskyblue;
+    -fx-border-width: 0 0 2 0;
 }
 
 #search-bar {
     -fx-background-radius: 100;
     -fx-background-color: #779d71;
     -fx-cursor: hand;
+    -fx-alignment: center-left;
+    -fx-padding: 40 60 40 60;
+    -fx-spacing: 10;
 }
 
 #search-bar:hover {

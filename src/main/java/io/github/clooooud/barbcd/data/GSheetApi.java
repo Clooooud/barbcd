@@ -154,7 +154,9 @@ public class GSheetApi {
                         values.get(1),
                         Integer.parseInt(values.get(2)),
                         Integer.parseInt(values.get(3)),
-                        library.getMagazineSerie(Integer.parseInt(values.get(4)))
+                        Integer.parseInt(values.get(4)),
+                        Integer.parseInt(values.get(5)),
+                        library.getMagazineSerie(Integer.parseInt(values.get(6)))
                 );
                 library.addMagazine(magazine);
             }
@@ -166,7 +168,8 @@ public class GSheetApi {
                         values.get(3),
                         library.getEditor(Integer.parseInt(values.get(4))),
                         library.getOeuvreType(Integer.parseInt(values.get(5))),
-                        Integer.parseInt(values.get(6))
+                        Integer.parseInt(values.get(6)),
+                        Integer.parseInt(values.get(7))
                 );
                 library.addOeuvre(oeuvre);
             }

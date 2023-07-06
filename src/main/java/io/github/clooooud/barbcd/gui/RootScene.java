@@ -68,8 +68,6 @@ public class RootScene extends Scene {
         headerBox.setMinHeight(100);
         headerBox.setPrefHeight(100);
         headerBox.setMaxHeight(100);
-        headerBox.setAlignment(Pos.CENTER_LEFT);
-        headerBox.setPadding(new Insets(0, 20, 0, 20));
         headerBox.setId("header-box");
 
         Label label = new Label("BarBCD");
@@ -82,6 +80,7 @@ public class RootScene extends Scene {
         // TODO: connecté pas connecté, variation de bouton
 
         Button button = new Button("Administration");
+        button.setFocusTraversable(false);
         button.setId("header-auth-btn");
         button.setPrefHeight(40);
         button.setGraphic(new ImageView(new Image(getResource("assets/lock.png"))));

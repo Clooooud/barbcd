@@ -8,7 +8,7 @@ public class Oeuvre implements ViewableDocument, Saveable {
     private String title, author, isbn;
     private Editor editor;
     private OeuvreType oeuvreType;
-    private int quantity;
+    private int quantity, year;
 
     private boolean needUpdate = false;
 
@@ -22,7 +22,7 @@ public class Oeuvre implements ViewableDocument, Saveable {
         return needUpdate;
     }
 
-    public Oeuvre(int id, String title, String author, String isbn, Editor editor, OeuvreType oeuvreType, int quantity) {
+    public Oeuvre(int id, String title, String author, String isbn, Editor editor, OeuvreType oeuvreType, int quantity, int year) {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -30,10 +30,16 @@ public class Oeuvre implements ViewableDocument, Saveable {
         this.editor = editor;
         this.oeuvreType = oeuvreType;
         this.quantity = quantity;
+        this.year = year;
     }
 
     public int getId() {
         return id;
+    }
+
+    @Override
+    public String getDate() {
+        return String.valueOf(year);
     }
 
     @Override
@@ -68,11 +74,11 @@ public class Oeuvre implements ViewableDocument, Saveable {
 
     @Override
     public List<Object> getValues() {
-        return List.of(id, title, isbn, author, editor.getId(), oeuvreType.getId(), quantity);
+        return List.of(id, title, author, isbn, editor.getId(), oeuvreType.getId(), quantity, year);
     }
 
     @Override
     public List<Object> getHeaders() {
-        return List.of("id", "title", "isbn", "author", "editor id", "oeuvre type id", "quantity");
+        return List.of("id", "title", "author", "isbn", "editor id", "oeuvre type id", "quantity", "year");
     }
 }

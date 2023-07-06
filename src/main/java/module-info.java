@@ -1,7 +1,6 @@
 module io.github.clooooud.barbcd {
     requires javafx.controls;
     requires javafx.fxml;
-
     requires com.google.gson;
     requires com.google.auth;
     requires com.google.api.client;
@@ -13,6 +12,7 @@ module io.github.clooooud.barbcd {
     requires google.api.services.drive.v3.rev197;
 
     requires com.dlsc.formsfx;
+    requires org.controlsfx.controls;
 
     opens io.github.clooooud.barbcd to javafx.fxml;
     exports io.github.clooooud.barbcd;

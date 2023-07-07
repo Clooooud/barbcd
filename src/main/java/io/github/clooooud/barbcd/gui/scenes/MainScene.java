@@ -8,8 +8,6 @@ import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
-import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -176,8 +174,7 @@ public class MainScene extends RootScene {
     @Override
     public void initContent(VBox vBox) {
         this.contentBox = vBox;
-        contentBox.setAlignment(Pos.TOP_CENTER);
-        contentBox.setPadding(new Insets(20, 75, 20, 75));
+        vBox.getStyleClass().add("main-page-content");
 
         this.searchBar = new HBox();
         searchBar.setId("search-bar");
@@ -191,7 +188,6 @@ public class MainScene extends RootScene {
         searchField.setMaxWidth(Double.MAX_VALUE);
         searchField.setId("search-field");
         searchField.setFocusTraversable(false);
-        searchField.setCursor(Cursor.HAND);
         searchField.textProperty().addListener((observableValue, oldVal, newVal) -> Platform.runLater(this::updateResearchBox));
 
         searchBar.setOnMouseClicked(event -> searchField.requestFocus());

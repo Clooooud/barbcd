@@ -37,8 +37,9 @@ Button {
 
 /* Main page */
 
-.scroll-bar:vertical {
-
+.main-page-content {
+    -fx-alignment: top-center;
+    -fx-padding: 20 75 20 75;
 }
 
 .scroll-pane, .scroll-pane > .viewport {
@@ -71,6 +72,7 @@ Button {
     -fx-text-fill: white;
     -fx-font-size: 24;
     -fx-font-weight: bold;
+    -fx-cursor: hand;
 }
 
 #search-field:focused {
@@ -90,3 +92,35 @@ Button {
 #search-bar:hover {
     -fx-background-color: derive(#779d71, -20%);
 }
+
+/*------------------*/
+
+/* Auth page */
+
+.auth-page-content {
+    -fx-alignment: center;
+}
+
+#auth-form-box {
+    -fx-padding: 20;
+    -fx-spacing: 10;
+    -fx-alignment: center-right;
+    -fx-background-color: derive(white, -5%);
+    -fx-background-radius: 10;
+    -fx-border-color: derive(white, -50%);
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+}
+
+#auth-button {
+    -fx-border-color: derive(white, -20%);
+    -fx-background-color: white;
+    -fx-border-radius: 2;
+    -fx-background-radius: 2;
+}
+
+#auth-button:hover {
+    -fx-background-color: derive(white, -5%);
+}
+
+/*-------------------*/

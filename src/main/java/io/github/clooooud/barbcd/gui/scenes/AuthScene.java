@@ -2,9 +2,7 @@ package io.github.clooooud.barbcd.gui.scenes;
 
 import io.github.clooooud.barbcd.BarBCD;
 import io.github.clooooud.barbcd.model.Library;
-import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
@@ -26,16 +24,13 @@ public class AuthScene extends RootScene {
 
     @Override
     public void initContent(VBox vBox) {
-        vBox.setAlignment(Pos.CENTER);
+        vBox.getStyleClass().add("auth-page-content");
 
         VBox formBox = new VBox();
+        formBox.setId("auth-form-box");
         formBox.setMinWidth(300);
         formBox.setPrefWidth(300);
         formBox.setMaxWidth(300);
-        formBox.setPadding(new Insets(20));
-        formBox.setSpacing(10);
-        formBox.setAlignment(Pos.CENTER_RIGHT);
-        formBox.setStyle("-fx-background-color: derive(white, -5%); -fx-background-radius: 10; -fx-border-color: derive(white, -50%); -fx-border-width: 1; -fx-border-radius: 10;");
 
         Label titleLabel = new Label("Authentification");
         titleLabel.setFont(Font.font(null, FontWeight.BOLD, 28));
@@ -54,7 +49,7 @@ public class AuthScene extends RootScene {
         passwordBox.getChildren().addAll(passwordLabel, passwordField);
 
         Button button = new Button("Se connecter");
-        button.setStyle("-fx-border-color: derive(white, -20%)");
+        button.setId("auth-button");
 
         formBox.getChildren().addAll(titleLabel, separator, passwordBox, button);
 

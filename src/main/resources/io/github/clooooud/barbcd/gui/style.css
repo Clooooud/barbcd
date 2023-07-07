@@ -1,3 +1,5 @@
+/* Common CSS */
+
 #header-box {
     -fx-background-color: #97719d;
     -fx-alignment: center-left;
@@ -31,19 +33,21 @@ Button {
     -fx-cursor: hand;
 }
 
+.scroll-pane, .scroll-pane > .viewport {
+   -fx-background-color: transparent;
+}
+
 #page-content {
     -fx-background-color: #deeaba;
 }
+
+/*-------------------*/
 
 /* Main page */
 
 .main-page-content {
     -fx-alignment: top-center;
     -fx-padding: 20 75 20 75;
-}
-
-.scroll-pane, .scroll-pane > .viewport {
-   -fx-background-color: transparent;
 }
 
 .document-title {

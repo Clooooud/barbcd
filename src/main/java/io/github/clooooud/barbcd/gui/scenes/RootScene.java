@@ -1,6 +1,7 @@
 package io.github.clooooud.barbcd.gui.scenes;
 
 import io.github.clooooud.barbcd.BarBCD;
+import io.github.clooooud.barbcd.model.Library;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
@@ -33,6 +34,10 @@ public abstract class RootScene {
 
     protected HBox getClickableTitle() {
         return clickableTitle;
+    }
+
+    protected Library getLibrary() {
+        return app.getLibrary();
     }
 
     public abstract void initContent(VBox vBox);

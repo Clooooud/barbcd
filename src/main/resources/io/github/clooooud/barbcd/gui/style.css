@@ -99,16 +99,15 @@ Button {
 
 /*------------------*/
 
-/* Auth page */
+/* Form page */
 
-.auth-page-content {
+.form-page-content {
     -fx-alignment: center;
 }
 
-#auth-form-box {
+.form-box {
     -fx-padding: 20;
     -fx-spacing: 10;
-    -fx-alignment: center-right;
     -fx-background-color: derive(white, -5%);
     -fx-background-radius: 10;
     -fx-border-color: derive(white, -50%);
@@ -116,14 +115,14 @@ Button {
     -fx-border-radius: 10;
 }
 
-#auth-button {
+.form-button {
     -fx-border-color: derive(white, -20%);
     -fx-background-color: white;
     -fx-border-radius: 2;
     -fx-background-radius: 2;
 }
 
-#auth-button:hover {
+.form-button:hover {
     -fx-background-color: derive(white, -5%);
 }
 

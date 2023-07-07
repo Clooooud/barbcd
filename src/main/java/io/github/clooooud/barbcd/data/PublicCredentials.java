@@ -16,6 +16,8 @@ public class PublicCredentials {
     private String apiKey;
     private String spreadsheetId;
 
+    private boolean fileExisted = true;
+
     public PublicCredentials() {
         load();
     }
@@ -44,16 +46,18 @@ public class PublicCredentials {
         this.spreadsheetId = spreadsheetId;
     }
 
+    public boolean isFileExisted() {
+        return fileExisted;
+    }
+
     public void save() {
         try (JsonWriter jsonWriter = new JsonWriter(new FileWriter(file))) {
             jsonWriter.setIndent("  ");
 
             jsonWriter.beginObject();
-
             jsonWriter.name("apiKey").value(apiKey);
             jsonWriter.name("passwordHash").value(passwordHash);
             jsonWriter.name("spreadsheetId").value(spreadsheetId);
-
             jsonWriter.endObject();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -77,6 +81,7 @@ public class PublicCredentials {
     }
 
     private void createDefault() {
+        fileExisted = false;
         passwordHash = "";
         apiKey = "";
         spreadsheetId = "";

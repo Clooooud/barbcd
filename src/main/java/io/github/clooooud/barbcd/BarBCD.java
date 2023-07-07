@@ -1,7 +1,9 @@
 package io.github.clooooud.barbcd;
 
+import io.github.clooooud.barbcd.data.PublicCredentials;
 import io.github.clooooud.barbcd.gui.StageWrapper;
 import io.github.clooooud.barbcd.gui.scenes.MainScene;
+import io.github.clooooud.barbcd.gui.scenes.StartScene;
 import io.github.clooooud.barbcd.model.Library;
 import io.github.clooooud.barbcd.model.document.Editor;
 import io.github.clooooud.barbcd.model.document.Oeuvre;
@@ -12,6 +14,7 @@ import javafx.stage.Stage;
 public class BarBCD extends Application {
 
     private StageWrapper stageWrapper;
+    private PublicCredentials credentials;
     private final Library library = new Library("");
 
     @Override
@@ -31,9 +34,9 @@ public class BarBCD extends Application {
         stage.setWidth(800);
         stage.setHeight(600);
         stage.setTitle("BarBCD");
-
+        this.credentials = new PublicCredentials();
         this.stageWrapper = new StageWrapper(stage);
-        this.stageWrapper.setContent(new MainScene(this));
+        this.stageWrapper.setContent(this.credentials.isFileExisted() ? new MainScene(this) : new StartScene(this));
         stage.show();
     }
 

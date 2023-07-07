@@ -30,8 +30,6 @@ import static io.github.clooooud.barbcd.gui.StageWrapper.getResource;
 
 public class MainScene extends RootScene {
 
-    private final Library library;
-
     private VBox contentBox;
     private VBox searchResults;
     private HBox searchBar;
@@ -41,7 +39,6 @@ public class MainScene extends RootScene {
 
     public MainScene(BarBCD app) {
         super(app);
-        this.library = app.getLibrary();
     }
 
     public static boolean isNodeClicked(double clickX, double clickY, Region node) {
@@ -64,8 +61,8 @@ public class MainScene extends RootScene {
 
     private List<ViewableDocument> getDocuments(String research) {
         return Stream.concat(
-                library.getMagazineList().stream(),
-                library.getOeuvreList().stream()
+                getLibrary().getMagazineList().stream(),
+                getLibrary().getOeuvreList().stream()
         ).filter(document -> document.getSearchString().toLowerCase().contains(research.toLowerCase()))
                 .sorted((Comparator<ViewableDocument>) (o1, o2) -> o1.getTitle().compareToIgnoreCase(o2.getTitle()))
                 .collect(Collectors.toList());

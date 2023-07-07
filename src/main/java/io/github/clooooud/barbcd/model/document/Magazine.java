@@ -59,8 +59,8 @@ public class Magazine implements ViewableDocument, Saveable {
     }
 
     @Override
-    public OeuvreType getType() {
-        return OeuvreType.MAGAZINE;
+    public Categorie getCategorie() {
+        return Categorie.MAGAZINE;
     }
 
     @Override

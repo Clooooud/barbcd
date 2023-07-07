@@ -3,7 +3,7 @@ package io.github.clooooud.barbcd.model.document;
 public interface ViewableDocument {
 
     default String getSearchString() {
-        return String.join(" ", getAuthor(), getTitle(), getISBN(), getType().getNom(), getEditor().getNom(), isAvailable() ? "Disponible" : "Indisponible");
+        return String.join(" ", getAuthor(), getTitle(), getISBN(), getCategorie().getNom(), getEditor().getNom(), isAvailable() ? "Disponible" : "Indisponible");
     }
 
     String getISBN();
@@ -12,7 +12,7 @@ public interface ViewableDocument {
 
     String getAuthor();
 
-    OeuvreType getType();
+    Categorie getCategorie();
 
     Editor getEditor();
 

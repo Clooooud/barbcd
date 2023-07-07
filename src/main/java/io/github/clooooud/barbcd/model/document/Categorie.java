@@ -3,9 +3,9 @@ package io.github.clooooud.barbcd.model.document;
 import java.util.List;
 import java.util.Objects;
 
-public class OeuvreType implements Saveable {
+public class Categorie implements Saveable {
 
-    public static final OeuvreType MAGAZINE = new OeuvreType(1, "Périodique");
+    public static final Categorie MAGAZINE = new Categorie(1, "Périodique");
 
     private final int id;
     private final String nom;
@@ -22,7 +22,7 @@ public class OeuvreType implements Saveable {
         return needUpdate;
     }
 
-    public OeuvreType(int id, String nom) {
+    public Categorie(int id, String nom) {
         this.id = id;
         this.nom = nom;
     }
@@ -49,7 +49,7 @@ public class OeuvreType implements Saveable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        OeuvreType that = (OeuvreType) o;
+        Categorie that = (Categorie) o;
         return id == that.id && Objects.equals(nom, that.nom);
     }
 

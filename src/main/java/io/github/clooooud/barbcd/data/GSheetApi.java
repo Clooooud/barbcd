@@ -66,8 +66,8 @@ public class GSheetApi {
             this.publicCredentials.setSpreadsheetId(spreadsheet.getSpreadsheetId());
             this.publicCredentials.save();
 
-            // Default Magazine OeuvreType
-            library.addOeuvreType(OeuvreType.MAGAZINE);
+            // Default Magazine Categorie
+            library.addCategorie(Categorie.MAGAZINE);
         }
 
         for (Set<? extends Saveable> saveableList : List.of(
@@ -75,7 +75,7 @@ public class GSheetApi {
                 library.getMagazineList(),
                 library.getMagazineSerieList(),
                 library.getOeuvreList(),
-                library.getOeuvreTypeList())
+                library.getCategorieList())
         ) {
             for (Saveable saveable : saveableList) {
                 if (!saveable.needsSave() && !firstSetup) {
@@ -105,7 +105,7 @@ public class GSheetApi {
     public void load(Library library) throws IOException {
         Spreadsheet spreadsheet = getSpreadsheet();
 
-        for (String sheetName : List.of("OeuvreTypes", "Editors", "MagazineSeries", "Magazines", "Oeuvres")) {
+        for (String sheetName : List.of("Categories", "Editors", "MagazineSeries", "Magazines", "Oeuvres")) {
             // Load the sheets in the right order (!!! important)
             Sheet sheet = spreadsheet.getSheets().stream()
                     .filter(sheet1 -> sheet1.getProperties().getTitle().equals(sheetName))
@@ -132,9 +132,9 @@ public class GSheetApi {
 
     private void generateAndStoreComponent(Library library, List<String> values, String sheetName) {
         switch (sheetName) {
-            case "OeuvreTypes" -> {
-                OeuvreType type = new OeuvreType(Integer.parseInt(values.get(0)), values.get(1));
-                library.addOeuvreType(type);
+            case "Categories" -> {
+                Categorie categorie = new Categorie(Integer.parseInt(values.get(0)), values.get(1));
+                library.addCategorie(categorie);
             }
             case "Editors" -> {
                 Editor editor = new Editor(Integer.parseInt(values.get(0)), values.get(1));
@@ -167,7 +167,7 @@ public class GSheetApi {
                         values.get(2),
                         values.get(3),
                         library.getEditor(Integer.parseInt(values.get(4))),
-                        library.getOeuvreType(Integer.parseInt(values.get(5))),
+                        library.getCategorie(Integer.parseInt(values.get(5))),
                         Integer.parseInt(values.get(6)),
                         Integer.parseInt(values.get(7))
                 );
@@ -222,7 +222,7 @@ public class GSheetApi {
         spreadsheet.getProperties().setTitle(SPREADSHEET_NAME);
 
         // Creation of the sheets
-        List<String> sheetNames = Arrays.asList("Oeuvres", "Editors", "Magazines", "MagazineSeries", "OeuvreTypes");
+        List<String> sheetNames = Arrays.asList("Oeuvres", "Editors", "Magazines", "MagazineSeries", "Categories");
         spreadsheet.setSheets(sheetNames
                 .stream()
                 .map(name -> new Sheet().setProperties(new SheetProperties().setTitle(name)))

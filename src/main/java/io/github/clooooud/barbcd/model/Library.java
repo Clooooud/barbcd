@@ -10,7 +10,7 @@ public class Library {
     private final Set<Oeuvre> oeuvreList;
     private final Set<Magazine> magazineList;
     private final Set<Editor> editorList;
-    private final Set<OeuvreType> oeuvreTypeList;
+    private final Set<Categorie> categorieList;
     private final Set<MagazineSerie> magazineSerieList;
 
     private final String name;
@@ -21,7 +21,7 @@ public class Library {
         oeuvreList = new HashSet<>();
         magazineList = new HashSet<>();
         editorList = new HashSet<>();
-        oeuvreTypeList = new HashSet<>();
+        categorieList = new HashSet<>();
         magazineSerieList = new HashSet<>();
     }
 
@@ -53,8 +53,8 @@ public class Library {
         return editorList;
     }
 
-    public Set<OeuvreType> getOeuvreTypeList() {
-        return oeuvreTypeList;
+    public Set<Categorie> getCategorieList() {
+        return categorieList;
     }
 
     public Set<MagazineSerie> getMagazineSerieList() {
@@ -85,10 +85,10 @@ public class Library {
                 .orElse(null);
     }
 
-    public OeuvreType getOeuvreType(int id) {
-        return getOeuvreTypeList()
+    public Categorie getCategorie(int id) {
+        return getCategorieList()
                 .stream()
-                .filter(oeuvreType -> oeuvreType.getId() == id)
+                .filter(categorie -> categorie.getId() == id)
                 .findFirst()
                 .orElse(null);
     }
@@ -113,8 +113,8 @@ public class Library {
         return editorList.stream().mapToInt(Editor::getId).max().orElse(0) + 1;
     }
 
-    public int getNextOeuvreTypeId() {
-        return oeuvreTypeList.stream().mapToInt(OeuvreType::getId).max().orElse(0) + 1;
+    public int getNextCategorieId() {
+        return categorieList.stream().mapToInt(Categorie::getId).max().orElse(0) + 1;
     }
 
     public int getNextMagazineSerieId() {
@@ -133,8 +133,8 @@ public class Library {
         editorList.add(editor);
     }
 
-    public void addOeuvreType(OeuvreType oeuvreType) {
-        oeuvreTypeList.add(oeuvreType);
+    public void addCategorie(Categorie categorie) {
+        categorieList.add(categorie);
     }
 
     public void addMagazineSerie(MagazineSerie magazineSerie) {
@@ -147,7 +147,7 @@ public class Library {
                 "oeuvreList=" + oeuvreList +
                 ", magazineList=" + magazineList +
                 ", editorList=" + editorList +
-                ", oeuvreTypeList=" + oeuvreTypeList +
+                ", categorieList=" + categorieList +
                 ", magazineSerieList=" + magazineSerieList +
                 '}';
     }

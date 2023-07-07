@@ -1,11 +1,8 @@
-package io.github.clooooud.barbcd.gui;
+package io.github.clooooud.barbcd.gui.scenes;
 
 import io.github.clooooud.barbcd.BarBCD;
-import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -14,51 +11,33 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
-import java.io.InputStream;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import static io.github.clooooud.barbcd.gui.StageWrapper.getResource;
 
-public abstract class RootScene extends Scene {
+public abstract class RootScene {
 
-    public static InputStream getResource(String url) {
-        return RootScene.class.getResourceAsStream(url);
-    }
-
-    protected BarBCD app;
-    protected HBox headerBox;
-    protected HBox clickableTitle;
+    private BarBCD app;
+    private HBox headerBox;
+    private HBox clickableTitle;
 
     public RootScene(BarBCD app) {
-        super(new VBox());
         this.app = app;
-        this.getStylesheets().add(RootScene.class.getResource("style.css").toExternalForm());
-
-        initHeader();
-        updateContent();
     }
 
-    public void updateContent() {
-        getParent().getChildren().clear();
-
-        Platform.runLater(() -> {
-            Node content = this.getContent();
-            getParent().getChildren().setAll(Stream.of(headerBox, content)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList()));
-
-            content.setId("page-content");
-            VBox.setVgrow(content, Priority.ALWAYS);
-        });
+    protected BarBCD getApp() {
+        return app;
     }
 
-    protected abstract Node getContent();
-
-    private VBox getParent() {
-        return (VBox) this.getRoot();
+    protected HBox getHeaderBox() {
+        return headerBox;
     }
 
-    private void initHeader() {
+    protected HBox getClickableTitle() {
+        return clickableTitle;
+    }
+
+    public abstract void initContent(VBox vBox);
+
+    public HBox getHeader() {
         this.headerBox = new HBox();
         headerBox.setMinHeight(100);
         headerBox.setPrefHeight(100);
@@ -73,7 +52,7 @@ public abstract class RootScene extends Scene {
         label.setId("title");
         label.setMaxWidth(Double.MAX_VALUE);
         clickableTitle.setCursor(Cursor.HAND);
-        clickableTitle.setOnMouseClicked(event -> updateContent());
+        clickableTitle.setOnMouseClicked(event -> app.getStageWrapper().setContent(new MainScene(app)));
 
         clickableTitle.getChildren().add(label);
         labelBox.getChildren().add(clickableTitle);
@@ -87,11 +66,12 @@ public abstract class RootScene extends Scene {
         button.setId("header-auth-btn");
         button.setPrefHeight(40);
         button.setGraphic(new ImageView(new Image(getResource("assets/lock.png"))));
+        button.setOnAction(event -> {
+            this.app.getStageWrapper().setContent(new AuthScene(app));
+        });
 
         headerBox.getChildren().add(button);
 
-        this.getParent().getChildren().add(headerBox);
+        return headerBox;
     }
-
-
 }

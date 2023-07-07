@@ -1,7 +1,8 @@
 package io.github.clooooud.barbcd;
 
-import io.github.clooooud.barbcd.gui.RootScene;
-import io.github.clooooud.barbcd.gui.content.MainScene;
+import io.github.clooooud.barbcd.gui.StageWrapper;
+import io.github.clooooud.barbcd.gui.scenes.RootScene;
+import io.github.clooooud.barbcd.gui.scenes.MainScene;
 import io.github.clooooud.barbcd.model.Library;
 import io.github.clooooud.barbcd.model.document.Editor;
 import io.github.clooooud.barbcd.model.document.Oeuvre;
@@ -11,6 +12,7 @@ import javafx.stage.Stage;
 
 public class BarBCD extends Application {
 
+    private StageWrapper stageWrapper;
     private final Library library = new Library("");
 
     @Override
@@ -27,10 +29,17 @@ public class BarBCD extends Application {
 
         stage.setMinWidth(800);
         stage.setMinHeight(600);
+        stage.setWidth(800);
+        stage.setHeight(600);
         stage.setTitle("BarBCD");
-        RootScene rootScene = new MainScene(this, library);
-        stage.setScene(rootScene);
+
+        this.stageWrapper = new StageWrapper(stage);
+        this.stageWrapper.setContent(new MainScene(this));
         stage.show();
+    }
+
+    public StageWrapper getStageWrapper() {
+        return stageWrapper;
     }
 
     public Library getLibrary() {

@@ -1,7 +1,6 @@
-package io.github.clooooud.barbcd.gui.content;
+package io.github.clooooud.barbcd.gui.scenes;
 
 import io.github.clooooud.barbcd.BarBCD;
-import io.github.clooooud.barbcd.gui.RootScene;
 import io.github.clooooud.barbcd.model.Library;
 import io.github.clooooud.barbcd.model.document.ViewableDocument;
 import javafx.animation.Interpolator;
@@ -29,27 +28,40 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static io.github.clooooud.barbcd.gui.StageWrapper.getResource;
+
 public class MainScene extends RootScene {
 
     private final Library library;
 
     private VBox contentBox;
+    private VBox searchResults;
     private HBox searchBar;
     private VBox researchBox;
     private TextField searchField;
     private boolean searchBarMoving = false;
 
-    public MainScene(BarBCD app, Library library) {
+    public MainScene(BarBCD app) {
         super(app);
-        this.library = library;
-
-        clickableTitle.setOnMouseClicked(null); // Can't refresh this page
-        clickableTitle.setCursor(Cursor.DEFAULT);
+        this.library = app.getLibrary();
     }
 
     public static boolean isNodeClicked(double clickX, double clickY, Region node) {
         return (clickX >= (node.getLayoutX() + node.getTranslateX()) && clickX <= (node.getLayoutX() + node.getTranslateX()) + node.getWidth())
                 && (clickY >= (node.getLayoutY() + node.getTranslateY()) && clickY <= (node.getLayoutY() + node.getTranslateY()) + node.getHeight());
+    }
+
+    @Override
+    public HBox getHeader() {
+        HBox header = super.getHeader();
+
+        getClickableTitle().setOnMouseClicked(event -> {
+            getHeaderBox().requestFocus();
+            searchBar.setTranslateY(0);
+            searchField.clear();
+        });
+
+        return header;
     }
 
     private List<ViewableDocument> getDocuments(String research) {
@@ -63,8 +75,8 @@ public class MainScene extends RootScene {
 
     public void updateSearchBar(boolean refresh, boolean focused) {
         if (!focused && !refresh) {
-            contentBox.getChildren().subList(1, contentBox.getChildren().size()).clear();
-            researchBox = null;
+            this.searchResults.setOpacity(0);
+            this.searchResults.setDisable(true);
         }
 
         TranslateTransition translate = new TranslateTransition();
@@ -82,9 +94,8 @@ public class MainScene extends RootScene {
         translate.setOnFinished(event -> {
             searchBarMoving = false;
             if (focused && !refresh) {
-                contentBox.setAlignment(Pos.TOP_CENTER);
-                Region searchResults = getSearchResults();
-                contentBox.getChildren().setAll(searchBar, searchResults);
+                this.searchResults.setOpacity(1);
+                this.searchResults.setDisable(false);
             }
         });
         translate.play();
@@ -136,7 +147,7 @@ public class MainScene extends RootScene {
         hBox.setPrefHeight(60);
         hBox.setPadding(new Insets(5, 10, 5, 10));
 
-        ImageView imageView = new ImageView(new Image(RootScene.getResource("assets/book.png")));
+        ImageView imageView = new ImageView(new Image(getResource("assets/book.png")));
         hBox.getChildren().add(imageView);
         HBox.setMargin(imageView, new Insets(0, 5, 0, 0));
 
@@ -156,17 +167,15 @@ public class MainScene extends RootScene {
         Label availableLabel = new Label(document.isAvailable() ? "Disponible" : "Indisponible");
         availableLabel.setFont(Font.font(null, FontWeight.BOLD,14));
         hBox.getChildren().add(availableLabel);
-        ImageView availability = new ImageView(new Image(RootScene.getResource(document.isAvailable() ? "assets/check.png" : "assets/x.png")));
+        ImageView availability = new ImageView(new Image(getResource(document.isAvailable() ? "assets/check.png" : "assets/x.png")));
         hBox.getChildren().add(availability);
-
 
         return hBox;
     }
 
     @Override
-    public Parent getContent() {
-        this.contentBox = new VBox();
-        contentBox.setAccessibleText("Main Page");
+    public void initContent(VBox vBox) {
+        this.contentBox = vBox;
         contentBox.setAlignment(Pos.TOP_CENTER);
         contentBox.setPadding(new Insets(20, 75, 20, 75));
 
@@ -176,7 +185,7 @@ public class MainScene extends RootScene {
         searchBar.setPrefSize(500, 120);
         searchBar.setMaxSize(800, 120);
 
-        ImageView searchIcon = new ImageView(new Image(RootScene.getResource("assets/search.png")));
+        ImageView searchIcon = new ImageView(new Image(getResource("assets/search.png")));
         this.searchField = new TextField();
         searchField.setPromptText("Rechercher un livre".toUpperCase());
         searchField.setMaxWidth(Double.MAX_VALUE);
@@ -199,15 +208,21 @@ public class MainScene extends RootScene {
             contentBox.requestFocus();
         });
 
-        this.getWindow()
-                .heightProperty()
-                .addListener(
-                        (observableValue, oldVal, newVal) -> Platform.runLater(
-                                () -> updateSearchBar(true, searchField.isFocused())
-                        )
-                );
+        Platform.runLater(() -> {
+            getApp().getStageWrapper().getStage()
+                    .heightProperty()
+                    .addListener(
+                            (observableValue, oldVal, newVal) -> Platform.runLater(
+                                    () -> updateSearchBar(true, searchField.isFocused())
+                            )
+                    );
+        });
 
         searchField.focusedProperty().addListener((observableValue, oldVal, newVal) -> {
+            if (contentBox.getScene() == null) {
+                return;
+            }
+
             if (!contentBox.getScene().getWindow().isFocused()) { // Prevent weird thing when using alt-tab / reducing the window
                 return;
             }
@@ -223,6 +238,15 @@ public class MainScene extends RootScene {
 
         contentBox.getChildren().add(searchBar);
 
-        return contentBox;
+        searchBar.setOpacity(0);
+        Platform.runLater(() -> {
+            updateSearchBar(true, false);
+            searchBar.setOpacity(1);
+
+            this.searchResults = getSearchResults();
+            searchResults.setOpacity(0);
+            searchResults.setDisable(true);
+            contentBox.getChildren().add(searchResults);
+        });
     }
 }

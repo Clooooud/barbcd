@@ -31,18 +31,18 @@ import java.util.stream.Collectors;
 public class GSheetApi {
 
     private static final String SPREADSHEET_NAME = "BarBCD Data";
-    private static final String PRIVATE_CREDENTIAL_PATH_NAME = "pr_credentials.enc";
+    public static final String PRIVATE_CREDENTIAL_PATH_NAME = "pr_credentials.enc";
 
     private static final List<String> ADMIN_SCOPES = Arrays.asList(SheetsScopes.DRIVE, SheetsScopes.SPREADSHEETS);
 
-    private final PublicCredentials publicCredentials;
+    private final PublicCredentials credentials;
 
     private Drive driveService;
     private Sheets sheetsService;
     private Sheets userSheetsService;
 
-    public GSheetApi(PublicCredentials publicCredentials) {
-        this.publicCredentials = publicCredentials;
+    public GSheetApi(PublicCredentials credentials) {
+        this.credentials = credentials;
     }
 
     public void init() {
@@ -69,8 +69,8 @@ public class GSheetApi {
             driveService.files().delete(file.getId()).execute();
         }
 
-        this.publicCredentials.setSpreadsheetId("");
-        this.publicCredentials.save();
+        this.credentials.setSpreadsheetId("");
+        this.credentials.save();
     }
 
     public void save(Library library) throws IOException {
@@ -78,12 +78,17 @@ public class GSheetApi {
             throw new IllegalArgumentException();
         }
 
-        boolean firstSetup = getFile() == null;
+        File file = getFile();
+        boolean firstSetup = file == null;
+        if (!firstSetup && (credentials.getSpreadsheetId() == null || credentials.getSpreadsheetId().isEmpty())) {
+            credentials.setSpreadsheetId(file.getId());
+            credentials.save();
+        }
 
         if (firstSetup) {
             Spreadsheet spreadsheet = initializeSpreadsheet();
-            this.publicCredentials.setSpreadsheetId(spreadsheet.getSpreadsheetId());
-            this.publicCredentials.save();
+            this.credentials.setSpreadsheetId(spreadsheet.getSpreadsheetId());
+            this.credentials.save();
 
             // Default Magazine Categorie
             library.addDocument(Categorie.MAGAZINE);
@@ -223,7 +228,7 @@ public class GSheetApi {
         try {
             sheetsService.spreadsheets()
                     .values()
-                    .clear(publicCredentials.getSpreadsheetId(), sheetName + "!" + (lineId+1), new ClearValuesRequest())
+                    .clear(credentials.getSpreadsheetId(), sheetName + "!" + (lineId+1), new ClearValuesRequest())
                     .execute();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -245,7 +250,7 @@ public class GSheetApi {
         try {
             sheetsService.spreadsheets()
                     .values()
-                    .update(publicCredentials.getSpreadsheetId(), sheetName + "!A" + (lineId+1), valueRange)
+                    .update(credentials.getSpreadsheetId(), sheetName + "!A" + (lineId+1), valueRange)
                     .setValueInputOption("RAW")
                     .execute();
         } catch (IOException e) {
@@ -258,11 +263,11 @@ public class GSheetApi {
             throw new IllegalArgumentException();
         }
 
-        Sheets.Spreadsheets.Get request = userSheetsService.spreadsheets().get(this.publicCredentials.getSpreadsheetId())
+        Sheets.Spreadsheets.Get request = userSheetsService.spreadsheets().get(this.credentials.getSpreadsheetId())
                 .setIncludeGridData(true);
         // Set the API key in the request
         HttpHeaders requestHeaders = request.getRequestHeaders();
-        requestHeaders.set("x-goog-api-key", this.publicCredentials.getApiKey());
+        requestHeaders.set("x-goog-api-key", this.credentials.getApiKey());
 
         return request.execute();
     }
@@ -292,7 +297,7 @@ public class GSheetApi {
         spreadsheet.getProperties().setTitle(SPREADSHEET_NAME);
 
         // Creation of the sheets
-        List<String> sheetNames = Arrays.asList("Oeuvres", "Editors", "Magazines", "MagazineSeries", "Categories");
+        List<String> sheetNames = SaveableType.getOrderedTypes().stream().map(SaveableType::getSheetName).toList();
         spreadsheet.setSheets(sheetNames
                 .stream()
                 .map(name -> new Sheet().setProperties(new SheetProperties().setTitle(name)))

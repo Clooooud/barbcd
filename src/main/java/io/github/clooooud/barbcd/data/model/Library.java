@@ -4,6 +4,8 @@ import io.github.clooooud.barbcd.data.Saveable;
 import io.github.clooooud.barbcd.data.SaveableType;
 import io.github.clooooud.barbcd.data.api.GSheetApi;
 import io.github.clooooud.barbcd.data.auth.User;
+import io.github.clooooud.barbcd.data.model.document.Borrowing;
+import io.github.clooooud.barbcd.data.model.document.ViewableDocument;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -68,6 +70,21 @@ public class Library {
                 .filter(saveable -> saveable.getId() == id)
                 .findFirst()
                 .orElse(null);
+    }
+
+    public void createBorrowing(User user, ViewableDocument viewableDocument) {
+        addDocument(new Borrowing(
+                getNextDocumentId(SaveableType.BORROWING),
+                user,
+                viewableDocument
+        ));
+    }
+
+    public User getUser(String login) {
+        return getDocuments(SaveableType.USER).stream()
+                .map(saveable -> (User) saveable)
+                .filter(user -> user.getLogin().equalsIgnoreCase(login))
+                .findFirst().orElse(null);
     }
 
     public int getNextDocumentId(SaveableType type) {

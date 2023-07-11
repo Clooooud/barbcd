@@ -34,8 +34,8 @@ public abstract class FormScene extends RootScene {
         return formBox.getButtons().values();
     }
 
-    protected void initButton(String buttonName, Button button) {
-
+    protected Runnable initButton(String buttonName, Button button) {
+        return null;
     }
 
     protected abstract String getTitle();
@@ -43,6 +43,8 @@ public abstract class FormScene extends RootScene {
     protected abstract String getDescription();
 
     protected abstract List<String> getFieldNames();
+
+    protected abstract List<String> getPasswordFieldNames();
 
     protected abstract List<String> getButtonNames();
 
@@ -54,12 +56,16 @@ public abstract class FormScene extends RootScene {
                 getTitle(),
                 getDescription(),
                 getButtonNames(),
-                getFieldNames()
+                getFieldNames(),
+                getPasswordFieldNames()
         );
         this.formBox.setOpacity(0);
 
         vBox.getChildren().add(formBox);
-        this.formBox.getButtons().forEach(this::initButton);
+        this.formBox.getButtons().forEach((buttonName, button) -> {
+            Runnable runnable = initButton(buttonName, button);
+            button.setOnAction(event -> runnable.run());
+        });
 
         Platform.runLater(() -> this.formBox.setOpacity(1));
     }

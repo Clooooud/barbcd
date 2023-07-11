@@ -9,10 +9,10 @@ public enum SaveableType {
     MAGAZINE_SERIE("MagazineSeries", List.of("id", "title", "isbn", "editor id")),
     EDITOR("Editors", List.of("id", "nom")),
     USER("Users", List.of("id", "login", "password hash")),
-    BORROWING("Borrowings", List.of("id", "user id", "isMagazine", "document id", "finished"));
+    BORROWING("Borrowings", List.of("id", "user id", "is magazine", "document id", "is finished"));
 
     public static List<SaveableType> getOrderedTypes() {
-        return List.of(CATEGORIE, EDITOR, MAGAZINE_SERIE, MAGAZINE, OEUVRE);
+        return List.of(CATEGORIE, EDITOR, MAGAZINE_SERIE, MAGAZINE, OEUVRE, USER, BORROWING);
     }
 
     private final String sheetName;

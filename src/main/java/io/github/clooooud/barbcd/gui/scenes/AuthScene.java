@@ -24,9 +24,10 @@ public class AuthScene extends FormScene {
     }
 
     @Override
-    protected void initButton(String buttonName, Button button) {
+    protected Runnable initButton(String buttonName, Button button) {
         // There is only one button, no more needed
         // TODO: connection
+        return null;
     }
 
     @Override
@@ -42,6 +43,11 @@ public class AuthScene extends FormScene {
     @Override
     protected List<String> getFieldNames() {
         return List.of("Utilisateur", "Mot de passe");
+    }
+
+    @Override
+    protected List<String> getPasswordFieldNames() {
+        return List.of();
     }
 
     @Override

@@ -26,8 +26,13 @@ public class BarBCD extends Application {
         stage.setTitle("BarBCD");
         this.credentials = new PublicCredentials();
         this.stageWrapper = new StageWrapper(stage);
-        this.stageWrapper.setContent(this.credentials.isFileExisted() ? new MainScene(this) : new StartScene(this));
+        boolean isInitialized = this.credentials.isFileExisted() && !this.credentials.isEmpty();
+        this.stageWrapper.setContent(isInitialized ? new MainScene(this) : new StartScene(this));
         stage.show();
+    }
+
+    public PublicCredentials getCredentials() {
+        return credentials;
     }
 
     public StageWrapper getStageWrapper() {

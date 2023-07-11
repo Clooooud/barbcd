@@ -4,10 +4,7 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -22,8 +19,8 @@ public class FormBox extends VBox {
     private final Map<String, TextField> fields = new HashMap<>();
     private final Map<String, Button> buttons = new HashMap<>();
 
-    public FormBox(String formName, String description, List<String> buttonNames, List<String> fieldNames) {
-        initFormBox(formName, description, buttonNames, fieldNames);
+    public FormBox(String formName, String description, List<String> buttonNames, List<String> fieldNames, List<String> passwordFieldNames) {
+        initFormBox(formName, description, buttonNames, fieldNames, passwordFieldNames);
     }
 
     public Map<String, Button> getButtons() {
@@ -42,7 +39,7 @@ public class FormBox extends VBox {
         return buttons.get(buttonName);
     }
 
-    private void initFormBox(String formName, String description, List<String> buttonNames, List<String> fieldNames) {
+    private void initFormBox(String formName, String description, List<String> buttonNames, List<String> fieldNames, List<String> passwordFieldNames) {
         this.getStyleClass().add("form-box");
         Platform.runLater(() -> this.maxWidthProperty().bind(Bindings.min(600, this.getScene().widthProperty().subtract(300))));
 
@@ -59,7 +56,7 @@ public class FormBox extends VBox {
         }
 
         for (String fieldName : fieldNames) {
-            fields.put(fieldName, initField(fieldName));
+            fields.put(fieldName, initField(fieldName, passwordFieldNames.contains(fieldName)));
         }
 
 
@@ -77,13 +74,13 @@ public class FormBox extends VBox {
         this.getChildren().add(buttonBox);
     }
 
-    private TextField initField(String fieldName) {
+    private TextField initField(String fieldName, boolean password) {
         VBox fieldBox = new VBox();
 
         Label label = new Label(fieldName);
         label.setFont(Font.font(null, FontWeight.BOLD, 16));
 
-        TextField field = new TextField();
+        TextField field = password ? new PasswordField() : new TextField();
 
         fieldBox.getChildren().addAll(label, field);
         this.getChildren().add(fieldBox);

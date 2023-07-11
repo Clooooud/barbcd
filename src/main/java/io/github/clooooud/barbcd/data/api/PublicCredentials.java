@@ -12,7 +12,6 @@ public class PublicCredentials {
 
     private final File file = new File(PUBLIC_CREDENTIAL_PATH_NAME);
 
-    private String passwordHash;
     private String apiKey;
     private String spreadsheetId;
 
@@ -20,14 +19,6 @@ public class PublicCredentials {
 
     public PublicCredentials() {
         load();
-    }
-
-    public String getPasswordHash() {
-        return passwordHash;
-    }
-
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
     }
 
     public String getApiKey() {
@@ -50,13 +41,20 @@ public class PublicCredentials {
         return fileExisted;
     }
 
+    public boolean isEmpty() {
+        if (this.spreadsheetId == null || this.apiKey == null) {
+            return false;
+        }
+
+        return this.spreadsheetId.isEmpty() && this.apiKey.isEmpty();
+    }
+
     public void save() {
         try (JsonWriter jsonWriter = new JsonWriter(new FileWriter(file))) {
             jsonWriter.setIndent("  ");
 
             jsonWriter.beginObject();
             jsonWriter.name("apiKey").value(apiKey);
-            jsonWriter.name("passwordHash").value(passwordHash);
             jsonWriter.name("spreadsheetId").value(spreadsheetId);
             jsonWriter.endObject();
         } catch (IOException e) {
@@ -72,7 +70,6 @@ public class PublicCredentials {
 
         try {
             JsonObject jsonObject = JsonParser.parseReader(new FileReader(file)).getAsJsonObject();
-            this.passwordHash = jsonObject.get("passwordHash").getAsString();
             this.apiKey = jsonObject.get("apiKey").getAsString();
             this.spreadsheetId = jsonObject.get("spreadsheetId").getAsString();
         } catch (FileNotFoundException e) {
@@ -82,7 +79,6 @@ public class PublicCredentials {
 
     private void createDefault() {
         fileExisted = false;
-        passwordHash = "";
         apiKey = "";
         spreadsheetId = "";
 

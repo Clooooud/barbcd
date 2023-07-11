@@ -37,7 +37,7 @@ public class AESUtil {
         }
     }
 
-    public void encrypt(String fileNameToEncrypt, String fileName) {
+    public void encryptFile(String fileNameToEncrypt, String fileName) {
         try (BufferedReader reader = new BufferedReader(new FileReader(fileNameToEncrypt));
              FileOutputStream fileOut = new FileOutputStream(fileName);
              CipherOutputStream cipherOut = new CipherOutputStream(fileOut, cipher)) {
@@ -52,6 +52,20 @@ public class AESUtil {
             byte[] iv = cipher.getIV();
             fileOut.write(iv);
             cipherOut.write(content.getBytes());
+        } catch (IOException | InvalidKeyException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void encrypt(String fileContent, String fileName) {
+        try (FileOutputStream fileOut = new FileOutputStream(fileName);
+             CipherOutputStream cipherOut = new CipherOutputStream(fileOut, cipher)) {
+
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+            byte[] iv = cipher.getIV();
+            fileOut.write(iv);
+            cipherOut.write(fileContent.getBytes());
+
         } catch (IOException | InvalidKeyException e) {
             throw new RuntimeException(e);
         }

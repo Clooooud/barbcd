@@ -1,4 +1,4 @@
-package io.github.clooooud.barbcd.model.document;
+package io.github.clooooud.barbcd.data.model.document;
 
 public interface ViewableDocument {
 

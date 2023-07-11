@@ -1,30 +1,30 @@
-package io.github.clooooud.barbcd.model.document;
+package io.github.clooooud.barbcd.data.model.document;
+
+import io.github.clooooud.barbcd.data.SaveableType;
+import io.github.clooooud.barbcd.data.Saveable;
 
 import java.util.List;
 import java.util.Objects;
 
 public class Categorie implements Saveable {
 
-    public static final Categorie MAGAZINE = new Categorie(1, "Périodique");
+    public static Categorie MAGAZINE = new Categorie(1, "Périodique");
 
     private final int id;
     private final String nom;
 
-    private boolean needUpdate = false;
-
-    @Override
-    public void markAsUpdated() {
-        needUpdate = true;
-    }
-
-    @Override
-    public boolean needsSave() {
-        return needUpdate;
-    }
-
     public Categorie(int id, String nom) {
+        if (id == 1) {
+            MAGAZINE = this;
+        }
+
         this.id = id;
         this.nom = nom;
+    }
+
+    @Override
+    public SaveableType getSaveableType() {
+        return SaveableType.CATEGORIE;
     }
 
     public String getNom() {
@@ -38,11 +38,6 @@ public class Categorie implements Saveable {
     @Override
     public List<Object> getValues() {
         return List.of(id, nom);
-    }
-
-    @Override
-    public List<Object> getHeaders() {
-        return List.of("id", "nom");
     }
 
     @Override

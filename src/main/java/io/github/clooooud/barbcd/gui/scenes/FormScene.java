@@ -2,10 +2,12 @@ package io.github.clooooud.barbcd.gui.scenes;
 
 import io.github.clooooud.barbcd.BarBCD;
 import io.github.clooooud.barbcd.gui.element.FormBox;
+import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
+import java.util.Collection;
 import java.util.List;
 
 public abstract class FormScene extends RootScene {
@@ -22,6 +24,14 @@ public abstract class FormScene extends RootScene {
 
     protected TextField getField(String fieldName) {
         return formBox.getField(fieldName);
+    }
+
+    protected Collection<TextField> getFields() {
+        return formBox.getFields().values();
+    }
+
+    protected Collection<Button> getButtons() {
+        return formBox.getButtons().values();
     }
 
     protected void initButton(String buttonName, Button button) {
@@ -46,8 +56,11 @@ public abstract class FormScene extends RootScene {
                 getButtonNames(),
                 getFieldNames()
         );
+        this.formBox.setOpacity(0);
 
         vBox.getChildren().add(formBox);
         this.formBox.getButtons().forEach(this::initButton);
+
+        Platform.runLater(() -> this.formBox.setOpacity(1));
     }
 }

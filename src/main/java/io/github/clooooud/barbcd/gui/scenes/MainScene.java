@@ -1,8 +1,8 @@
 package io.github.clooooud.barbcd.gui.scenes;
 
 import io.github.clooooud.barbcd.BarBCD;
-import io.github.clooooud.barbcd.model.Library;
-import io.github.clooooud.barbcd.model.document.ViewableDocument;
+import io.github.clooooud.barbcd.data.SaveableType;
+import io.github.clooooud.barbcd.data.model.document.ViewableDocument;
 import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
@@ -21,7 +21,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.util.Duration;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -52,7 +51,6 @@ public class MainScene extends RootScene {
 
         getClickableTitle().setOnMouseClicked(event -> {
             getHeaderBox().requestFocus();
-            searchBar.setTranslateY(0);
             searchField.clear();
         });
 
@@ -61,17 +59,18 @@ public class MainScene extends RootScene {
 
     private List<ViewableDocument> getDocuments(String research) {
         return Stream.concat(
-                getLibrary().getMagazineList().stream(),
-                getLibrary().getOeuvreList().stream()
-        ).filter(document -> document.getSearchString().toLowerCase().contains(research.toLowerCase()))
-                .sorted((Comparator<ViewableDocument>) (o1, o2) -> o1.getTitle().compareToIgnoreCase(o2.getTitle()))
+                getLibrary().getDocuments(SaveableType.MAGAZINE).stream(),
+                getLibrary().getDocuments(SaveableType.OEUVRE).stream()
+        ).map(saveable -> (ViewableDocument) saveable)
+                .filter(document -> document.getSearchString().toLowerCase().contains(research.toLowerCase()))
+                .sorted((o1, o2) -> o1.getTitle().compareToIgnoreCase(o2.getTitle()))
                 .collect(Collectors.toList());
     }
 
     public void updateSearchBar(boolean refresh, boolean focused) {
         if (!focused && !refresh) {
-            this.searchResults.setOpacity(0);
-            this.searchResults.setDisable(true);
+            contentBox.getChildren().subList(1, contentBox.getChildren().size()).clear();
+            researchBox = null;
         }
 
         TranslateTransition translate = new TranslateTransition();
@@ -89,8 +88,9 @@ public class MainScene extends RootScene {
         translate.setOnFinished(event -> {
             searchBarMoving = false;
             if (focused && !refresh) {
-                this.searchResults.setOpacity(1);
-                this.searchResults.setDisable(false);
+                contentBox.setAlignment(Pos.TOP_CENTER);
+                Region searchResults = getSearchResults();
+                contentBox.getChildren().setAll(searchBar, searchResults);
             }
         });
         translate.play();
@@ -130,7 +130,25 @@ public class MainScene extends RootScene {
 
         this.researchBox.getChildren().clear();
 
-        for (ViewableDocument document : getDocuments(searchField.getText())) {
+
+        List<ViewableDocument> documents = getDocuments(searchField.getText());
+
+        if (documents.isEmpty()) {
+            HBox hBox = new HBox();
+            hBox.setPrefHeight(60);
+            hBox.getStyleClass().add("document-line");
+            hBox.setAlignment(Pos.CENTER);
+
+            Label label = new Label("La BCD n'a aucune oeuvre enregistrée");
+            label.setFont(Font.font(null, FontWeight.BOLD, 20));
+
+            hBox.getChildren().add(label);
+
+            this.researchBox.getChildren().add(hBox);
+            return;
+        }
+
+        for (ViewableDocument document : documents) {
             this.researchBox.getChildren().add(getDocumentLine(document));
         }
     }
@@ -232,14 +250,16 @@ public class MainScene extends RootScene {
         contentBox.getChildren().add(searchBar);
 
         searchBar.setOpacity(0);
-        Platform.runLater(() -> {
-            updateSearchBar(true, false);
-            searchBar.setOpacity(1);
-
-            this.searchResults = getSearchResults();
-            searchResults.setOpacity(0);
-            searchResults.setDisable(true);
-            contentBox.getChildren().add(searchResults);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                updateSearchBar(true, false);
+                if (searchBar.getTranslateY() == 0) {
+                    Platform.runLater(this);
+                } else {
+                    searchBar.setOpacity(1);
+                }
+            }
         });
     }
 }

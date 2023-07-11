@@ -1,4 +1,7 @@
-package io.github.clooooud.barbcd.model.document;
+package io.github.clooooud.barbcd.data.model.document;
+
+import io.github.clooooud.barbcd.data.SaveableType;
+import io.github.clooooud.barbcd.data.Saveable;
 
 import java.util.List;
 
@@ -9,23 +12,16 @@ public class MagazineSerie implements Saveable {
     private final String isbn;
     private final Editor editor;
 
-    private boolean needUpdate = false;
-
-    @Override
-    public void markAsUpdated() {
-        needUpdate = true;
-    }
-
-    @Override
-    public boolean needsSave() {
-        return needUpdate;
-    }
-
     public MagazineSerie(int id, String title, String isbn, Editor editor) {
         this.id = id;
         this.title = title;
         this.isbn = isbn;
         this.editor = editor;
+    }
+
+    @Override
+    public SaveableType getSaveableType() {
+        return SaveableType.MAGAZINE_SERIE;
     }
 
     public int getId() {
@@ -47,10 +43,5 @@ public class MagazineSerie implements Saveable {
     @Override
     public List<Object> getValues() {
         return List.of(id, title, isbn, editor.getId());
-    }
-
-    @Override
-    public List<Object> getHeaders() {
-        return List.of("id", "title", "isbn", "editor id");
     }
 }

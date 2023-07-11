@@ -1,4 +1,4 @@
-package io.github.clooooud.barbcd.data;
+package io.github.clooooud.barbcd.util;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
@@ -10,6 +10,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
+import java.util.Arrays;
 
 public class AESUtil {
 
@@ -27,7 +28,7 @@ public class AESUtil {
     private final Cipher cipher;
     private final SecretKey secretKey;
 
-    AESUtil(String password) {
+    public AESUtil(String password) {
         this.secretKey = getKeyFromPassword(password, "salt123+");
         try {
             this.cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
@@ -36,7 +37,7 @@ public class AESUtil {
         }
     }
 
-    void encrypt(String fileNameToEncrypt, String fileName) {
+    public void encrypt(String fileNameToEncrypt, String fileName) {
         try (BufferedReader reader = new BufferedReader(new FileReader(fileNameToEncrypt));
              FileOutputStream fileOut = new FileOutputStream(fileName);
              CipherOutputStream cipherOut = new CipherOutputStream(fileOut, cipher)) {
@@ -56,7 +57,7 @@ public class AESUtil {
         }
     }
 
-    String decrypt(String fileName) {
+    public String decrypt(String fileName) {
         String content;
 
         try (FileInputStream fileIn = new FileInputStream(fileName)) {

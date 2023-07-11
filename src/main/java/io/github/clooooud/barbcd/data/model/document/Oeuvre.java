@@ -1,4 +1,7 @@
-package io.github.clooooud.barbcd.model.document;
+package io.github.clooooud.barbcd.data.model.document;
+
+import io.github.clooooud.barbcd.data.SaveableType;
+import io.github.clooooud.barbcd.data.Saveable;
 
 import java.util.List;
 
@@ -13,18 +16,6 @@ public class Oeuvre implements ViewableDocument, Saveable {
     private final int quantity;
     private final int year;
 
-    private boolean needUpdate = false;
-
-    @Override
-    public void markAsUpdated() {
-        needUpdate = true;
-    }
-
-    @Override
-    public boolean needsSave() {
-        return needUpdate;
-    }
-
     public Oeuvre(int id, String title, String author, String isbn, Editor editor, Categorie categorie, int quantity, int year) {
         this.id = id;
         this.title = title;
@@ -34,6 +25,11 @@ public class Oeuvre implements ViewableDocument, Saveable {
         this.categorie = categorie;
         this.quantity = quantity;
         this.year = year;
+    }
+
+    @Override
+    public SaveableType getSaveableType() {
+        return SaveableType.OEUVRE;
     }
 
     public int getId() {
@@ -78,10 +74,5 @@ public class Oeuvre implements ViewableDocument, Saveable {
     @Override
     public List<Object> getValues() {
         return List.of(id, title, author, isbn, editor.getId(), categorie.getId(), quantity, year);
-    }
-
-    @Override
-    public List<Object> getHeaders() {
-        return List.of("id", "title", "author", "isbn", "editor id", "categorie id", "quantity", "year");
     }
 }

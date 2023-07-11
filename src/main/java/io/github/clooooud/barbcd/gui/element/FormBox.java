@@ -19,8 +19,8 @@ import java.util.Map;
 
 public class FormBox extends VBox {
 
-    private Map<String, TextField> fields = new HashMap<>();
-    private Map<String, Button> buttons = new HashMap<>();
+    private final Map<String, TextField> fields = new HashMap<>();
+    private final Map<String, Button> buttons = new HashMap<>();
 
     public FormBox(String formName, String description, List<String> buttonNames, List<String> fieldNames) {
         initFormBox(formName, description, buttonNames, fieldNames);
@@ -28,6 +28,10 @@ public class FormBox extends VBox {
 
     public Map<String, Button> getButtons() {
         return buttons;
+    }
+
+    public Map<String, TextField> getFields() {
+        return fields;
     }
 
     public TextField getField(String fieldName) {
@@ -76,12 +80,12 @@ public class FormBox extends VBox {
     private TextField initField(String fieldName) {
         VBox fieldBox = new VBox();
 
-        Label passwordLabel = new Label(fieldName);
-        passwordLabel.setFont(Font.font(null, FontWeight.BOLD, 16));
+        Label label = new Label(fieldName);
+        label.setFont(Font.font(null, FontWeight.BOLD, 16));
 
         TextField field = new TextField();
 
-        fieldBox.getChildren().addAll(passwordLabel, field);
+        fieldBox.getChildren().addAll(label, field);
         this.getChildren().add(fieldBox);
 
         return field;

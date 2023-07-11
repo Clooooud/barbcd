@@ -1,4 +1,7 @@
-package io.github.clooooud.barbcd.model.document;
+package io.github.clooooud.barbcd.data.model.document;
+
+import io.github.clooooud.barbcd.data.SaveableType;
+import io.github.clooooud.barbcd.data.Saveable;
 
 import java.util.List;
 
@@ -7,21 +10,14 @@ public class Editor implements Saveable {
     private final int id;
     private final String nom;
 
-    private boolean needUpdate = false;
-
-    @Override
-    public void markAsUpdated() {
-        needUpdate = true;
-    }
-
-    @Override
-    public boolean needsSave() {
-        return needUpdate;
-    }
-
     public Editor(int id, String nom) {
         this.id = id;
         this.nom = nom;
+    }
+
+    @Override
+    public SaveableType getSaveableType() {
+        return SaveableType.EDITOR;
     }
 
     public int getId() {
@@ -35,10 +31,5 @@ public class Editor implements Saveable {
     @Override
     public List<Object> getValues() {
         return List.of(id, nom);
-    }
-
-    @Override
-    public List<Object> getHeaders() {
-        return List.of("id", "nom");
     }
 }

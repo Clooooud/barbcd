@@ -1,7 +1,7 @@
 package io.github.clooooud.barbcd.gui.scenes;
 
 import io.github.clooooud.barbcd.BarBCD;
-import io.github.clooooud.barbcd.model.Library;
+import io.github.clooooud.barbcd.data.model.Library;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
@@ -19,6 +19,7 @@ public abstract class RootScene {
     private BarBCD app;
     private HBox headerBox;
     private HBox clickableTitle;
+    private Button authButton;
 
     public RootScene(BarBCD app) {
         this.app = app;
@@ -34,6 +35,10 @@ public abstract class RootScene {
 
     protected HBox getClickableTitle() {
         return clickableTitle;
+    }
+
+    protected Button getAuthButton() {
+        return authButton;
     }
 
     protected Library getLibrary() {
@@ -66,16 +71,16 @@ public abstract class RootScene {
 
         // TODO: connecté pas connecté, variation de bouton
 
-        Button button = new Button("Administration");
-        button.setFocusTraversable(false);
-        button.setId("header-auth-btn");
-        button.setPrefHeight(40);
-        button.setGraphic(new ImageView(new Image(getResource("assets/lock.png"))));
-        button.setOnAction(event -> {
+        authButton = new Button("Administration");
+        authButton.setFocusTraversable(false);
+        authButton.setId("header-auth-btn");
+        authButton.setPrefHeight(40);
+        authButton.setGraphic(new ImageView(new Image(getResource("assets/lock.png"))));
+        authButton.setOnAction(event -> {
             this.app.getStageWrapper().setContent(new AuthScene(app));
         });
 
-        headerBox.getChildren().add(button);
+        headerBox.getChildren().add(authButton);
 
         return headerBox;
     }

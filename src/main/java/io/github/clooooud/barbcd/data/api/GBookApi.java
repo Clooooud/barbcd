@@ -1,4 +1,4 @@
-package io.github.clooooud.barbcd.data;
+package io.github.clooooud.barbcd.data.api;
 
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;

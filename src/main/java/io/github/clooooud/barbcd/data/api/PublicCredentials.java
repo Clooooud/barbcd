@@ -1,4 +1,4 @@
-package io.github.clooooud.barbcd.data;
+package io.github.clooooud.barbcd.data.api;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;

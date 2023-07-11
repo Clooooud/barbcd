@@ -7,10 +7,8 @@ import io.github.clooooud.barbcd.data.auth.User;
 import io.github.clooooud.barbcd.data.model.document.Borrowing;
 import io.github.clooooud.barbcd.data.model.document.ViewableDocument;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class Library {
@@ -28,7 +26,7 @@ public class Library {
         this.saveables = new HashMap<>();
 
         for (SaveableType saveableType : SaveableType.values()) {
-            saveables.put(saveableType, new HashSet<>());
+            saveables.put(saveableType, ConcurrentHashMap.newKeySet());
         }
 
         dataUpdateList = new HashSet<>();

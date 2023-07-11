@@ -8,25 +8,22 @@ import java.io.IOException;
 
 public class LoadRunnable implements Runnable {
 
-    public static void start(Library library, PublicCredentials credentials) {
-        new Thread(new LoadRunnable(library, credentials)).start();
+    public static void start(Library library, GSheetApi gSheetApi) {
+        new Thread(new LoadRunnable(library, gSheetApi)).start();
     }
 
     private final Library library;
-    private final PublicCredentials credentials;
+    private final GSheetApi gSheetApi;
 
-    private LoadRunnable(Library library, PublicCredentials credentials) {
+    public LoadRunnable(Library library, GSheetApi gSheetApi) {
         this.library = library;
-        this.credentials = credentials;
+        this.gSheetApi = gSheetApi;
     }
 
     @Override
     public void run() {
-        GSheetApi api = new GSheetApi(credentials);
-        api.init();
-
         try {
-            api.load(library);
+            gSheetApi.load(library);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -43,10 +44,16 @@ public class GSheetApi {
 
     public GSheetApi(PublicCredentials credentials) {
         this.credentials = credentials;
+        init();
     }
 
     public void init() {
         initUserSheetsService();
+    }
+
+    public void closeAdminMode() {
+        sheetsService = null;
+        driveService = null;
     }
 
     public void initAdmin(String adminPassword) {
@@ -120,6 +127,8 @@ public class GSheetApi {
         Spreadsheet spreadsheet = getSpreadsheet();
 
         for (SaveableType type : SaveableType.getOrderedTypes()) {
+            library.getDocuments(type).clear();
+
             String sheetName = type.getSheetName();
             Sheet sheet = spreadsheet.getSheets().stream()
                     .filter(sheet1 -> sheet1.getProperties().getTitle().equals(sheetName))
@@ -277,17 +286,13 @@ public class GSheetApi {
             throw new IllegalArgumentException();
         }
 
-        List<File> fileList = driveService.files().list()
-                .setQ("name contains '" + SPREADSHEET_NAME + "' and mimeType='application/vnd.google-apps.spreadsheet'")
-                .setOrderBy("modifiedTime desc")
-                .setSpaces("drive")
-                .execute().getFiles();
-
-        if (fileList.size() < 1) {
+        if (credentials.getSpreadsheetId().equals("")) {
             return null;
         }
 
-        return fileList.get(0);
+        Drive.Files.Get request = driveService.files().get(credentials.getSpreadsheetId());
+
+        return request.execute();
     }
 
     private Spreadsheet initializeSpreadsheet() throws IOException {
@@ -306,8 +311,7 @@ public class GSheetApi {
         spreadsheet = sheetsService.spreadsheets().create(spreadsheet).execute();
 
         // Reading permissions for everyone
-        String fileId = getFile().getId();
-        driveService.permissions().create(fileId, new Permission().setRole("reader").setType("anyone")).execute();
+        driveService.permissions().create(spreadsheet.getSpreadsheetId(), new Permission().setRole("reader").setType("anyone")).execute();
 
         return spreadsheet;
     }

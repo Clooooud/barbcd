@@ -1,22 +1,21 @@
 package io.github.clooooud.barbcd;
 
+import io.github.clooooud.barbcd.data.api.GSheetApi;
 import io.github.clooooud.barbcd.data.api.PublicCredentials;
 import io.github.clooooud.barbcd.data.api.tasks.LoadRunnable;
+import io.github.clooooud.barbcd.data.model.Library;
 import io.github.clooooud.barbcd.gui.StageWrapper;
 import io.github.clooooud.barbcd.gui.scenes.MainScene;
 import io.github.clooooud.barbcd.gui.scenes.StartScene;
-import io.github.clooooud.barbcd.data.model.Library;
-import io.github.clooooud.barbcd.data.model.document.Editor;
-import io.github.clooooud.barbcd.data.model.document.Oeuvre;
-import io.github.clooooud.barbcd.data.model.document.Categorie;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
 public class BarBCD extends Application {
 
-    private StageWrapper stageWrapper;
-    private PublicCredentials credentials;
+    private final PublicCredentials credentials = new PublicCredentials();
     private final Library library = new Library("");
+    private final GSheetApi gSheetApi = new GSheetApi(credentials);
+    private StageWrapper stageWrapper;
 
     @Override
     public void start(Stage stage) {
@@ -25,14 +24,17 @@ public class BarBCD extends Application {
         stage.setWidth(800);
         stage.setHeight(600);
         stage.setTitle("BarBCD");
-        this.credentials = new PublicCredentials();
         this.stageWrapper = new StageWrapper(stage);
         boolean isInitialized = this.credentials.isFileExisted() && !this.credentials.isEmpty();
         if (isInitialized) {
-            LoadRunnable.start(library, credentials);
+            LoadRunnable.start(library, this.gSheetApi);
         }
         this.stageWrapper.setContent(isInitialized ? new MainScene(this) : new StartScene(this));
         stage.show();
+    }
+
+    public GSheetApi getGSheetApi() {
+        return gSheetApi;
     }
 
     public PublicCredentials getCredentials() {

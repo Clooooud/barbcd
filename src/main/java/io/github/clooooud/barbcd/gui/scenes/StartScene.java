@@ -60,7 +60,7 @@ public class StartScene extends FormScene {
         this.getApp().getCredentials().save();
         this.getLibrary().addDocument(new AdminUser(Sha256Util.passToSha256(password)));
 
-        SaveRunnable.start(this.getApp().getCredentials(), this.getLibrary(), password);
+        SaveRunnable.start(this.getLibrary(), this.getApp().getGSheetApi(), password);
 
         return true;
     }

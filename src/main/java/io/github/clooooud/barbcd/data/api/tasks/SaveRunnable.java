@@ -26,6 +26,7 @@ public class SaveRunnable implements Runnable {
     public void run() {
         GSheetApi api = new GSheetApi(credentials);
         api.initAdmin(adminPassword);
+
         try {
             api.save(library);
         } catch (IOException e) {

@@ -1,6 +1,7 @@
 package io.github.clooooud.barbcd;
 
 import io.github.clooooud.barbcd.data.api.PublicCredentials;
+import io.github.clooooud.barbcd.data.api.tasks.LoadRunnable;
 import io.github.clooooud.barbcd.gui.StageWrapper;
 import io.github.clooooud.barbcd.gui.scenes.MainScene;
 import io.github.clooooud.barbcd.gui.scenes.StartScene;
@@ -27,6 +28,9 @@ public class BarBCD extends Application {
         this.credentials = new PublicCredentials();
         this.stageWrapper = new StageWrapper(stage);
         boolean isInitialized = this.credentials.isFileExisted() && !this.credentials.isEmpty();
+        if (isInitialized) {
+            LoadRunnable.start(library, credentials);
+        }
         this.stageWrapper.setContent(isInitialized ? new MainScene(this) : new StartScene(this));
         stage.show();
     }

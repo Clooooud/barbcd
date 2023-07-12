@@ -35,9 +35,6 @@ public class AuthScene extends FormScene {
 
         String login = this.getField("Utilisateur").getText();
         String password = this.getField("Mot de passe").getText();
-
-        //TODO: comment décrypter le fichier encrypté sans le mdp ????
-        // Ré-encrypter le mot de passe principal pour chaque utilisateur avec son mot de passe
     }
 
     @Override

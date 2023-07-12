@@ -59,7 +59,6 @@ public class FormBox extends VBox {
             fields.put(fieldName, initField(fieldName, passwordFieldNames.contains(fieldName)));
         }
 
-
         HBox buttonBox = new HBox();
         buttonBox.setSpacing(10);
         buttonBox.setAlignment(Pos.CENTER_RIGHT);

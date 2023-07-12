@@ -6,6 +6,8 @@ import io.github.clooooud.barbcd.data.api.GSheetApi;
 import io.github.clooooud.barbcd.data.auth.User;
 import io.github.clooooud.barbcd.data.model.document.Borrowing;
 import io.github.clooooud.barbcd.data.model.document.ViewableDocument;
+import io.github.clooooud.barbcd.util.AESUtil;
+import io.github.clooooud.barbcd.util.Sha256Util;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -71,11 +73,24 @@ public class Library {
     }
 
     public void createBorrowing(User user, ViewableDocument viewableDocument) {
-        addDocument(new Borrowing(
+        Borrowing borrowing = new Borrowing(
                 getNextDocumentId(SaveableType.BORROWING),
                 user,
                 viewableDocument
-        ));
+        );
+        addDocument(borrowing);
+        markDocumentAsUpdated(borrowing);
+    }
+
+    public void createUser(String login, String password, String adminPassword) {
+        User user = new User(
+                this.getNextDocumentId(SaveableType.USER),
+                login,
+                Sha256Util.passToSha256(password),
+                new AESUtil(password).encryptString(adminPassword)
+        );
+        addDocument(user);
+        markDocumentAsUpdated(user);
     }
 
     public User getUser(String login) {

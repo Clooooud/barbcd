@@ -24,10 +24,20 @@ public class AuthScene extends FormScene {
     }
 
     @Override
-    protected Runnable initButton(String buttonName, Button button) {
-        // There is only one button, no more needed
-        // TODO: connection
-        return null;
+    protected Runnable getButtonAction(String buttonName, Button button) {
+        return this::consumeForm;
+    }
+
+    private void consumeForm() {
+        if (!this.getFields().stream().allMatch(this::validateNonEmptyTextField)) {
+            return;
+        }
+
+        String login = this.getField("Utilisateur").getText();
+        String password = this.getField("Mot de passe").getText();
+
+        //TODO: comment décrypter le fichier encrypté sans le mdp ????
+        // Ré-encrypter le mot de passe principal pour chaque utilisateur avec son mot de passe
     }
 
     @Override

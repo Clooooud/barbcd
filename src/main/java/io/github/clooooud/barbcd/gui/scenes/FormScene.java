@@ -3,6 +3,7 @@ package io.github.clooooud.barbcd.gui.scenes;
 import io.github.clooooud.barbcd.BarBCD;
 import io.github.clooooud.barbcd.gui.element.FormBox;
 import javafx.application.Platform;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
@@ -34,8 +35,12 @@ public abstract class FormScene extends RootScene {
         return formBox.getButtons().values();
     }
 
-    protected Runnable initButton(String buttonName, Button button) {
+    protected Runnable getButtonAction(String buttonName, Button button) {
         return null;
+    }
+
+    protected void initField(String fieldName, TextField field) {
+
     }
 
     protected abstract String getTitle();
@@ -63,10 +68,33 @@ public abstract class FormScene extends RootScene {
 
         vBox.getChildren().add(formBox);
         this.formBox.getButtons().forEach((buttonName, button) -> {
-            Runnable runnable = initButton(buttonName, button);
+            Runnable runnable = getButtonAction(buttonName, button);
             button.setOnAction(event -> runnable.run());
+        });
+
+        this.formBox.getFields().forEach((fieldName, field) -> {
+            this.initField(fieldName, field);
+            field.textProperty().addListener(event -> validateNonEmptyTextField(field));
         });
 
         Platform.runLater(() -> this.formBox.setOpacity(1));
     }
+
+    public static void markNodeErrorStatus(Node node, boolean isValid) {
+        if (isValid) {
+            node.setStyle(null);
+        } else {
+            node.setStyle("-fx-control-inner-background: f8d7da");
+        }
+    }
+
+
+    protected boolean validateNonEmptyTextField(TextField textField) {
+        boolean isValid = textField.getText().strip().length() > 0;
+
+        markNodeErrorStatus(textField, isValid);
+
+        return isValid;
+    }
+
 }

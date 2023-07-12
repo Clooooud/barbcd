@@ -85,6 +85,8 @@ public class GSheetApi {
             throw new IllegalArgumentException();
         }
 
+        reset();
+
         File file = getFile();
         boolean firstSetup = file == null;
         if (!firstSetup && (credentials.getSpreadsheetId() == null || credentials.getSpreadsheetId().isEmpty())) {
@@ -208,7 +210,8 @@ public class GSheetApi {
                 User user = new User(
                         id,
                         values.get(1),
-                        values.get(2)
+                        values.get(2),
+                        values.get(3)
                 );
                 library.addDocument(user);
             }

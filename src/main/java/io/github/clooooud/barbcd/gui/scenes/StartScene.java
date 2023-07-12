@@ -28,7 +28,7 @@ public class StartScene extends FormScene {
     }
 
     @Override
-    protected Runnable initButton(String buttonName, Button button) {
+    protected Runnable getButtonAction(String buttonName, Button button) {
         return switch (buttonName) {
             case "Tutoriel" -> this::openTutorial;
             case "Finaliser" -> () -> {
@@ -45,7 +45,7 @@ public class StartScene extends FormScene {
     }
 
     private boolean consumeForm() {
-        if (this.getFields().stream().anyMatch(field -> field.getText().isEmpty())) {
+        if (!this.getFields().stream().allMatch(this::validateNonEmptyTextField)) {
             return false;
         }
 

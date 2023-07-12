@@ -8,7 +8,7 @@ public enum SaveableType {
     MAGAZINE("Magazines", List.of("id", "title", "magazine number", "quantity", "year", "month", "magazine serie id")),
     MAGAZINE_SERIE("MagazineSeries", List.of("id", "title", "isbn", "editor id")),
     EDITOR("Editors", List.of("id", "nom")),
-    USER("Users", List.of("id", "login", "password hash")),
+    USER("Users", List.of("id", "login", "password hash", "main password")),
     BORROWING("Borrowings", List.of("id", "user id", "is magazine", "document id", "is finished"));
 
     public static List<SaveableType> getOrderedTypes() {

@@ -10,11 +10,13 @@ public class User implements Saveable {
     private int id;
     private String login;
     private String passwordHash;
+    private String mainPassword;
 
-    public User(int id, String login, String passwordHash) {
+    public User(int id, String login, String passwordHash, String mainPassword) {
         this.id = id;
         this.login = login;
         this.passwordHash = passwordHash;
+        this.mainPassword = mainPassword;
     }
 
     public boolean isAdmin() {
@@ -37,6 +39,14 @@ public class User implements Saveable {
         this.passwordHash = passwordHash;
     }
 
+    public String getMainPassword() {
+        return mainPassword;
+    }
+
+    public void setMainPassword(String mainPassword) {
+        this.mainPassword = mainPassword;
+    }
+
     @Override
     public SaveableType getSaveableType() {
         return SaveableType.USER;
@@ -49,6 +59,6 @@ public class User implements Saveable {
 
     @Override
     public List<Object> getValues() {
-        return List.of(this.id, this.login, this.passwordHash);
+        return List.of(this.id, this.login, this.passwordHash, this.mainPassword);
     }
 }

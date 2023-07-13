@@ -21,6 +21,7 @@ public class Library {
 
     private final String name;
     private String adminPassword;
+    private User user;
 
     public Library(String name) {
         this.name = name;
@@ -34,20 +35,29 @@ public class Library {
         dataUpdateList = new HashSet<>();
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public void setAdminPassword(String adminPassword) {
         this.adminPassword = adminPassword;
     }
 
-    public void clearAdminPassword() {
+    public void disconnectUser() {
         setAdminPassword("");
+        setUser(null);
     }
 
     public String getAdminPassword() {
         return adminPassword;
     }
 
-    public boolean isAdmin() {
-        return !adminPassword.isEmpty();
+    public boolean isLoggedIn() {
+        return adminPassword != null && !adminPassword.isEmpty();
     }
 
     public Set<User> getUsers() {
@@ -94,8 +104,7 @@ public class Library {
     }
 
     public User getUser(String login) {
-        return getDocuments(SaveableType.USER).stream()
-                .map(saveable -> (User) saveable)
+        return getUsers().stream()
                 .filter(user -> user.getLogin().equalsIgnoreCase(login))
                 .findFirst().orElse(null);
     }
@@ -115,5 +124,9 @@ public class Library {
 
     public void addDocument(Saveable saveable) {
         saveables.get(saveable.getSaveableType()).add(saveable);
+    }
+
+    public String getName() {
+        return this.name;
     }
 }

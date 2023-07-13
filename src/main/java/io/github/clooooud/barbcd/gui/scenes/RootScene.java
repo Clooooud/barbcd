@@ -2,12 +2,15 @@ package io.github.clooooud.barbcd.gui.scenes;
 
 import io.github.clooooud.barbcd.BarBCD;
 import io.github.clooooud.barbcd.data.model.Library;
+import io.github.clooooud.barbcd.gui.scenes.admin.MainAdminScene;
+import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -47,6 +50,19 @@ public abstract class RootScene {
 
     public abstract void initContent(VBox vBox);
 
+    protected void homeButtonAction(MouseEvent event) {
+        this.app.getStageWrapper().setContent(this.getLibrary().isLoggedIn() ? new MainAdminScene(app) : new MainScene(app));
+    }
+
+    protected void authButtonAction(ActionEvent event) {
+        if (this.getLibrary().isLoggedIn()) {
+            this.getLibrary().disconnectUser();
+            this.app.getStageWrapper().setContent(new MainScene(app));
+        } else {
+            this.app.getStageWrapper().setContent(new AuthScene(app));
+        }
+    }
+
     public HBox getHeader() {
         this.headerBox = new HBox();
         headerBox.setMinHeight(100);
@@ -58,11 +74,12 @@ public abstract class RootScene {
         this.clickableTitle = new HBox();
         clickableTitle.setAlignment(Pos.CENTER_LEFT);
         labelBox.setAlignment(Pos.CENTER_LEFT);
-        Label label = new Label("BarBCD");
+        String name = this.getLibrary().getName();
+        Label label = new Label("BarBCD" + (name.isEmpty() ? "" : (" " + name)));
         label.setId("title");
         label.setMaxWidth(Double.MAX_VALUE);
         clickableTitle.setCursor(Cursor.HAND);
-        clickableTitle.setOnMouseClicked(event -> app.getStageWrapper().setContent(new MainScene(app)));
+        clickableTitle.setOnMouseClicked(this::homeButtonAction);
 
         clickableTitle.getChildren().add(label);
         labelBox.getChildren().add(clickableTitle);
@@ -71,14 +88,12 @@ public abstract class RootScene {
 
         // TODO: connecté pas connecté, variation de bouton
 
-        authButton = new Button("Administration");
+        authButton = new Button(this.getLibrary().isLoggedIn() ? "Déconnexion" : "Administration");
         authButton.setFocusTraversable(false);
         authButton.setId("header-auth-btn");
         authButton.setPrefHeight(40);
-        authButton.setGraphic(new ImageView(new Image(getResource("assets/lock.png"))));
-        authButton.setOnAction(event -> {
-            this.app.getStageWrapper().setContent(new AuthScene(app));
-        });
+        authButton.setGraphic(new ImageView(new Image(getResource(this.getLibrary().isLoggedIn() ? "assets/unlock.png" : "assets/lock.png"))));
+        authButton.setOnAction(this::authButtonAction);
 
         headerBox.getChildren().add(authButton);
 

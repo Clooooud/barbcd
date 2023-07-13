@@ -10,6 +10,30 @@
     -fx-font-family: 'Roboto';
 }
 
+#sidebox {
+    -fx-background-color: derive(#97719d, 20%);
+}
+
+.sidebox-button-label {
+    -fx-text-fill: white;
+}
+
+.sidebox-button-notlast {
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: derive(#97719d, -10%);
+}
+
+.sidebox-button {
+    -fx-background-color: transparent;
+    -fx-alignment: center-left;
+    -fx-padding: 0 10 0 10;
+}
+
+.sidebox-button:hover {
+    -fx-background-color: derive(#97719d, 10%);
+    -fx-cursor: hand;
+}
+
 #title {
     -fx-font-size: 48;
     -fx-text-fill: white;

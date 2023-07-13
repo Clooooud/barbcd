@@ -7,8 +7,8 @@ import java.io.IOException;
 
 public class SaveRunnable implements Runnable {
 
-    public static void start(Library library, GSheetApi gSheetApi, String adminPassword) {
-        new Thread(new SaveRunnable(library, gSheetApi, adminPassword)).start();
+    public static RunnableWrapper create(Library library, GSheetApi gSheetApi, String adminPassword) {
+        return new RunnableWrapper(new SaveRunnable(library, gSheetApi, adminPassword));
     }
 
     private final GSheetApi gSheetApi;

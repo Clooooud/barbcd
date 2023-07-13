@@ -62,7 +62,7 @@ public class MainScene extends RootScene {
                 getLibrary().getDocuments(SaveableType.MAGAZINE).stream(),
                 getLibrary().getDocuments(SaveableType.OEUVRE).stream()
         ).map(saveable -> (ViewableDocument) saveable)
-                .filter(document -> document.getSearchString().toLowerCase().contains(research.toLowerCase()))
+                .filter(document -> document.getSearchString(getLibrary()).toLowerCase().contains(research.toLowerCase()))
                 .sorted((o1, o2) -> o1.getTitle().compareToIgnoreCase(o2.getTitle()))
                 .collect(Collectors.toList());
     }
@@ -177,10 +177,11 @@ public class MainScene extends RootScene {
         hBox.getChildren().add(vBox);
         HBox.setHgrow(vBox, Priority.ALWAYS);
 
-        Label availableLabel = new Label(document.isAvailable() ? "Disponible" : "Indisponible");
+        boolean isAvailable = document.isAvailable(this.getLibrary());
+        Label availableLabel = new Label(isAvailable ? "Disponible" : "Indisponible");
         availableLabel.setFont(Font.font(null, FontWeight.BOLD,14));
         hBox.getChildren().add(availableLabel);
-        ImageView availability = new ImageView(new Image(getResource(document.isAvailable() ? "assets/check.png" : "assets/x.png")));
+        ImageView availability = new ImageView(new Image(getResource(isAvailable ? "assets/check.png" : "assets/x.png")));
         hBox.getChildren().add(availability);
 
         return hBox;

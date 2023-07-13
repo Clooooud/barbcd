@@ -8,8 +8,8 @@ import java.io.IOException;
 
 public class LoadRunnable implements Runnable {
 
-    public static void start(Library library, GSheetApi gSheetApi) {
-        new Thread(new LoadRunnable(library, gSheetApi)).start();
+    public static RunnableWrapper create(Library library, GSheetApi gSheetApi) {
+        return new RunnableWrapper(new LoadRunnable(library, gSheetApi));
     }
 
     private final Library library;

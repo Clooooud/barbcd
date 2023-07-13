@@ -27,7 +27,9 @@ public class BarBCD extends Application {
         this.stageWrapper = new StageWrapper(stage);
         boolean isInitialized = this.credentials.isFileExisted() && !this.credentials.isEmpty();
         if (isInitialized) {
-            LoadRunnable.start(library, this.gSheetApi);
+            LoadRunnable.create(library, gSheetApi)
+                    .then(() -> this.getLibrary().createUser("test", "mdp", "test"))
+                    .start();
         }
         this.stageWrapper.setContent(isInitialized ? new MainScene(this) : new StartScene(this));
         stage.show();

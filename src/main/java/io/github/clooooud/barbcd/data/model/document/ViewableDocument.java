@@ -1,9 +1,12 @@
 package io.github.clooooud.barbcd.data.model.document;
 
+import io.github.clooooud.barbcd.data.SaveableType;
+import io.github.clooooud.barbcd.data.model.Library;
+
 public interface ViewableDocument {
 
-    default String getSearchString() {
-        return String.join(" ", getAuthor(), getTitle(), getISBN(), getCategorie().getNom(), getEditor().getNom(), isAvailable() ? "Disponible" : "Indisponible");
+    default String getSearchString(Library library) {
+        return String.join(" ", getAuthor(), getTitle(), getISBN(), getCategorie().getNom(), getEditor().getNom(), isAvailable(library) ? "Disponible" : "Indisponible");
     }
 
     String getISBN();
@@ -20,7 +23,15 @@ public interface ViewableDocument {
 
     int getQuantity();
 
-    default boolean isAvailable() {
-        return getQuantity() > 0;
+    default boolean isAvailable(Library library) {
+        return getQuantity() - getNumberOfActiveBorrowings(library) > 0;
+    }
+
+    private int getNumberOfActiveBorrowings(Library library) {
+        return (int) library.getDocuments(SaveableType.BORROWING).stream()
+                .map(saveable -> (Borrowing) saveable)
+                .filter(borrowing -> !borrowing.isFinished())
+                .filter(borrowing -> borrowing.getBorrowedDocument().equals(this))
+                .count();
     }
 }

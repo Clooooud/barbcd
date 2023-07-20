@@ -125,18 +125,17 @@ Button {
 
 /* Form page */
 
-.form-page-content {
-    -fx-alignment: center;
-}
-
-.form-box {
-    -fx-padding: 20;
-    -fx-spacing: 10;
+.box {
     -fx-background-color: derive(white, -5%);
     -fx-background-radius: 10;
     -fx-border-color: derive(white, -50%);
     -fx-border-width: 1;
     -fx-border-radius: 10;
+}
+
+.form-box {
+    -fx-padding: 5 15 5 15;
+    -fx-spacing: 7;
 }
 
 .form-button {
@@ -148,6 +147,14 @@ Button {
 
 .form-button:hover {
     -fx-background-color: derive(white, -5%);
+}
+
+.form-component-label {
+    -fx-font: normal Bold 16 'Roboto';
+}
+
+.form-component-description {
+    -fx-font: normal normal 12 'Roboto';
 }
 
 /*-------------------*/

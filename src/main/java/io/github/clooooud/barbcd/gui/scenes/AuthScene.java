@@ -2,50 +2,62 @@ package io.github.clooooud.barbcd.gui.scenes;
 
 import io.github.clooooud.barbcd.BarBCD;
 import io.github.clooooud.barbcd.data.auth.User;
+import io.github.clooooud.barbcd.gui.element.SimpleFormBox;
 import io.github.clooooud.barbcd.gui.scenes.admin.MainAdminScene;
 import io.github.clooooud.barbcd.util.AESUtil;
 import io.github.clooooud.barbcd.util.Sha256Util;
+import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
-import java.util.Collections;
-import java.util.List;
+public class AuthScene extends RootScene {
 
-public class AuthScene extends FormScene {
+    private SimpleFormBox formBox;
 
     public AuthScene(BarBCD app) {
         super(app);
     }
 
     @Override
+    public void initContent(VBox vBox) {
+        vBox.setAlignment(Pos.CENTER);
+
+        this.formBox = new SimpleFormBox.Builder("Authentification")
+                .setDesc(getDescription())
+                .addField("Utilisateur")
+                .addField("Mot de passe", true)
+                .addButton("Se connecter", (event) -> consumeForm())
+                .build();
+
+        this.formBox.getFields().forEach(this::initField);
+
+        vBox.getChildren().add(this.formBox);
+    }
+
+    @Override
     public HBox getHeader() {
         HBox header = super.getHeader();
 
-        getAuthButton().setOnAction((event) -> getFields().forEach(TextInputControl::clear));
+        getAuthButton().setOnAction((event) -> this.formBox.getFields().forEach(TextInputControl::clear));
 
         return header;
     }
 
-    @Override
-    protected Runnable getButtonAction(String buttonName, Button button) {
-        return this::consumeForm;
-    }
-
-    @Override
-    protected void initField(String fieldName, TextField field) {
+    protected void initField(TextField field) {
         field.setOnAction(event -> consumeForm());
     }
 
     private void consumeForm() {
-        if (!this.getFields().stream().allMatch(this::validateNonEmptyTextField)) {
+        if (!this.formBox.getFields().stream().allMatch(RootScene::validateNonEmptyTextField)) {
             return;
         }
 
-        String login = this.getField("Utilisateur").getText();
-        String password = this.getField("Mot de passe").getText();
+        String login = this.formBox.getField("Utilisateur").getText();
+        String password = this.formBox.getField("Mot de passe").getText();
 
         User user = this.getLibrary().getUser(login);
 
@@ -74,28 +86,8 @@ public class AuthScene extends FormScene {
 
     }
 
-    @Override
-    protected String getTitle() {
-        return "Authentification";
-    }
-
-    @Override
-    protected String getDescription() {
-        return "Veuillez rentrer votre nom d'utilisateur et votre mot de passe. Le nom d'utilisateur 'admin' est réservé pour l'administrateur.";
-    }
-
-    @Override
-    protected List<String> getFieldNames() {
-        return List.of("Utilisateur", "Mot de passe");
-    }
-
-    @Override
-    protected List<String> getPasswordFieldNames() {
-        return List.of("Mot de passe");
-    }
-
-    @Override
-    protected List<String> getButtonNames() {
-        return Collections.singletonList("Se connecter");
+    private String getDescription() {
+        return "Veuillez rentrer votre nom d'utilisateur et votre mot de passe. " +
+                "Le nom d'utilisateur 'admin' est réservé pour l'administrateur.";
     }
 }

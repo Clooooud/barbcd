@@ -1,8 +1,6 @@
 package io.github.clooooud.barbcd.data.api.tasks;
 
-import java.util.List;
-
-public class RunnableWrapper {
+public class RunnableWrapper implements Runnable {
 
     private Runnable before;
     private Runnable runnable;
@@ -22,13 +20,29 @@ public class RunnableWrapper {
         return this;
     }
 
-    public void start() {
-        new Thread(() -> {
-            for (Runnable run : new Runnable[]{before, runnable, after}) {
-                if (run != null) {
+    public void run(boolean async) {
+        if (async) {
+            run();
+        } else {
+            this.startRunnables();
+        }
+    }
+
+    @Override
+    public void run() {
+        new Thread(this::startRunnables).start();
+    }
+
+    private void startRunnables() {
+        for (Runnable run : new Runnable[]{before, runnable, after}) {
+            if (run != null) {
+                try {
                     run.run();
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                    break;
                 }
             }
-        }).start();
+        }
     }
 }

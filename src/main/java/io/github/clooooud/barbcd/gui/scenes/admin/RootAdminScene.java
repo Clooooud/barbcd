@@ -1,13 +1,18 @@
-package io.github.clooooud.barbcd.gui.scenes;
+package io.github.clooooud.barbcd.gui.scenes.admin;
 
 import io.github.clooooud.barbcd.BarBCD;
+import io.github.clooooud.barbcd.gui.scenes.RootScene;
 import io.github.clooooud.barbcd.gui.scenes.admin.AdminScene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+
+import static io.github.clooooud.barbcd.gui.StageWrapper.getResource;
 
 public abstract class RootAdminScene extends RootScene {
 
@@ -65,14 +70,17 @@ public abstract class RootAdminScene extends RootScene {
 
     private HBox generateSideButton(AdminScene scene) {
         HBox hBox = new HBox();
-
         hBox.getStyleClass().add("sidebox-button");
+        hBox.setSpacing(5);
+
+        ImageView imageView = new ImageView(new Image(getResource(scene.getIconName())));
+        imageView.setSmooth(false);
 
         Label label = new Label(scene.getSceneName());
         label.setFont(Font.font(null, FontWeight.BOLD, 16));
         label.getStyleClass().add("sidebox-button-label");
 
-        hBox.getChildren().add(label);
+        hBox.getChildren().addAll(imageView, label);
 
         hBox.setOnMouseClicked(mouseEvent -> this.getApp().getStageWrapper().setContent(scene.getScene(this.getApp())));
 

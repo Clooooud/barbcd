@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 public class BarBCD extends Application {
 
     private final PublicCredentials credentials = new PublicCredentials();
-    private final Library library = new Library("");
+    private final Library library = new Library(this, " ");
     private final GSheetApi gSheetApi = new GSheetApi(credentials);
     private StageWrapper stageWrapper;
 
@@ -29,7 +29,7 @@ public class BarBCD extends Application {
         if (isInitialized) {
             LoadRunnable.create(library, gSheetApi)
                     .then(() -> this.getLibrary().createUser("test", "mdp", "test"))
-                    .start();
+                    .run();
         }
         this.stageWrapper.setContent(isInitialized ? new MainScene(this) : new StartScene(this));
         stage.show();

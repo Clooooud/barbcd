@@ -1,7 +1,6 @@
 package io.github.clooooud.barbcd.gui.scenes.admin;
 
 import io.github.clooooud.barbcd.BarBCD;
-import io.github.clooooud.barbcd.gui.scenes.RootAdminScene;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;

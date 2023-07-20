@@ -16,8 +16,11 @@ import io.github.clooooud.barbcd.data.SaveableType;
 import io.github.clooooud.barbcd.data.auth.User;
 import io.github.clooooud.barbcd.data.model.Library;
 import io.github.clooooud.barbcd.data.Saveable;
+import io.github.clooooud.barbcd.data.model.classes.Class;
+import io.github.clooooud.barbcd.data.model.classes.Student;
 import io.github.clooooud.barbcd.data.model.document.*;
 import io.github.clooooud.barbcd.util.AESUtil;
+import javafx.application.Platform;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -85,8 +88,6 @@ public class GSheetApi {
             throw new IllegalArgumentException();
         }
 
-        reset();
-
         File file = getFile();
         boolean firstSetup = file == null;
         if (!firstSetup && (credentials.getSpreadsheetId() == null || credentials.getSpreadsheetId().isEmpty())) {
@@ -104,6 +105,7 @@ public class GSheetApi {
         }
 
         for (SaveableType type : SaveableType.values()) {
+
             if (firstSetup) {
                 writeHeader(
                         type.getSheetName(),
@@ -112,7 +114,7 @@ public class GSheetApi {
             }
 
             for (Saveable saveable : library.getDocuments(type)) {
-                if (saveable.needsUpdate(library) && !firstSetup) {
+                if (!saveable.needsUpdate(library)) {
                     continue;
                 }
 
@@ -123,6 +125,8 @@ public class GSheetApi {
                 );
             }
         }
+
+        library.getDataUpdateList().clear();
     }
 
     public void load(Library library) throws IOException {
@@ -220,14 +224,37 @@ public class GSheetApi {
                 boolean isMagazine = Boolean.parseBoolean(values.get(2));
                 SaveableType documentType = isMagazine ? SaveableType.MAGAZINE : SaveableType.OEUVRE;
                 ViewableDocument document = (ViewableDocument) library.getDocumentById(documentType, Integer.parseInt(values.get(3)));
+                Student student = (Student) library.getDocumentById(SaveableType.USER, Integer.parseInt(values.get(4)));
 
                 Borrowing borrowing = new Borrowing(
                         id,
                         user,
                         document,
-                        Boolean.parseBoolean(values.get(4))
+                        student,
+                        Boolean.parseBoolean(values.get(5))
                 );
                 library.addDocument(borrowing);
+            }
+            case CLASS -> {
+                Class clazz = new Class(
+                        Integer.parseInt(values.get(0)),
+                        values.get(1)
+                );
+                library.addDocument(clazz);
+            }
+            case STUDENT -> {
+                Student student = new Student(
+                        Integer.parseInt(values.get(0)),
+                        values.get(1),
+                        values.get(2),
+                        (Class) library.getDocumentById(SaveableType.CLASS, Integer.parseInt(values.get(3)))
+                );
+                library.addDocument(student);
+            }
+            case SETTINGS -> {
+                library.getDocuments(SaveableType.SETTINGS).add(library);
+                library.setName(values.get(1));
+                Platform.runLater(() -> library.getApp().getStageWrapper().getScene().updateHeader());
             }
         }
     }

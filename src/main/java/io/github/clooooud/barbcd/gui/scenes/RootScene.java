@@ -6,8 +6,10 @@ import io.github.clooooud.barbcd.gui.scenes.admin.MainAdminScene;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -19,9 +21,26 @@ import static io.github.clooooud.barbcd.gui.StageWrapper.getResource;
 
 public abstract class RootScene {
 
+    private static void markNodeErrorStatus(Node node, boolean isValid) {
+        if (isValid) {
+            node.setStyle(null);
+        } else {
+            node.setStyle("-fx-control-inner-background: f8d7da");
+        }
+    }
+
+    public static boolean validateNonEmptyTextField(TextField textField) {
+        boolean isValid = textField.getText().strip().length() > 0;
+
+        markNodeErrorStatus(textField, isValid);
+
+        return isValid;
+    }
+
     private BarBCD app;
     private HBox headerBox;
     private HBox clickableTitle;
+    private Label titleLabel;
     private Button authButton;
 
     public RootScene(BarBCD app) {
@@ -50,6 +69,10 @@ public abstract class RootScene {
 
     public abstract void initContent(VBox vBox);
 
+    public void onSceneLeft() {
+
+    }
+
     protected void homeButtonAction(MouseEvent event) {
         this.app.getStageWrapper().setContent(this.getLibrary().isLoggedIn() ? new MainAdminScene(app) : new MainScene(app));
     }
@@ -63,8 +86,13 @@ public abstract class RootScene {
         }
     }
 
-    public HBox getHeader() {
-        this.headerBox = new HBox();
+    public void updateHeader() {
+        if (this.headerBox == null) {
+            this.headerBox = new HBox();
+        } else {
+            this.headerBox.getChildren().clear();
+        }
+
         headerBox.setMinHeight(100);
         headerBox.setPrefHeight(100);
         headerBox.setMaxHeight(100);
@@ -75,18 +103,16 @@ public abstract class RootScene {
         clickableTitle.setAlignment(Pos.CENTER_LEFT);
         labelBox.setAlignment(Pos.CENTER_LEFT);
         String name = this.getLibrary().getName();
-        Label label = new Label("BarBCD" + (name.isEmpty() ? "" : (" " + name)));
-        label.setId("title");
-        label.setMaxWidth(Double.MAX_VALUE);
+        titleLabel = new Label("BarBCD" + (name.isEmpty() ? "" : (" " + name)));
+        titleLabel.setId("title");
+        titleLabel.setMaxWidth(Double.MAX_VALUE);
         clickableTitle.setCursor(Cursor.HAND);
         clickableTitle.setOnMouseClicked(this::homeButtonAction);
 
-        clickableTitle.getChildren().add(label);
+        clickableTitle.getChildren().add(titleLabel);
         labelBox.getChildren().add(clickableTitle);
         headerBox.getChildren().add(labelBox);
         HBox.setHgrow(labelBox, Priority.ALWAYS);
-
-        // TODO: connecté pas connecté, variation de bouton
 
         authButton = new Button(this.getLibrary().isLoggedIn() ? "Déconnexion" : "Administration");
         authButton.setFocusTraversable(false);
@@ -96,6 +122,12 @@ public abstract class RootScene {
         authButton.setOnAction(this::authButtonAction);
 
         headerBox.getChildren().add(authButton);
+    }
+
+    public HBox getHeader() {
+        if (headerBox == null) {
+            updateHeader();
+        }
 
         return headerBox;
     }

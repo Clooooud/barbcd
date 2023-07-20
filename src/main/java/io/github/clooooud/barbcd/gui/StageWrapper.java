@@ -16,6 +16,7 @@ public class StageWrapper {
     }
 
     private Stage stage;
+    private RootScene scene;
 
     public StageWrapper(Stage stage) {
         this.stage = stage;
@@ -25,7 +26,17 @@ public class StageWrapper {
         return stage;
     }
 
+    public RootScene getScene() {
+        return scene;
+    }
+
     public void setContent(RootScene scene) {
+        if (this.scene != null) {
+            this.scene.onSceneLeft();
+        }
+
+        this.scene = scene;
+
         if (stage.getScene() == null) {
             stage.setScene(new Scene(new VBox()));
             stage.getScene().getStylesheets().add(StageWrapper.class.getResource("style.css").toExternalForm());

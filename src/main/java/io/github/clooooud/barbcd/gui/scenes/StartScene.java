@@ -2,20 +2,62 @@ package io.github.clooooud.barbcd.gui.scenes;
 
 import io.github.clooooud.barbcd.BarBCD;
 import io.github.clooooud.barbcd.data.api.GSheetApi;
+import io.github.clooooud.barbcd.data.api.tasks.RunnableWrapper;
 import io.github.clooooud.barbcd.data.api.tasks.SaveRunnable;
 import io.github.clooooud.barbcd.data.auth.AdminUser;
+import io.github.clooooud.barbcd.gui.element.SimpleFormBox;
 import io.github.clooooud.barbcd.util.AESUtil;
 import io.github.clooooud.barbcd.util.Sha256Util;
-import javafx.scene.control.Button;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
 import java.awt.*;
 import java.net.URL;
-import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-public class StartScene extends FormScene {
+public class StartScene extends RootScene {
 
-    private static void openWebpage(String urlString) {
+    private SimpleFormBox formBox;
+
+    public StartScene(BarBCD app) {
+        super(app);
+    }
+
+    @Override
+    protected void homeButtonAction(MouseEvent event) {
+
+    }
+
+    @Override
+    protected void authButtonAction(ActionEvent event) {
+
+    }
+
+    @Override
+    public void initContent(VBox vBox) {
+        vBox.setAlignment(Pos.CENTER);
+
+        this.formBox = new SimpleFormBox.Builder("Bienvenue dans BarBCD !")
+                .setDesc(getDescription())
+                .addField("Mot de passe Admin",true)
+                .addField("Compte de service Google", "Copiez le contenu du fichier json directement")
+                .addField("Clé API Google")
+                .addButton("Tutoriel", (event) -> openTutorial())
+                .addButton("Finaliser", (event) -> consumeForm())
+                .build();
+
+        vBox.getChildren().add(this.formBox);
+    }
+
+    private void openTutorial() {
+        openWebpage("https://www.google.com");
+    }
+
+    private void openWebpage(String urlString) {
         try {
             Desktop.getDesktop().browse(new URL(urlString).toURI());
         } catch (Exception e) {
@@ -23,35 +65,14 @@ public class StartScene extends FormScene {
         }
     }
 
-    public StartScene(BarBCD app) {
-        super(app);
-    }
-
-    @Override
-    protected Runnable getButtonAction(String buttonName, Button button) {
-        return switch (buttonName) {
-            case "Tutoriel" -> this::openTutorial;
-            case "Finaliser" -> () -> {
-                if (consumeForm()) {
-                    this.getApp().getStageWrapper().setContent(new MainScene(this.getApp()));
-                }
-            };
-            default -> null;
-        };
-    }
-
-    private void openTutorial() {
-        openWebpage("https://www.google.com");
-    }
-
-    private boolean consumeForm() {
-        if (!this.getFields().stream().allMatch(this::validateNonEmptyTextField)) {
-            return false;
+    private void consumeForm() {
+        if (!this.formBox.getFields().stream().allMatch(RootScene::validateNonEmptyTextField)) {
+            return;
         }
 
-        String password = this.getField("Mot de passe Admin").getText();
-        String privateCredentials = this.getField("Compte de service Google").getText();
-        String apiKey = this.getField("Clé API Google").getText();
+        String password = this.formBox.getField("Mot de passe Admin").getText();
+        String privateCredentials = this.formBox.getField("Compte de service Google").getText();
+        String apiKey = this.formBox.getField("Clé API Google").getText();
 
         AESUtil aesUtil = new AESUtil(password);
         aesUtil.encrypt(privateCredentials, GSheetApi.PRIVATE_CREDENTIAL_PATH_NAME);
@@ -60,42 +81,29 @@ public class StartScene extends FormScene {
         this.getApp().getCredentials().save();
         this.getLibrary().addDocument(new AdminUser(Sha256Util.passToSha256(password)));
 
-        SaveRunnable.create(this.getLibrary(), this.getApp().getGSheetApi(), password).start();
+        GSheetApi gSheetApi = this.getApp().getGSheetApi();
+        AtomicBoolean result = new AtomicBoolean(false);
+        new RunnableWrapper(() -> {
+            try {
+                gSheetApi.initAdmin(password);
+                gSheetApi.reset();
+                result.set(true);
+            } catch (Exception e) {
+                new Alert(Alert.AlertType.ERROR, "Une erreur s'est produite lors d'un appel à l'API de Google. Une des clés est mauvaise.").show();
+            }
+        }).then(SaveRunnable.create(this.getLibrary(), gSheetApi, password)).run(false);
 
-        return true;
+        if (!result.get()) {
+            return;
+        }
+
+        new Alert(Alert.AlertType.INFORMATION, "La création des bases de données a été réalisée").showAndWait();
+        this.getApp().getStageWrapper().setContent(new MainScene(this.getApp()));
     }
 
-    @Override
-    public void initContent(VBox vBox) {
-        super.initContent(vBox);
-    }
-
-    @Override
-    protected String getTitle() {
-        return "Bienvenue dans BarBCD !";
-    }
-
-    @Override
-    protected String getDescription() {
+    private String getDescription() {
         return "Pour utiliser cette application, vous devez y entrer des données importantes. " +
                 "Nous utilisons Google Drive comme base de donnée et par conséquent certains paramétrages sont nécessaires. " +
                 "Veuillez suivre le tutoriel si besoin.";
     }
-
-    @Override
-    protected List<String> getFieldNames() {
-        return List.of("Mot de passe Admin", "Compte de service Google", "Clé API Google");
-    }
-
-    @Override
-    protected List<String> getPasswordFieldNames() {
-        return List.of("Mot de passe Admin");
-    }
-
-    @Override
-    protected List<String> getButtonNames() {
-        return List.of("Tutoriel", "Finaliser");
-    }
-
-
 }

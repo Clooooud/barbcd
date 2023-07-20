@@ -1,9 +1,11 @@
 package io.github.clooooud.barbcd.data.model;
 
+import io.github.clooooud.barbcd.BarBCD;
 import io.github.clooooud.barbcd.data.Saveable;
 import io.github.clooooud.barbcd.data.SaveableType;
 import io.github.clooooud.barbcd.data.api.GSheetApi;
 import io.github.clooooud.barbcd.data.auth.User;
+import io.github.clooooud.barbcd.data.model.classes.Student;
 import io.github.clooooud.barbcd.data.model.document.Borrowing;
 import io.github.clooooud.barbcd.data.model.document.ViewableDocument;
 import io.github.clooooud.barbcd.util.AESUtil;
@@ -13,17 +15,19 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-public class Library {
+public class Library implements Saveable {
 
     private final Map<SaveableType, Set<Saveable>> saveables;
 
     private final Set<GSheetApi.DataRequest> dataUpdateList;
 
-    private final String name;
+    private final BarBCD app;
+    private String name;
     private String adminPassword;
     private User user;
 
-    public Library(String name) {
+    public Library(BarBCD app, String name) {
+        this.app = app;
         this.name = name;
 
         this.saveables = new HashMap<>();
@@ -32,7 +36,13 @@ public class Library {
             saveables.put(saveableType, ConcurrentHashMap.newKeySet());
         }
 
+        saveables.get(SaveableType.SETTINGS).add(this);
+
         dataUpdateList = new HashSet<>();
+    }
+
+    public BarBCD getApp() {
+        return app;
     }
 
     public User getUser() {
@@ -82,11 +92,12 @@ public class Library {
                 .orElse(null);
     }
 
-    public void createBorrowing(User user, ViewableDocument viewableDocument) {
+    public void createBorrowing(User user, ViewableDocument viewableDocument, Student student) {
         Borrowing borrowing = new Borrowing(
                 getNextDocumentId(SaveableType.BORROWING),
                 user,
-                viewableDocument
+                viewableDocument,
+                student
         );
         addDocument(borrowing);
         markDocumentAsUpdated(borrowing);
@@ -99,7 +110,9 @@ public class Library {
                 Sha256Util.passToSha256(password),
                 new AESUtil(password).encryptString(adminPassword)
         );
-        addDocument(user);
+        if (!addDocument(user)) {
+            return;
+        }
         markDocumentAsUpdated(user);
     }
 
@@ -122,11 +135,31 @@ public class Library {
         dataUpdateList.add(new GSheetApi.DataRequest(GSheetApi.RequestType.DELETE, saveable));
     }
 
-    public void addDocument(Saveable saveable) {
-        saveables.get(saveable.getSaveableType()).add(saveable);
+    public boolean addDocument(Saveable saveable) {
+        return saveables.get(saveable.getSaveableType()).add(saveable);
     }
 
     public String getName() {
         return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+        this.markDocumentAsUpdated(this);
+    }
+
+    @Override
+    public SaveableType getSaveableType() {
+        return SaveableType.SETTINGS;
+    }
+
+    @Override
+    public int getId() {
+        return 1;
+    }
+
+    @Override
+    public List<Object> getValues() {
+        return List.of(getId(), this.name);
     }
 }

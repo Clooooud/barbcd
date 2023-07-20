@@ -46,7 +46,7 @@ public class PublicCredentials {
             return false;
         }
 
-        return this.spreadsheetId.isEmpty() && this.apiKey.isEmpty();
+        return this.spreadsheetId.isEmpty() || this.apiKey.isEmpty();
     }
 
     public void save() {

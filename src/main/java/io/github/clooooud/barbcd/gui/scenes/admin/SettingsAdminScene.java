@@ -3,14 +3,12 @@ package io.github.clooooud.barbcd.gui.scenes.admin;
 import io.github.clooooud.barbcd.BarBCD;
 import io.github.clooooud.barbcd.data.SaveableType;
 import io.github.clooooud.barbcd.data.api.GSheetApi;
+import io.github.clooooud.barbcd.data.api.PublicCredentials;
 import io.github.clooooud.barbcd.data.api.tasks.RunnableWrapper;
 import io.github.clooooud.barbcd.data.api.tasks.SaveRunnable;
 import io.github.clooooud.barbcd.data.auth.AdminUser;
 import io.github.clooooud.barbcd.data.model.Library;
-import io.github.clooooud.barbcd.gui.element.Box;
-import io.github.clooooud.barbcd.gui.element.FieldComponent;
-import io.github.clooooud.barbcd.gui.element.FormBox;
-import io.github.clooooud.barbcd.gui.element.FormComponent;
+import io.github.clooooud.barbcd.gui.element.*;
 import io.github.clooooud.barbcd.util.Sha256Util;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -29,8 +27,10 @@ import java.util.Optional;
 public class SettingsAdminScene extends RootAdminScene {
 
     private FormBox formBox;
-    private TextField nameField;
+    private TextField apiKeyField;
+
     private boolean hasNameChanged = false;
+    private boolean hasApiKeyChanged = false;
 
     public SettingsAdminScene(BarBCD app) {
         super(app);
@@ -38,27 +38,34 @@ public class SettingsAdminScene extends RootAdminScene {
 
     @Override
     public void onSceneLeft() {
-        if (!hasNameChanged) {
-            return;
+        if (hasNameChanged) {
+            SaveRunnable.create(getLibrary(), getApp().getGSheetApi(), getLibrary().getAdminPassword()).run();
         }
 
-        SaveRunnable.create(getLibrary(), getApp().getGSheetApi(), getLibrary().getAdminPassword()).run();
+        if (hasApiKeyChanged) {
+            ButtonType buttonType = new Alert(
+                    Alert.AlertType.CONFIRMATION,
+                    "Voulez-vous vraiment mettre à jour la clé API ? Si vous n'avez pas de sauvegarde de l'ancienne clé, vous aurez sûrement des problèmes !"
+            ).showAndWait().orElse(null);
+
+            if (buttonType != null && buttonType.getButtonData().isDefaultButton()) {
+                PublicCredentials credentials = this.getApp().getCredentials();
+                credentials.setApiKey(apiKeyField.getText());
+                credentials.save();
+            }
+        }
     }
 
     @Override
     public void initAdminContent(VBox vBox) {
         vBox.setAlignment(Pos.CENTER);
 
-        Button ctaNode = new Button("Remise à zéro");
-        ctaNode.getStyleClass().add("form-button");
-        ctaNode.setOnAction((event -> onResetButtonClicked()));
-
         FieldComponent bcdName = new FieldComponent("Nom de la BCD");
-        this.nameField = bcdName.getField();
-        this.nameField.setText(this.getLibrary().getName());
-        this.nameField.textProperty().addListener((observableValue, oldVal, newVal) -> {
+        TextField nameField = bcdName.getField();
+        nameField.setText(this.getLibrary().getName());
+        nameField.textProperty().addListener((observableValue, oldVal, newVal) -> {
             if (newVal.strip().length() > 10) {
-                this.nameField.setText(oldVal);
+                nameField.setText(oldVal);
                 return;
             }
 
@@ -67,15 +74,28 @@ public class SettingsAdminScene extends RootAdminScene {
             updateHeader();
         });
 
+        FieldComponent apiKey = new FieldComponent(
+                "Clé API Google",
+                "La clé API créé sur l'interface de gestion de projet Google",
+                true
+        );
+        this.apiKeyField = apiKey.getField();
+        this.apiKeyField.setText(this.getApp().getCredentials().getApiKey());
+        this.apiKeyField.textProperty().addListener((observableValue, oldVal, newVal) -> hasApiKeyChanged = true);
+
+        //TODO service account
+
         this.formBox = new FormBox.Builder("Paramètres")
                 .setDesc("Cette interface est réservée aux administrateurs qui ont besoin d'effectuer des manipulations qui peuvent être risquées. " +
                         "Veuillez faire attention lors de son utilisation.")
                 .addComponent("BCD Name", bcdName)
-                .addComponent("Reset", new FormComponent(
+                .addComponent("Reset", new ButtonComponent(
                         "Remise à zéro",
-                        ctaNode,
+                        "Remettre à zéro",
+                        event -> onResetButtonClicked(),
                         "Supprime TOUTES LES INFORMATIONS de la base."
                 ))
+                .addComponent("API Key", apiKey)
                 .build();
 
         vBox.getChildren().add(this.formBox);

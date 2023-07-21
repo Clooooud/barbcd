@@ -62,7 +62,7 @@ public class SettingsAdminScene extends RootAdminScene {
 
         FieldComponent bcdName = new FieldComponent("Nom de la BCD");
         TextField nameField = bcdName.getField();
-        nameField.setText(this.getLibrary().getName());
+        nameField.setText(this.getLibrary().getName().strip());
         nameField.textProperty().addListener((observableValue, oldVal, newVal) -> {
             if (newVal.strip().length() > 10) {
                 nameField.setText(oldVal);
@@ -76,8 +76,7 @@ public class SettingsAdminScene extends RootAdminScene {
 
         FieldComponent apiKey = new FieldComponent(
                 "Clé API Google",
-                "La clé API créé sur l'interface de gestion de projet Google",
-                true
+                "La clé API créé sur l'interface de gestion de projet Google"
         );
         this.apiKeyField = apiKey.getField();
         this.apiKeyField.setText(this.getApp().getCredentials().getApiKey());
@@ -123,7 +122,9 @@ public class SettingsAdminScene extends RootAdminScene {
                     library.getDocuments(type).clear();
                 }
                 library.getDataUpdateList().clear();
+
                 library.addDocument(new AdminUser(Sha256Util.passToSha256(adminPassword)));
+                library.addDocument(library);
 
                 this.getApp().getGSheetApi().save(library);
                 Platform.runLater(() -> new Alert(Alert.AlertType.INFORMATION, "La base a été remise à zéro.").show());

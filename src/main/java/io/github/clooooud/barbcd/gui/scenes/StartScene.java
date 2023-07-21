@@ -80,6 +80,7 @@ public class StartScene extends RootScene {
         this.getApp().getCredentials().setApiKey(apiKey);
         this.getApp().getCredentials().save();
         this.getLibrary().addDocument(new AdminUser(Sha256Util.passToSha256(password)));
+        this.getLibrary().markDocumentAsUpdated(this.getLibrary());
 
         GSheetApi gSheetApi = this.getApp().getGSheetApi();
         AtomicBoolean result = new AtomicBoolean(false);
@@ -88,10 +89,11 @@ public class StartScene extends RootScene {
                 gSheetApi.initAdmin(password);
                 gSheetApi.reset();
                 result.set(true);
+                SaveRunnable.create(this.getLibrary(), gSheetApi, password).run(false);
             } catch (Exception e) {
                 new Alert(Alert.AlertType.ERROR, "Une erreur s'est produite lors d'un appel à l'API de Google. Une des clés est mauvaise.").show();
             }
-        }).then(SaveRunnable.create(this.getLibrary(), gSheetApi, password)).run(false);
+        }).then(gSheetApi::closeAdminMode).run(false);
 
         if (!result.get()) {
             return;

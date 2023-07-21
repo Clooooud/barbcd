@@ -17,6 +17,7 @@ import io.github.clooooud.barbcd.data.auth.User;
 import io.github.clooooud.barbcd.data.model.Library;
 import io.github.clooooud.barbcd.data.Saveable;
 import io.github.clooooud.barbcd.data.model.classes.Class;
+import io.github.clooooud.barbcd.data.model.classes.Responsibility;
 import io.github.clooooud.barbcd.data.model.classes.Student;
 import io.github.clooooud.barbcd.data.model.document.*;
 import io.github.clooooud.barbcd.util.AESUtil;
@@ -165,7 +166,8 @@ public class GSheetApi {
             case CATEGORIE -> {
                 Categorie categorie = new Categorie(
                         id,
-                        values.get(1)
+                        values.get(1),
+                        Integer.parseInt(values.get(2))
                 );
                 library.addDocument(categorie);
             }
@@ -237,14 +239,14 @@ public class GSheetApi {
             }
             case CLASS -> {
                 Class clazz = new Class(
-                        Integer.parseInt(values.get(0)),
+                        id,
                         values.get(1)
                 );
                 library.addDocument(clazz);
             }
             case STUDENT -> {
                 Student student = new Student(
-                        Integer.parseInt(values.get(0)),
+                        id,
                         values.get(1),
                         values.get(2),
                         (Class) library.getDocumentById(SaveableType.CLASS, Integer.parseInt(values.get(3)))
@@ -255,6 +257,17 @@ public class GSheetApi {
                 library.getDocuments(SaveableType.SETTINGS).add(library);
                 library.setName(values.get(1));
                 Platform.runLater(() -> library.getApp().getStageWrapper().getScene().updateHeader());
+            }
+            case RESPONSIBILITY -> {
+                User user = (User) library.getDocumentById(SaveableType.USER, Integer.parseInt(values.get(1)));
+                Class clazz = (Class) library.getDocumentById(SaveableType.CLASS, Integer.parseInt(values.get(2)));
+
+                Responsibility responsibility = new Responsibility(
+                        id,
+                        user,
+                        clazz
+                );
+                library.addDocument(responsibility);
             }
         }
     }

@@ -103,7 +103,7 @@ public abstract class RootScene {
         clickableTitle.setAlignment(Pos.CENTER_LEFT);
         labelBox.setAlignment(Pos.CENTER_LEFT);
         String name = this.getLibrary().getName();
-        titleLabel = new Label("BarBCD" + (name.isEmpty() ? "" : (" " + name)));
+        titleLabel = new Label("BarBCD" + (name.isBlank() ? "" : (" " + name)));
         titleLabel.setId("title");
         titleLabel.setMaxWidth(Double.MAX_VALUE);
         clickableTitle.setCursor(Cursor.HAND);

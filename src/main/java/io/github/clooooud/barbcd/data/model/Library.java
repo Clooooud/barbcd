@@ -136,7 +136,11 @@ public class Library implements Saveable {
     }
 
     public boolean addDocument(Saveable saveable) {
-        return saveables.get(saveable.getSaveableType()).add(saveable);
+        boolean result = saveables.get(saveable.getSaveableType()).add(saveable);
+        if (result) {
+            markDocumentAsUpdated(saveable);
+        }
+        return result;
     }
 
     public String getName() {

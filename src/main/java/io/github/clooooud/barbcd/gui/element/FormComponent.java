@@ -6,8 +6,8 @@ import javafx.scene.layout.VBox;
 
 public class FormComponent extends VBox {
 
-    private Label componentLabel;
-    private Node ctaNode;
+    private final Label componentLabel;
+    private final Node ctaNode;
     private Label descriptionLabel;
 
     public FormComponent(String componentLabel, Node ctaNode) {

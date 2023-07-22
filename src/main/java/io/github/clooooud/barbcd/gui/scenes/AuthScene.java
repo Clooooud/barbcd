@@ -13,8 +13,6 @@ import javafx.scene.control.TextInputControl;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-import javax.crypto.BadPaddingException;
-
 public class AuthScene extends RootScene {
 
     private SimpleFormBox formBox;

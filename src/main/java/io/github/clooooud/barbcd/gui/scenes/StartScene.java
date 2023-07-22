@@ -8,7 +8,6 @@ import io.github.clooooud.barbcd.data.auth.AdminUser;
 import io.github.clooooud.barbcd.gui.element.SimpleFormBox;
 import io.github.clooooud.barbcd.util.AESUtil;
 import io.github.clooooud.barbcd.util.Sha256Util;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;

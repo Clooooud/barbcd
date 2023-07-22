@@ -8,15 +8,14 @@ import io.github.clooooud.barbcd.data.api.tasks.RunnableWrapper;
 import io.github.clooooud.barbcd.data.api.tasks.SaveRunnable;
 import io.github.clooooud.barbcd.data.auth.AdminUser;
 import io.github.clooooud.barbcd.data.model.Library;
-import io.github.clooooud.barbcd.gui.element.*;
+import io.github.clooooud.barbcd.gui.element.ButtonComponent;
+import io.github.clooooud.barbcd.gui.element.FieldComponent;
+import io.github.clooooud.barbcd.gui.element.FormBox;
 import io.github.clooooud.barbcd.util.Sha256Util;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
@@ -26,7 +25,6 @@ import java.util.Optional;
 
 public class SettingsAdminScene extends RootAdminScene {
 
-    private FormBox formBox;
     private TextField apiKeyField;
 
     private boolean hasNameChanged = false;
@@ -84,7 +82,7 @@ public class SettingsAdminScene extends RootAdminScene {
 
         //TODO service account
 
-        this.formBox = new FormBox.Builder("Paramètres")
+        FormBox formBox = new FormBox.Builder("Paramètres")
                 .setDesc("Cette interface est réservée aux administrateurs qui ont besoin d'effectuer des manipulations qui peuvent être risquées. " +
                         "Veuillez faire attention lors de son utilisation.")
                 .addComponent("BCD Name", bcdName)
@@ -97,7 +95,7 @@ public class SettingsAdminScene extends RootAdminScene {
                 .addComponent("API Key", apiKey)
                 .build();
 
-        vBox.getChildren().add(this.formBox);
+        vBox.getChildren().add(formBox);
     }
 
     private void onResetButtonClicked() {

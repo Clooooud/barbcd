@@ -37,10 +37,9 @@ public abstract class RootScene {
         return isValid;
     }
 
-    private BarBCD app;
+    private final BarBCD app;
     private HBox headerBox;
     private HBox clickableTitle;
-    private Label titleLabel;
     private Button authButton;
 
     public RootScene(BarBCD app) {
@@ -104,7 +103,7 @@ public abstract class RootScene {
         clickableTitle.setAlignment(Pos.CENTER_LEFT);
         labelBox.setAlignment(Pos.CENTER_LEFT);
         String name = this.getLibrary().getName();
-        titleLabel = new Label("BarBCD" + (name.isBlank() ? "" : (" " + name)));
+        Label titleLabel = new Label("BarBCD" + (name.isBlank() ? "" : (" " + name)));
         titleLabel.setId("title");
         titleLabel.setMaxWidth(Double.MAX_VALUE);
         clickableTitle.setCursor(Cursor.HAND);

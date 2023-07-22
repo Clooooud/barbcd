@@ -1,14 +1,10 @@
 package io.github.clooooud.barbcd.gui.scenes.admin.user;
 
 import io.github.clooooud.barbcd.BarBCD;
-import io.github.clooooud.barbcd.data.SaveableType;
 import io.github.clooooud.barbcd.data.auth.User;
 import io.github.clooooud.barbcd.data.model.classes.Class;
-import io.github.clooooud.barbcd.data.model.classes.Responsibility;
 import io.github.clooooud.barbcd.gui.element.ScrollBox;
 import io.github.clooooud.barbcd.gui.scenes.admin.RootAdminScene;
-import javafx.beans.binding.Bindings;
-import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 

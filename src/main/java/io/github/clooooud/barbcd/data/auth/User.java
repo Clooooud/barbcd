@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 
 public class User implements Saveable {
 
-    private int id;
-    private String login;
+    private final int id;
+    private final String login;
     private String password;
     private String mainPassword;
 
@@ -39,10 +39,6 @@ public class User implements Saveable {
 
     public String getLogin() {
         return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
     }
 
     public String getPassword() {

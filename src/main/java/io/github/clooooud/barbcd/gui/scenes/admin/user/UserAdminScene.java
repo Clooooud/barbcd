@@ -19,9 +19,6 @@ import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import org.controlsfx.control.CheckComboBox;
 
-import java.util.List;
-import java.util.Set;
-
 public class UserAdminScene extends RootAdminScene {
 
     private final User user;

@@ -45,8 +45,8 @@ public class GSheetApi {
     private Sheets sheetsService;
     private Sheets userSheetsService;
 
-    private List<String> clearRangeList = new ArrayList<>();
-    private List<ValueRange> updateRangeList = new ArrayList<>();
+    private final List<String> clearRangeList = new ArrayList<>();
+    private final List<ValueRange> updateRangeList = new ArrayList<>();
 
     public GSheetApi(PublicCredentials credentials) {
         this.credentials = credentials;
@@ -82,7 +82,7 @@ public class GSheetApi {
             if (file.getId() == null) {
                 continue;
             }
-            batch.queue(driveService.files().delete(file.getId()).buildHttpRequest(), Void.class, GoogleJsonErrorContainer.class, new BatchCallback<Void, GoogleJsonErrorContainer>() {
+            batch.queue(driveService.files().delete(file.getId()).buildHttpRequest(), Void.class, GoogleJsonErrorContainer.class, new BatchCallback<>() {
                 @Override
                 public void onSuccess(Void unused, HttpHeaders httpHeaders) {
 
@@ -405,7 +405,7 @@ public class GSheetApi {
         }
 
         try {
-            this.sheetsService = new Sheets.Builder(GoogleNetHttpTransport.newTrustedTransport(), GsonFactory.getDefaultInstance(), getCredentials(decryptedFile, ADMIN_SCOPES))
+            this.sheetsService = new Sheets.Builder(GoogleNetHttpTransport.newTrustedTransport(), GsonFactory.getDefaultInstance(), getCredentials(decryptedFile))
                     .setApplicationName("barbcd")
                     .build();
         } catch (GeneralSecurityException | IOException e) {
@@ -429,7 +429,7 @@ public class GSheetApi {
         }
 
         try {
-            this.driveService = new Drive.Builder(GoogleNetHttpTransport.newTrustedTransport(), GsonFactory.getDefaultInstance(), getCredentials(decryptedFile, ADMIN_SCOPES))
+            this.driveService = new Drive.Builder(GoogleNetHttpTransport.newTrustedTransport(), GsonFactory.getDefaultInstance(), getCredentials(decryptedFile))
                     .setApplicationName("barbcd")
                     .build();
         } catch (GeneralSecurityException | IOException e) {
@@ -437,10 +437,10 @@ public class GSheetApi {
         }
     }
 
-    private HttpRequestInitializer getCredentials(String decryptedCredentials, List<String> scopes) {
+    private HttpRequestInitializer getCredentials(String decryptedCredentials) {
         try {
             ServiceAccountCredentials credentials = ServiceAccountCredentials.fromStream(new ByteArrayInputStream(decryptedCredentials.getBytes()));
-            credentials = (ServiceAccountCredentials) credentials.createScoped(scopes);
+            credentials = (ServiceAccountCredentials) credentials.createScoped(ADMIN_SCOPES);
             return new HttpCredentialsAdapter(credentials);
         } catch (IOException e) {
             throw new RuntimeException(e);

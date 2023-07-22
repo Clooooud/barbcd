@@ -1,7 +1,6 @@
 package io.github.clooooud.barbcd.gui.element;
 
 import javafx.beans.binding.Bindings;
-import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;

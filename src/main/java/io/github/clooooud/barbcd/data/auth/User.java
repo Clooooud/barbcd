@@ -8,6 +8,8 @@ import io.github.clooooud.barbcd.data.model.classes.Responsibility;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class User implements Saveable {
 
@@ -23,12 +25,12 @@ public class User implements Saveable {
         this.mainPassword = mainPassword;
     }
 
-    public List<Class> getOwnedClasses(Library library) {
+    public Set<Class> getOwnedClasses(Library library) {
         return library.getDocuments(SaveableType.RESPONSIBILITY).stream()
                 .map(saveable -> (Responsibility) saveable)
                 .filter(responsibility -> responsibility.getUser().equals(this))
                 .map(Responsibility::getOwnedClass)
-                .toList();
+                .collect(Collectors.toSet());
     }
 
     public boolean isAdmin() {

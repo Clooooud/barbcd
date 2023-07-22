@@ -13,7 +13,7 @@ public enum SaveableType {
     STUDENT("Students", List.of("id", "first name", "last name", "class id")),
     CLASS("Classes", List.of("id", "class name")),
     SETTINGS("Settings", List.of("id", "library name")),
-    RESPONSIBILITY("Responsiblities", List.of("id", "user id", "class id"));
+    RESPONSIBILITY("Responsibilities", List.of("id", "user id", "class id"));
 
     public static List<SaveableType> getOrderedTypes() {
         return List.of(SETTINGS, CATEGORIE, EDITOR, MAGAZINE_SERIE, MAGAZINE, OEUVRE, USER, BORROWING, STUDENT, CLASS, RESPONSIBILITY);

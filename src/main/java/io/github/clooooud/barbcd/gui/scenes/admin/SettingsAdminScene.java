@@ -121,7 +121,9 @@ public class SettingsAdminScene extends RootAdminScene {
                 for (SaveableType type : SaveableType.values()) {
                     library.getDocuments(type).clear();
                 }
-                library.getDataUpdateList().clear();
+                for (GSheetApi.RequestType requestType : GSheetApi.RequestType.values()) {
+                    library.getDataUpdateList().get(requestType).clear();
+                }
 
                 library.addDocument(new AdminUser(Sha256Util.passToSha256(adminPassword)));
                 library.addDocument(library);

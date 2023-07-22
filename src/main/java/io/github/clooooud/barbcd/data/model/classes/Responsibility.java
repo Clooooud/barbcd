@@ -5,6 +5,7 @@ import io.github.clooooud.barbcd.data.SaveableType;
 import io.github.clooooud.barbcd.data.auth.User;
 
 import java.util.List;
+import java.util.Objects;
 
 public class Responsibility implements Saveable {
 
@@ -27,8 +28,21 @@ public class Responsibility implements Saveable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Responsibility that = (Responsibility) o;
+        return Objects.equals(user, that.user) && Objects.equals(clazz, that.clazz);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(user, clazz);
+    }
+
+    @Override
     public SaveableType getSaveableType() {
-        return null;
+        return SaveableType.RESPONSIBILITY;
     }
 
     @Override

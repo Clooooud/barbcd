@@ -20,6 +20,7 @@ import javafx.util.StringConverter;
 import org.controlsfx.control.CheckComboBox;
 
 import java.util.List;
+import java.util.Set;
 
 public class UserAdminScene extends RootAdminScene {
 
@@ -95,35 +96,39 @@ public class UserAdminScene extends RootAdminScene {
                         .findFirst().orElse(null);
             }
         });
-        List<Class> ownedClasses = this.user.getOwnedClasses(this.getLibrary());
-        classList.getItems().addAll(ownedClasses);
-        classList.getItems().add(new Class(1, "yolerap"));
-        classList.getItems().add(new Class(2, "salam"));
+        classList.getItems().addAll(this.getLibrary().getDocuments(SaveableType.CLASS).stream()
+                .map(saveable -> (Class) saveable)
+                .toList());
 
-        for (Class ownedClass : ownedClasses) {
+        for (Class ownedClass : this.user.getOwnedClasses(this.getLibrary())) {
             classList.getCheckModel().check(ownedClass);
         }
 
         classList.getCheckModel().getCheckedItems().addListener((ListChangeListener<Class>) change -> {
-            for (Class aClass : change.getRemoved()) {
-                Responsibility responsibility = getLibrary().getDocuments(SaveableType.RESPONSIBILITY).stream()
-                        .map(saveable -> (Responsibility) saveable)
-                        .filter(resp -> resp.getUser().equals(user) && resp.getOwnedClass().equals(aClass))
-                        .findFirst().orElse(null);
+            change.next();
+            if (change.wasRemoved()) {
+                for (Class aClass : change.getRemoved()) {
+                    Responsibility responsibility = getLibrary().getDocuments(SaveableType.RESPONSIBILITY).stream()
+                            .map(saveable -> (Responsibility) saveable)
+                            .filter(resp -> resp.getUser().equals(user) && resp.getOwnedClass().equals(aClass))
+                            .findFirst().orElse(null);
 
-                if (responsibility == null) {
-                    continue;
+                    if (responsibility == null) {
+                        continue;
+                    }
+
+                    getLibrary().removeDocument(responsibility);
                 }
-
-                getLibrary().removeDocument(responsibility);
             }
 
-            for (Class aClass : change.getAddedSubList()) {
-                getLibrary().addDocument(new Responsibility(
-                        getLibrary().getNextDocumentId(SaveableType.RESPONSIBILITY),
-                        user,
-                        aClass)
-                );
+            if (change.wasAdded()) {
+                for (Class aClass : change.getAddedSubList()) {
+                    getLibrary().addDocument(new Responsibility(
+                            getLibrary().getNextDocumentId(SaveableType.RESPONSIBILITY),
+                            user,
+                            aClass)
+                    );
+                }
             }
         });
 

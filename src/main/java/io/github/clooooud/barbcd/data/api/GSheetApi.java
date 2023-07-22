@@ -45,7 +45,8 @@ public class GSheetApi {
     private Sheets sheetsService;
     private Sheets userSheetsService;
 
-    private List<ValueRange> rangeList = new ArrayList<>();
+    private List<String> clearRangeList = new ArrayList<>();
+    private List<ValueRange> updateRangeList = new ArrayList<>();
 
     public GSheetApi(PublicCredentials credentials) {
         this.credentials = credentials;
@@ -76,7 +77,8 @@ public class GSheetApi {
 
         BatchRequest batch = driveService.batch();
 
-        for (File file : driveService.files().list().execute().getFiles()) {
+        List<File> fileList = driveService.files().list().execute().getFiles();
+        for (File file : fileList) {
             if (file.getId() == null) {
                 continue;
             }
@@ -93,7 +95,9 @@ public class GSheetApi {
             });
         }
 
-        batch.execute();
+        if (batch.size() > 0) {
+            batch.execute();
+        }
 
         this.credentials.setSpreadsheetId("");
         this.credentials.save();
@@ -127,8 +131,9 @@ public class GSheetApi {
             library.addDocument(Categorie.MAGAZINE);
         }
 
-        clearLines(library.getDataUpdateList().get(RequestType.DELETE));
+        library.getDataUpdateList().get(RequestType.DELETE).forEach(this::pushClear);
         library.getDataUpdateList().get(RequestType.UPDATE).forEach(this::pushLine);
+        this.clearLines();
         this.writeLines();
         for (RequestType requestType : RequestType.values()) {
             library.getDataUpdateList().get(requestType).clear();
@@ -277,21 +282,31 @@ public class GSheetApi {
         }
     }
 
-    private void clearLines(Collection<Saveable> saveableList) {
+    private void pushClear(Saveable saveable) {
+        pushClear(saveable.getSaveableType().getSheetName(), saveable.getId());
+    }
+
+    private void pushClear(String sheetName, int lineId) {
+        lineId++;
+        clearRangeList.add(sheetName + "!" + lineId + ":" + lineId);
+    }
+
+    private void clearLines() {
         if (sheetsService == null) {
             throw new IllegalArgumentException();
         }
 
-        if (saveableList.isEmpty()) {
+        if (clearRangeList.isEmpty()) {
             return;
         }
 
         try {
-            sheetsService.spreadsheets()
-                    .values()
-                    .batchClear(credentials.getSpreadsheetId(), new BatchClearValuesRequest()
-                            .setRanges(saveableList.stream().map(saveable -> saveable.getSaveableType().getSheetName() + "!A" + (saveable.getId() + 1)).toList()))
-                    .execute();
+            sheetsService.spreadsheets().values().batchClear(
+                    credentials.getSpreadsheetId(),
+                    new BatchClearValuesRequest()
+                            .setRanges(clearRangeList)
+            ).execute();
+            clearRangeList.clear();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -310,7 +325,7 @@ public class GSheetApi {
         valueRange.setRange(sheetName + "!A" + (lineId+1));
         valueRange.setValues(Collections.singletonList(values));
 
-        rangeList.add(valueRange);
+        updateRangeList.add(valueRange);
     }
 
     private void writeLines() {
@@ -318,7 +333,7 @@ public class GSheetApi {
             throw new IllegalArgumentException();
         }
 
-        if (rangeList.isEmpty()) {
+        if (updateRangeList.isEmpty()) {
             return;
         }
 
@@ -327,9 +342,9 @@ public class GSheetApi {
                     credentials.getSpreadsheetId(),
                     new BatchUpdateValuesRequest()
                             .setValueInputOption("RAW")
-                            .setData(rangeList)
+                            .setData(updateRangeList)
             ).execute();
-            rangeList.clear();
+            updateRangeList.clear();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

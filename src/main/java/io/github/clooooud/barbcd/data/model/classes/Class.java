@@ -5,6 +5,7 @@ import io.github.clooooud.barbcd.data.SaveableType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Class implements Saveable {
 
@@ -28,6 +29,19 @@ public class Class implements Saveable {
 
     public List<Student> getStudents() {
         return students;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Class aClass = (Class) o;
+        return Objects.equals(className, aClass.className);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(className);
     }
 
     @Override

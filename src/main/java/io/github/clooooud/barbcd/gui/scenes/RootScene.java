@@ -79,6 +79,7 @@ public abstract class RootScene {
 
     protected void authButtonAction(ActionEvent event) {
         if (this.getLibrary().isLoggedIn()) {
+            this.getApp().getGSheetApi().closeAdminMode();
             this.getLibrary().disconnectUser();
             this.app.getStageWrapper().setContent(new MainScene(app));
         } else {

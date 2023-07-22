@@ -158,3 +158,61 @@ Button {
 }
 
 /*-------------------*/
+
+/* Admin */
+
+.admin-content {
+    -fx-padding: 20;
+    -fx-spacing: 10;
+    -fx-alignment: top-center;
+}
+
+.admin-scene-title {
+    -fx-font: normal Bold 28 'Roboto';
+    -fx-text-fill: black;
+    -fx-text-alignment: center;
+}
+
+/*-------------------*/
+
+/* Lists */
+
+.list-elem {
+    -fx-padding: 2 10 2 10;
+    -fx-alignment: center-left;
+    -fx-cursor: hand;
+}
+
+.list-elem-first {
+    -fx-background-radius: 10 10 0 0;
+}
+
+.list-elem-last {
+    -fx-background-radius: 0 0 10 10;
+}
+
+.list-elem-odd {
+    -fx-background-color: white;
+}
+
+.list-elem-odd:hover {
+    -fx-background-color: derive(white, -3%);
+}
+
+.list-elem-even {
+    -fx-background-color: derive(white, -8%);
+}
+
+.list-elem-even:hover {
+    -fx-background-color: derive(white, -11%);
+}
+
+.list-elem-title {
+    -fx-font: normal Bold 16 'Roboto';
+}
+
+.list-elem-content {
+    -fx-font: normal normal 14 'Roboto';
+}
+
+/*------------------*/

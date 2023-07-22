@@ -13,13 +13,14 @@ import io.github.clooooud.barbcd.util.Sha256Util;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.stream.Collectors;
 
 public class Library implements Saveable {
 
     private final Map<SaveableType, Set<Saveable>> saveables;
 
-    private final Set<GSheetApi.DataRequest> dataUpdateList;
+    private final Map<GSheetApi.RequestType, Collection<Saveable>> dataUpdateList;
 
     private final BarBCD app;
     private String name;
@@ -38,7 +39,11 @@ public class Library implements Saveable {
 
         saveables.get(SaveableType.SETTINGS).add(this);
 
-        dataUpdateList = new HashSet<>();
+        dataUpdateList = new ConcurrentHashMap<>();
+
+        for (GSheetApi.RequestType requestType : GSheetApi.RequestType.values()) {
+            dataUpdateList.put(requestType, ConcurrentHashMap.newKeySet());
+        }
     }
 
     public BarBCD getApp() {
@@ -80,7 +85,7 @@ public class Library implements Saveable {
         return this.saveables.get(type);
     }
 
-    public Set<GSheetApi.DataRequest> getDataUpdateList() {
+    public Map<GSheetApi.RequestType, Collection<Saveable>> getDataUpdateList() {
         return dataUpdateList;
     }
 
@@ -100,20 +105,16 @@ public class Library implements Saveable {
                 student
         );
         addDocument(borrowing);
-        markDocumentAsUpdated(borrowing);
     }
 
     public void createUser(String login, String password, String adminPassword) {
         User user = new User(
                 this.getNextDocumentId(SaveableType.USER),
                 login,
-                Sha256Util.passToSha256(password),
+                new AESUtil(adminPassword).encryptString(password),
                 new AESUtil(password).encryptString(adminPassword)
         );
-        if (!addDocument(user)) {
-            return;
-        }
-        markDocumentAsUpdated(user);
+        addDocument(user);
     }
 
     public User getUser(String login) {
@@ -127,12 +128,12 @@ public class Library implements Saveable {
     }
 
     public void markDocumentAsUpdated(Saveable saveable) {
-        dataUpdateList.add(new GSheetApi.DataRequest(GSheetApi.RequestType.UPDATE, saveable));
+        dataUpdateList.get(GSheetApi.RequestType.UPDATE).add(saveable);
     }
 
     public void removeDocument(Saveable saveable) {
         saveables.get(saveable.getSaveableType()).remove(saveable);
-        dataUpdateList.add(new GSheetApi.DataRequest(GSheetApi.RequestType.DELETE, saveable));
+        dataUpdateList.get(GSheetApi.RequestType.DELETE).add(saveable);
     }
 
     public boolean addDocument(Saveable saveable) {

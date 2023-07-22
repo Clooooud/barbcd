@@ -4,10 +4,15 @@ import io.github.clooooud.barbcd.data.model.Library;
 
 import java.util.List;
 
-public interface Saveable {
+public interface Saveable extends Comparable<Saveable> {
 
     default boolean needsUpdate(Library library) {
-        return library.getDataUpdateList().stream().anyMatch(dataRequest -> dataRequest.saveable().equals(this));
+        return library.getDataUpdateList().values().stream().anyMatch(saveables -> saveables.contains(this));
+    }
+
+    @Override
+    default int compareTo(Saveable o) {
+        return this.getId() - o.getId();
     }
 
     SaveableType getSaveableType();

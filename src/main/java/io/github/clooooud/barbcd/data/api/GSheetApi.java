@@ -1,6 +1,9 @@
 package io.github.clooooud.barbcd.data.api;
 
+import com.google.api.client.googleapis.batch.BatchCallback;
+import com.google.api.client.googleapis.batch.BatchRequest;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.googleapis.json.GoogleJsonErrorContainer;
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.json.gson.GsonFactory;
@@ -12,10 +15,10 @@ import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.*;
 import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.ServiceAccountCredentials;
+import io.github.clooooud.barbcd.data.Saveable;
 import io.github.clooooud.barbcd.data.SaveableType;
 import io.github.clooooud.barbcd.data.auth.User;
 import io.github.clooooud.barbcd.data.model.Library;
-import io.github.clooooud.barbcd.data.Saveable;
 import io.github.clooooud.barbcd.data.model.classes.Class;
 import io.github.clooooud.barbcd.data.model.classes.Responsibility;
 import io.github.clooooud.barbcd.data.model.classes.Student;
@@ -26,11 +29,7 @@ import javafx.application.Platform;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.function.BiConsumer;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class GSheetApi {
@@ -45,6 +44,8 @@ public class GSheetApi {
     private Drive driveService;
     private Sheets sheetsService;
     private Sheets userSheetsService;
+
+    private List<ValueRange> rangeList = new ArrayList<>();
 
     public GSheetApi(PublicCredentials credentials) {
         this.credentials = credentials;
@@ -73,12 +74,26 @@ public class GSheetApi {
             throw new IllegalArgumentException();
         }
 
+        BatchRequest batch = driveService.batch();
+
         for (File file : driveService.files().list().execute().getFiles()) {
             if (file.getId() == null) {
                 continue;
             }
-            driveService.files().delete(file.getId()).execute();
+            batch.queue(driveService.files().delete(file.getId()).buildHttpRequest(), Void.class, GoogleJsonErrorContainer.class, new BatchCallback<Void, GoogleJsonErrorContainer>() {
+                @Override
+                public void onSuccess(Void unused, HttpHeaders httpHeaders) {
+
+                }
+
+                @Override
+                public void onFailure(GoogleJsonErrorContainer googleJsonErrorContainer, HttpHeaders httpHeaders) {
+
+                }
+            });
         }
+
+        batch.execute();
 
         this.credentials.setSpreadsheetId("");
         this.credentials.save();
@@ -101,33 +116,23 @@ public class GSheetApi {
             this.credentials.setSpreadsheetId(spreadsheet.getSpreadsheetId());
             this.credentials.save();
 
-            // Default Magazine Categorie
-            library.addDocument(Categorie.MAGAZINE);
-        }
-
-        for (SaveableType type : SaveableType.values()) {
-
-            if (firstSetup) {
-                writeHeader(
+            for (SaveableType type : SaveableType.values()) {
+                pushHeader(
                         type.getSheetName(),
                         type.getHeaders()
                 );
             }
 
-            for (Saveable saveable : library.getDocuments(type)) {
-                if (!saveable.needsUpdate(library)) {
-                    continue;
-                }
-
-                writeLine(
-                        saveable.getSaveableType().getSheetName(),
-                        saveable.getId(),
-                        saveable.getValues()
-                );
-            }
+            // Default Magazine Categorie
+            library.addDocument(Categorie.MAGAZINE);
         }
 
-        library.getDataUpdateList().clear();
+        clearLines(library.getDataUpdateList().get(RequestType.DELETE));
+        library.getDataUpdateList().get(RequestType.UPDATE).forEach(this::pushLine);
+        this.writeLines();
+        for (RequestType requestType : RequestType.values()) {
+            library.getDataUpdateList().get(requestType).clear();
+        }
     }
 
     public void load(Library library) throws IOException {
@@ -272,39 +277,59 @@ public class GSheetApi {
         }
     }
 
-    private void clearLine(String sheetName, int lineId) {
+    private void clearLines(Collection<Saveable> saveableList) {
         if (sheetsService == null) {
             throw new IllegalArgumentException();
+        }
+
+        if (saveableList.isEmpty()) {
+            return;
         }
 
         try {
             sheetsService.spreadsheets()
                     .values()
-                    .clear(credentials.getSpreadsheetId(), sheetName + "!" + (lineId+1), new ClearValuesRequest())
+                    .batchClear(credentials.getSpreadsheetId(), new BatchClearValuesRequest()
+                            .setRanges(saveableList.stream().map(saveable -> saveable.getSaveableType().getSheetName() + "!A" + (saveable.getId() + 1)).toList()))
                     .execute();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void writeHeader(String sheetName, List<Object> values) {
-        writeLine(sheetName, 0, values);
+    private void pushHeader(String sheetName, List<Object> values) {
+        pushLine(sheetName, 0, values);
     }
 
-    private void writeLine(String sheetName, int lineId, List<Object> values) {
+    private void pushLine(Saveable saveable) {
+        pushLine(saveable.getSaveableType().getSheetName(), saveable.getId(), saveable.getValues());
+    }
+
+    private void pushLine(String sheetName, int lineId, List<Object> values) {
+        ValueRange valueRange = new ValueRange();
+        valueRange.setRange(sheetName + "!A" + (lineId+1));
+        valueRange.setValues(Collections.singletonList(values));
+
+        rangeList.add(valueRange);
+    }
+
+    private void writeLines() {
         if (sheetsService == null) {
             throw new IllegalArgumentException();
         }
 
-        ValueRange valueRange = new ValueRange();
-        valueRange.setValues(Collections.singletonList(values));
+        if (rangeList.isEmpty()) {
+            return;
+        }
 
         try {
-            sheetsService.spreadsheets()
-                    .values()
-                    .update(credentials.getSpreadsheetId(), sheetName + "!A" + (lineId+1), valueRange)
-                    .setValueInputOption("RAW")
-                    .execute();
+            sheetsService.spreadsheets().values().batchUpdate(
+                    credentials.getSpreadsheetId(),
+                    new BatchUpdateValuesRequest()
+                            .setValueInputOption("RAW")
+                            .setData(rangeList)
+            ).execute();
+            rangeList.clear();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -339,7 +364,7 @@ public class GSheetApi {
     }
 
     private Spreadsheet initializeSpreadsheet() throws IOException {
-        // Initialize de la spreadsheet
+        // Initialize the spreadsheet
         Spreadsheet spreadsheet = new Spreadsheet();
         spreadsheet.setProperties(new SpreadsheetProperties());
         spreadsheet.getProperties().setTitle(SPREADSHEET_NAME);
@@ -407,25 +432,7 @@ public class GSheetApi {
         }
     }
 
-    public record DataRequest(RequestType type, Saveable saveable) {
-
-        public int id() {
-            return saveable.getId();
-        }
-    }
-
     public enum RequestType {
-        UPDATE((gSheetApi, saveable) -> gSheetApi.writeLine(saveable.getSaveableType().getSheetName(), saveable.getId(), saveable.getValues())),
-        DELETE((gSheetApi, saveable) -> gSheetApi.clearLine(saveable.getSaveableType().getSheetName(), saveable.getId()));
-
-        private final BiConsumer<GSheetApi, Saveable> consumer;
-
-        RequestType(BiConsumer<GSheetApi, Saveable> consumer) {
-            this.consumer = consumer;
-        }
-
-        public void consume(GSheetApi api, Saveable saveable) {
-            this.consumer.accept(api, saveable);
-        }
+        DELETE, UPDATE
     }
 }

@@ -18,6 +18,10 @@ public class Class implements Saveable {
         this.students = new ArrayList<>();
     }
 
+    public String getClassName() {
+        return className;
+    }
+
     void addStudent(Student student) {
         students.add(student);
     }

@@ -10,21 +10,13 @@ public class Box extends VBox {
     protected final VBox vBox = new VBox();
     
     public Box() {
-        ScrollPane scrollPane = new ScrollPane();
-        scrollPane.setFitToWidth(true);
-        VBox.setVgrow(scrollPane, Priority.ALWAYS);
-        scrollPane.setContent(vBox);
-        this.getChildren().add(scrollPane);
+        ScrollBox scrollBox = new ScrollBox(this, vBox, true);
+        this.getChildren().add(scrollBox);
         this.getStyleClass().add("box");
         vBox.getStyleClass().add("form-box");
 
         parentProperty().addListener((observable, oldVal, newVal) -> {
             if (newVal != null) {
-                scrollPane.prefViewportHeightProperty().bind(Bindings.min(
-                        newVal.getScene().heightProperty().subtract(150),
-                        vBox.heightProperty()
-                ));
-
                 maxWidthProperty().bind(Bindings.min(600, newVal.getScene().widthProperty().subtract(300)));
             }
         });

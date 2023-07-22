@@ -6,13 +6,14 @@ import io.github.clooooud.barbcd.gui.element.SimpleFormBox;
 import io.github.clooooud.barbcd.gui.scenes.admin.MainAdminScene;
 import io.github.clooooud.barbcd.util.AESUtil;
 import io.github.clooooud.barbcd.util.Sha256Util;
-import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+
+import javax.crypto.BadPaddingException;
 
 public class AuthScene extends RootScene {
 
@@ -66,18 +67,24 @@ public class AuthScene extends RootScene {
             return;
         }
 
-        boolean goodPassword = user.getPasswordHash().equals(Sha256Util.passToSha256(password));
+        String decryptedPassword = " ";
+
+        if (!user.isAdmin()) {
+            AESUtil aesUtil = new AESUtil(password);
+            try {
+                decryptedPassword = aesUtil.decryptString(user.getMainPassword());
+            } catch (Exception ignored) {}
+        } else {
+            decryptedPassword = password;
+        }
+
+        String adminPasswordHash = this.getLibrary().getUser("admin").getPassword();
+        String hashToTest = Sha256Util.passToSha256(decryptedPassword);
+        boolean goodPassword = adminPasswordHash.equals(hashToTest);
 
         if (!goodPassword) {
             new Alert(Alert.AlertType.ERROR, "Le mot de passe est incorrect.").showAndWait();
             return;
-        }
-
-        String decryptedPassword = password;
-
-        if (!user.isAdmin()) {
-            AESUtil aesUtil = new AESUtil(password);
-            decryptedPassword = aesUtil.decryptString(user.getMainPassword());
         }
 
         this.getLibrary().setAdminPassword(decryptedPassword);

@@ -50,16 +50,18 @@ public class PublicCredentials {
     }
 
     public void save() {
-        try (JsonWriter jsonWriter = new JsonWriter(new FileWriter(file))) {
-            jsonWriter.setIndent("  ");
+        new Thread(() -> {
+            try (JsonWriter jsonWriter = new JsonWriter(new FileWriter(file))) {
+                jsonWriter.setIndent("  ");
 
-            jsonWriter.beginObject();
-            jsonWriter.name("apiKey").value(apiKey);
-            jsonWriter.name("spreadsheetId").value(spreadsheetId);
-            jsonWriter.endObject();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+                jsonWriter.beginObject();
+                jsonWriter.name("apiKey").value(apiKey);
+                jsonWriter.name("spreadsheetId").value(spreadsheetId);
+                jsonWriter.endObject();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
     }
 
     public void load() {

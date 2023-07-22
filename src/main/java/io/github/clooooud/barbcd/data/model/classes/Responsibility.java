@@ -18,6 +18,14 @@ public class Responsibility implements Saveable {
         this.clazz = clazz;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public Class getOwnedClass() {
+        return clazz;
+    }
+
     @Override
     public SaveableType getSaveableType() {
         return null;

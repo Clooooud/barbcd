@@ -106,7 +106,7 @@ public class AESUtil {
         } catch (IOException | InvalidKeyException | InvalidAlgorithmParameterException e) {
             throw new RuntimeException(e);
         }
-        return content;
+        return content.strip();
     }
 
     public void encrypt(String fileContent, String fileName) {

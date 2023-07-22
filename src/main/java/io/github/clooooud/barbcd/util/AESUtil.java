@@ -41,17 +41,17 @@ public class AESUtil {
         try (BufferedReader reader = new BufferedReader(new FileReader(fileNameToEncrypt));
              FileOutputStream fileOut = new FileOutputStream(fileName);
              CipherOutputStream cipherOut = new CipherOutputStream(fileOut, cipher)) {
-            String content = "";
+            StringBuilder content = new StringBuilder();
             String line;
 
             while ((line = reader.readLine()) != null) {
-                content += line + "\n";
+                content.append(line).append("\n");
             }
 
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
             byte[] iv = cipher.getIV();
             fileOut.write(iv);
-            cipherOut.write(content.getBytes());
+            cipherOut.write(content.toString().getBytes());
         } catch (IOException | InvalidKeyException e) {
             throw new RuntimeException(e);
         }

@@ -114,8 +114,8 @@ public class UsersScene extends RootAdminScene {
         });
 
         ImageView deleteButton = new ImageView(new Image(StageWrapper.getResource("assets/x.png")));
-        deleteButton.setFitWidth(40);
-        deleteButton.setFitHeight(40);
+        deleteButton.setFitWidth(25);
+        deleteButton.setFitHeight(25);
 
         deleteButtonBox.getChildren().add(deleteButton);
         

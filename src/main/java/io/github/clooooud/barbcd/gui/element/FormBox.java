@@ -70,8 +70,7 @@ public class FormBox extends Box {
         VBox componentBox = new VBox();
         componentBox.setSpacing(15);
 
-        for (Iterator<Map.Entry<String, FormComponent>> iterator = components.iterator(); iterator.hasNext(); ) {
-            Map.Entry<String, FormComponent> component = iterator.next();
+        for (Map.Entry<String, FormComponent> component : components) {
             FormComponent formComponent = component.getValue();
             String componentName = component.getKey();
 

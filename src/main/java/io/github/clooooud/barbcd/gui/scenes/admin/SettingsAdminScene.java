@@ -11,8 +11,10 @@ import io.github.clooooud.barbcd.data.model.Library;
 import io.github.clooooud.barbcd.gui.element.ButtonComponent;
 import io.github.clooooud.barbcd.gui.element.FieldComponent;
 import io.github.clooooud.barbcd.gui.element.FormBox;
+import io.github.clooooud.barbcd.util.AESUtil;
 import io.github.clooooud.barbcd.util.Sha256Util;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Alert;
@@ -20,24 +22,39 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 
 public class SettingsAdminScene extends RootAdminScene {
 
     private TextField apiKeyField;
+    private TextField nameField;
+    private TextField serviceAccountField;
 
     private boolean hasNameChanged = false;
     private boolean hasApiKeyChanged = false;
+    private boolean hasServiceAccountChanged = false;
 
     public SettingsAdminScene(BarBCD app) {
         super(app);
     }
 
-    @Override
-    public void onSceneLeft() {
-        if (hasNameChanged) {
-            SaveRunnable.create(getLibrary(), getApp().getGSheetApi(), getLibrary().getAdminPassword()).run();
+    public void consumeForm() {
+        if (hasServiceAccountChanged) {
+            ButtonType buttonType = new Alert(
+                    Alert.AlertType.CONFIRMATION,
+                    "Voulez-vous vraiment mettre à jour le compte de service ? Si vous n'avez pas de sauvegarde de l'ancien compte de service, vous aurez sûrement des problèmes !"
+            ).showAndWait().orElse(null);
+
+            if (buttonType != null && buttonType.getButtonData().isDefaultButton()) {
+                File file = new File("pr_credentials.enc");
+                if (file.exists()) {
+                    file.delete();
+                }
+
+                new AESUtil(this.getLibrary().getAdminPassword()).encrypt(serviceAccountField.getText(), "pr_credentials.enc");
+            }
         }
 
         if (hasApiKeyChanged) {
@@ -52,14 +69,23 @@ public class SettingsAdminScene extends RootAdminScene {
                 credentials.save();
             }
         }
+
+        if (hasNameChanged) {
+            this.getLibrary().setName(nameField.getText().strip());
+            updateHeader();
+            SaveRunnable.create(getLibrary(), getApp().getGSheetApi(), getLibrary().getAdminPassword()).run();
+        }
+
+        this.getApp().getStageWrapper().setContent(new MainAdminScene(this.getApp()));
     }
 
     @Override
     public void initAdminContent(VBox vBox) {
+        vBox.setPadding(new Insets(20));
         vBox.setAlignment(Pos.CENTER);
 
         FieldComponent bcdName = new FieldComponent("Nom de la BCD");
-        TextField nameField = bcdName.getField();
+        nameField = bcdName.getField();
         nameField.setText(this.getLibrary().getName().strip());
         nameField.textProperty().addListener((observableValue, oldVal, newVal) -> {
             if (newVal.strip().length() > 10) {
@@ -68,8 +94,6 @@ public class SettingsAdminScene extends RootAdminScene {
             }
 
             hasNameChanged = true;
-            this.getLibrary().setName(newVal.strip());
-            updateHeader();
         });
 
         FieldComponent apiKey = new FieldComponent(
@@ -80,7 +104,12 @@ public class SettingsAdminScene extends RootAdminScene {
         this.apiKeyField.setText(this.getApp().getCredentials().getApiKey());
         this.apiKeyField.textProperty().addListener((observableValue, oldVal, newVal) -> hasApiKeyChanged = true);
 
-        //TODO service account
+        FieldComponent serviceAccount = new FieldComponent(
+                "Compte de service Google",
+                "Le compte de service qui sera utilisé pour modifier la base de donnée"
+        );
+        this.serviceAccountField = serviceAccount.getField();
+        this.serviceAccountField.textProperty().addListener((observableValue, oldVal, newVal) -> hasServiceAccountChanged = true);
 
         FormBox formBox = new FormBox.Builder("Paramètres")
                 .setDesc("Cette interface est réservée aux administrateurs qui ont besoin d'effectuer des manipulations qui peuvent être risquées. " +
@@ -92,7 +121,10 @@ public class SettingsAdminScene extends RootAdminScene {
                         event -> onResetButtonClicked(),
                         "Supprime TOUTES LES INFORMATIONS de la base."
                 ))
+                .addComponent("Service Account", serviceAccount)
                 .addComponent("API Key", apiKey)
+                .addButton("Annuler", event -> this.getApp().getStageWrapper().setContent(new MainAdminScene(this.getApp())))
+                .addButton("Sauvegarder", event -> consumeForm())
                 .build();
 
         vBox.getChildren().add(formBox);

@@ -4,6 +4,7 @@
     -fx-background-color: #97719d;
     -fx-alignment: center-left;
     -fx-padding: 0 20 0 20;
+    -fx-spacing: 10;
 }
 
 .root {

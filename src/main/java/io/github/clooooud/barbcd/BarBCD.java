@@ -19,6 +19,9 @@ public class BarBCD extends Application {
 
     @Override
     public void start(Stage stage) {
+        stage.setOnCloseRequest(event -> {
+            System.exit(0);
+        });
         stage.setMinWidth(800);
         stage.setMinHeight(600);
         stage.setWidth(800);

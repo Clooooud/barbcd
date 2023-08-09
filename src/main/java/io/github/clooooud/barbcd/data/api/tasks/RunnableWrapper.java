@@ -2,6 +2,7 @@ package io.github.clooooud.barbcd.data.api.tasks;
 
 public class RunnableWrapper implements Runnable {
 
+    private Thread thread;
     private Runnable before;
     private Runnable runnable;
     private Runnable after;
@@ -21,6 +22,10 @@ public class RunnableWrapper implements Runnable {
     }
 
     public void run(boolean async) {
+        if (thread != null) {
+            return;
+        }
+
         if (async) {
             run();
         } else {
@@ -43,6 +48,10 @@ public class RunnableWrapper implements Runnable {
                     break;
                 }
             }
+        }
+
+        if (thread != null) {
+            thread.interrupt();
         }
     }
 }

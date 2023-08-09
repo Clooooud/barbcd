@@ -3,6 +3,7 @@ package io.github.clooooud.barbcd.gui.scenes;
 import io.github.clooooud.barbcd.BarBCD;
 import io.github.clooooud.barbcd.data.model.Library;
 import io.github.clooooud.barbcd.gui.scenes.admin.MainAdminScene;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -16,6 +17,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static io.github.clooooud.barbcd.gui.StageWrapper.getResource;
 
@@ -41,6 +45,8 @@ public abstract class RootScene {
     private HBox headerBox;
     private HBox clickableTitle;
     private Button authButton;
+    private ImageView loadingImage;
+    private int loadingCount = 0;
 
     public RootScene(BarBCD app) {
         this.app = app;
@@ -86,6 +92,31 @@ public abstract class RootScene {
         }
     }
 
+    public void startLoading() {
+        this.loadingImage.setImage(new Image(getResource("assets/loader.png")));
+        loadingCount++;
+    }
+
+    public void finishLoading(boolean success) {
+        loadingCount--;
+
+        if (loadingCount > 0) {
+            return;
+        }
+
+        this.loadingImage.setImage(new Image(getResource(success ? "assets/check.png" : "assets/x.png")));
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    loadingImage.setImage(null);
+                });
+            }
+        };
+        Timer timer = new Timer();
+        timer.schedule(timerTask, 2000);
+    }
+
     public void updateHeader() {
         if (this.headerBox == null) {
             this.headerBox = new HBox();
@@ -113,6 +144,12 @@ public abstract class RootScene {
         labelBox.getChildren().add(clickableTitle);
         headerBox.getChildren().add(labelBox);
         HBox.setHgrow(labelBox, Priority.ALWAYS);
+
+        this.loadingImage = new ImageView();
+        this.loadingImage.setFitHeight(25);
+        this.loadingImage.setFitWidth(25);
+        this.loadingImage.setImage(null);
+        headerBox.getChildren().add(this.loadingImage);
 
         authButton = new Button(this.getLibrary().isLoggedIn() ? "Déconnexion" : "Administration");
         authButton.setFocusTraversable(false);

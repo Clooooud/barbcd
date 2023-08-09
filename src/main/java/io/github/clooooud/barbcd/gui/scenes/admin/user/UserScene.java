@@ -19,32 +19,40 @@ import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import org.controlsfx.control.CheckComboBox;
 
-public class UserAdminScene extends RootAdminScene {
+import java.util.ArrayList;
+import java.util.List;
+
+public class UserScene extends RootAdminScene {
 
     private final User user;
     private TextField passwordField;
 
-    public UserAdminScene(BarBCD app, User user) {
+    private final List<Runnable> runnableList = new ArrayList<>();
+
+    public UserScene(BarBCD app, User user) {
         super(app);
         this.user = user;
     }
 
-    @Override
-    public void onSceneLeft() {
+    private void consumeForm() {
+        runnableList.forEach(Runnable::run);
+
         String password = passwordField.getText().strip();
         if (!password.isBlank()) {
+            AESUtil actualAes = new AESUtil(this.getLibrary().getAdminPassword());
+            AESUtil newAes = new AESUtil(password);
             if (!user.isAdmin()) {
-                this.user.setPassword(new AESUtil(this.getLibrary().getAdminPassword()).encryptString(password));
-                this.user.setMainPassword(new AESUtil(password).encryptString(this.getLibrary().getAdminPassword()));
+                this.user.setPassword(actualAes.encryptString(password));
+                this.user.setMainPassword(newAes.encryptString(this.getLibrary().getAdminPassword()));
             } else {
                 this.user.setPassword(Sha256Util.passToSha256(password));
-                String oldCredentials = new AESUtil(this.getLibrary().getAdminPassword()).decrypt("pr_credentials.enc");
-                new AESUtil(password).encrypt(oldCredentials, "pr_credentials.enc");
+                String oldCredentials = actualAes.decrypt("pr_credentials.enc");
+                newAes.encrypt(oldCredentials, "pr_credentials.enc");
 
                 this.getLibrary().getUsers().stream().filter(user1 -> !user1.isAdmin()).forEach(
                         user1 -> {
-                            String decryptedPass = new AESUtil(this.getLibrary().getAdminPassword()).decryptString(user1.getPassword());
-                            user1.setPassword(new AESUtil(password).encryptString(decryptedPass));
+                            String decryptedPass = actualAes.decryptString(user1.getPassword());
+                            user1.setPassword(newAes.encryptString(decryptedPass));
                             user1.setMainPassword(new AESUtil(decryptedPass).encryptString(password));
                             this.getLibrary().markDocumentAsUpdated(user1);
                         }
@@ -56,6 +64,7 @@ public class UserAdminScene extends RootAdminScene {
         }
 
         SaveRunnable.create(getLibrary(), getApp().getGSheetApi(), getLibrary().getAdminPassword()).run(true);
+        this.getApp().getStageWrapper().setContent(new UsersScene(this.getApp()));
     }
 
     @Override
@@ -71,6 +80,9 @@ public class UserAdminScene extends RootAdminScene {
         FieldComponent passwordComponent = new FieldComponent("Mot de passe", true);
         this.passwordField = passwordComponent.getField();
         builder.addComponent("password", passwordComponent);
+
+        builder.addButton("Annuler", (event) -> this.getApp().getStageWrapper().setContent(new UsersScene(this.getApp())))
+                .addButton("Sauvegarder", (event) -> consumeForm());
 
         FormBox formBox = builder.build();
         vBox.getChildren().add(formBox);
@@ -114,17 +126,17 @@ public class UserAdminScene extends RootAdminScene {
                         continue;
                     }
 
-                    getLibrary().removeDocument(responsibility);
+                    runnableList.add(() -> getLibrary().removeDocument(responsibility));
                 }
             }
 
             if (change.wasAdded()) {
                 for (Class aClass : change.getAddedSubList()) {
-                    getLibrary().addDocument(new Responsibility(
+                    runnableList.add(() -> getLibrary().addDocument(new Responsibility(
                             getLibrary().getNextDocumentId(SaveableType.RESPONSIBILITY),
                             user,
                             aClass)
-                    );
+                    ));
                 }
             }
         });

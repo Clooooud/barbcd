@@ -131,13 +131,16 @@ public class GSheetApi {
             library.addDocument(Categorie.MAGAZINE);
         }
 
-        library.getDataUpdateList().get(RequestType.DELETE).forEach(this::pushClear);
-        library.getDataUpdateList().get(RequestType.UPDATE).forEach(this::pushLine);
+        library.getDataUpdateList().get(RequestType.DELETE).removeIf(saveable -> {
+            pushClear(saveable);
+            return true;
+        });
+        library.getDataUpdateList().get(RequestType.UPDATE).removeIf(saveable -> {
+            pushLine(saveable);
+            return true;
+        });
         this.clearLines();
         this.writeLines();
-        for (RequestType requestType : RequestType.values()) {
-            library.getDataUpdateList().get(requestType).clear();
-        }
     }
 
     public void load(Library library) throws IOException {
@@ -163,10 +166,19 @@ public class GSheetApi {
                     }
 
                     RowData rowData = dataRowData.get(i);
-                    List<String> values = rowData.getValues().stream().map(CellData::getFormattedValue).toList();
+                    List<CellData> unformattedValues = rowData.getValues();
+
+                    if (unformattedValues == null) {
+                        continue;
+                    }
+
+                    List<String> values = unformattedValues.stream().map(CellData::getFormattedValue).toList();
                     generateAndStoreComponent(library, values, type);
                 }
             }
+
+            // Bypasses every addDocument data update request
+            library.getDataUpdateList().values().forEach(Collection::clear);
         }
     }
 
@@ -284,6 +296,7 @@ public class GSheetApi {
 
     private void pushClear(Saveable saveable) {
         pushClear(saveable.getSaveableType().getSheetName(), saveable.getId());
+
     }
 
     private void pushClear(String sheetName, int lineId) {

@@ -3,19 +3,19 @@ package io.github.clooooud.barbcd.gui.element;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class FormBox extends Box {
 
@@ -48,8 +48,8 @@ public class FormBox extends Box {
 
     private void initFormBox(String formName, String description, List<Map.Entry<String, FormComponent>> components, List<Map.Entry<String, EventHandler<ActionEvent>>> buttons) {
         Label titleLabel = new Label(formName);
+        titleLabel.getStyleClass().add("form-title");
         titleLabel.setWrapText(true);
-        titleLabel.setFont(Font.font(null, FontWeight.BOLD, 28));
         this.vBox.getChildren().addAll(titleLabel, new Separator(Orientation.HORIZONTAL));
 
         initDescription(description);
@@ -60,20 +60,26 @@ public class FormBox extends Box {
     private void initDescription(String description) {
         if (description != null) {
             Label descriptionLabel = new Label(description);
-            descriptionLabel.setFont(Font.font(14));
+            descriptionLabel.getStyleClass().add("form-description");
             descriptionLabel.setWrapText(true);
             this.vBox.getChildren().addAll(descriptionLabel, new Separator(Orientation.HORIZONTAL));
         }
     }
 
     private void initComponents(List<Map.Entry<String, FormComponent>> components) {
-        for (Map.Entry<String, FormComponent> component : components) {
+        VBox componentBox = new VBox();
+        componentBox.setSpacing(15);
+
+        for (Iterator<Map.Entry<String, FormComponent>> iterator = components.iterator(); iterator.hasNext(); ) {
+            Map.Entry<String, FormComponent> component = iterator.next();
             FormComponent formComponent = component.getValue();
             String componentName = component.getKey();
 
-            this.vBox.getChildren().add(formComponent);
+            componentBox.getChildren().add(formComponent);
             this.components.put(componentName, formComponent);
         }
+
+        this.vBox.getChildren().add(componentBox);
     }
 
     private void initButtons(List<Map.Entry<String, EventHandler<ActionEvent>>> buttons) {
@@ -94,6 +100,7 @@ public class FormBox extends Box {
         }
 
         this.vBox.getChildren().add(buttonBox);
+        VBox.setMargin(buttonBox, new Insets(5, 0, 0, 0));
     }
 
     public static class Builder {

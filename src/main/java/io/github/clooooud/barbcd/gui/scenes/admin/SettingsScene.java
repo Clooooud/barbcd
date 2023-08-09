@@ -26,7 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 
-public class SettingsAdminScene extends RootAdminScene {
+public class SettingsScene extends RootAdminScene {
 
     private TextField apiKeyField;
     private TextField nameField;
@@ -36,7 +36,7 @@ public class SettingsAdminScene extends RootAdminScene {
     private boolean hasApiKeyChanged = false;
     private boolean hasServiceAccountChanged = false;
 
-    public SettingsAdminScene(BarBCD app) {
+    public SettingsScene(BarBCD app) {
         super(app);
     }
 

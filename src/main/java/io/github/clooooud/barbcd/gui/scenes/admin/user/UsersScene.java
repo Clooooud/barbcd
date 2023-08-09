@@ -1,9 +1,11 @@
 package io.github.clooooud.barbcd.gui.scenes.admin.user;
 
 import io.github.clooooud.barbcd.BarBCD;
+import io.github.clooooud.barbcd.data.SaveableType;
 import io.github.clooooud.barbcd.data.api.tasks.SaveRunnable;
 import io.github.clooooud.barbcd.data.auth.User;
 import io.github.clooooud.barbcd.data.model.classes.Class;
+import io.github.clooooud.barbcd.data.model.classes.Responsibility;
 import io.github.clooooud.barbcd.gui.StageWrapper;
 import io.github.clooooud.barbcd.gui.element.ScrollBox;
 import io.github.clooooud.barbcd.gui.scenes.MainScene;
@@ -44,25 +46,19 @@ public class UsersScene extends RootAdminScene {
 
     private VBox createContent() {
         VBox vBox = new VBox();
+        vBox.setSpacing(10);
 
         List<User> list = this.getLibrary().getUsers().stream().sorted().toList();
         for (int i = 0; i < list.size(); i++) {
             User user = list.get(i);
 
-            HBox userBox = createUserBox(user, i);
-
-            if (i == 0) {
-                userBox.getStyleClass().add("list-elem-first");
-            } else if (i == list.size()-1) {
-                userBox.getStyleClass().add("list-elem-last");
-            }
+            HBox userBox = createUserBox(user);
 
             vBox.getChildren().add(userBox);
         }
 
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.CENTER);
-        hBox.setPadding(new Insets(10));
 
         ImageView addButton = new ImageView(new Image(StageWrapper.getResource("assets/add.png")));
         addButton.setFitWidth(50);
@@ -76,10 +72,9 @@ public class UsersScene extends RootAdminScene {
         return vBox;
     }
 
-    private HBox createUserBox(User user, int id) {
+    private HBox createUserBox(User user) {
         HBox hBox = new HBox();
         hBox.getStyleClass().add("list-elem");
-        hBox.getStyleClass().add("list-elem-" + ((id % 2 == 0) ? "even" : "odd"));
 
         VBox vBox = new VBox();
         vBox.setPrefHeight(50);
@@ -111,6 +106,7 @@ public class UsersScene extends RootAdminScene {
             ).showAndWait().ifPresent(buttonType -> {
                 if (buttonType.getButtonData().isDefaultButton()) {
                     this.getLibrary().removeDocument(user);
+                    user.getResponsibilities(this.getLibrary()).forEach(responsibility -> this.getLibrary().removeDocument(responsibility));
                     SaveRunnable.create(this.getLibrary(), this.getApp().getGSheetApi(), this.getLibrary().getAdminPassword()).run();
                     this.getApp().getStageWrapper().setContent(new UsersScene(this.getApp()));
                 }

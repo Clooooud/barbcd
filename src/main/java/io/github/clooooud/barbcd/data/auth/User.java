@@ -25,10 +25,15 @@ public class User implements Saveable {
         this.mainPassword = mainPassword;
     }
 
-    public Set<Class> getOwnedClasses(Library library) {
+    public Set<Responsibility> getResponsibilities(Library library) {
         return library.getDocuments(SaveableType.RESPONSIBILITY).stream()
                 .map(saveable -> (Responsibility) saveable)
                 .filter(responsibility -> responsibility.getUser().equals(this))
+                .collect(Collectors.toSet());
+    }
+
+    public Set<Class> getOwnedClasses(Library library) {
+        return getResponsibilities(library).stream()
                 .map(Responsibility::getOwnedClass)
                 .collect(Collectors.toSet());
     }

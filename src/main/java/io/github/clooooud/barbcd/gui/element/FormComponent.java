@@ -37,7 +37,7 @@ public class FormComponent extends VBox {
         this.getChildren().add(componentLabel);
 
         if (descriptionLabel != null) {
-            descriptionLabel.getStyleClass().add("font-component-description");
+            descriptionLabel.getStyleClass().add("form-component-description");
             descriptionLabel.setWrapText(true);
             this.getChildren().add(descriptionLabel);
         }

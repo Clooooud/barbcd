@@ -1,7 +1,12 @@
 /* Common CSS */
 
+* {
+    -header-color: #06367a;
+    -content-color: #266fd5;
+}
+
 #header-box {
-    -fx-background-color: #97719d;
+    -fx-background-color: -header-color;
     -fx-alignment: center-left;
     -fx-padding: 0 20 0 20;
     -fx-spacing: 10;
@@ -12,7 +17,7 @@
 }
 
 #sidebox {
-    -fx-background-color: derive(#97719d, 20%);
+    -fx-background-color: derive(-header-color, 20%);
 }
 
 .sidebox-button-label {
@@ -21,7 +26,7 @@
 
 .sidebox-button-notlast {
     -fx-border-width: 0 0 1 0;
-    -fx-border-color: derive(#97719d, -10%);
+    -fx-border-color: derive(-header-color, -10%);
 }
 
 .sidebox-button {
@@ -31,7 +36,7 @@
 }
 
 .sidebox-button:hover {
-    -fx-background-color: derive(#97719d, 10%);
+    -fx-background-color: derive(-header-color, 10%);
     -fx-cursor: hand;
 }
 
@@ -41,9 +46,7 @@
 }
 
 #header-auth-btn {
-    -fx-background-color: transparent;
-    -fx-border-color: derive(#97719d, -20%);
-    -fx-border-radius: 20;
+    -fx-background-color: derive(-header-color, -20%);
     -fx-background-radius: 20;
     -fx-text-fill: white;
     -fx-content-display: left;
@@ -51,7 +54,7 @@
 }
 
 #header-auth-btn:hover {
-    -fx-background-color: derive(#97719d, -20%);
+    -fx-background-color: derive(-header-color, -30%);
 }
 
 Button {
@@ -63,7 +66,7 @@ Button {
 }
 
 #page-content {
-    -fx-background-color: #deeaba;
+    -fx-background-color: derive(#ebf2fc, -10%);
 }
 
 /*-------------------*/
@@ -111,7 +114,7 @@ Button {
 
 #search-bar {
     -fx-background-radius: 100;
-    -fx-background-color: #779d71;
+    -fx-background-color: -content-color;
     -fx-cursor: hand;
     -fx-alignment: center-left;
     -fx-padding: 40 60 40 60;
@@ -119,7 +122,7 @@ Button {
 }
 
 #search-bar:hover {
-    -fx-background-color: derive(#779d71, -20%);
+    -fx-background-color: derive(-content-color, -20%);
 }
 
 /*------------------*/
@@ -127,35 +130,43 @@ Button {
 /* Form page */
 
 .box {
-    -fx-background-color: derive(white, -5%);
-    -fx-background-radius: 10;
-    -fx-border-color: derive(white, -50%);
-    -fx-border-width: 1;
-    -fx-border-radius: 10;
+    -fx-background-color: white;
+    -fx-background-radius: 20;
 }
 
 .form-box {
-    -fx-padding: 5 15 5 15;
+    -fx-padding: 15;
     -fx-spacing: 7;
 }
 
 .form-button {
-    -fx-border-color: derive(white, -20%);
-    -fx-background-color: white;
-    -fx-border-radius: 2;
-    -fx-background-radius: 2;
+    -fx-background-color: -content-color;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
 }
 
 .form-button:hover {
-    -fx-background-color: derive(white, -5%);
+    -fx-background-color: derive(-content-color, -10%);
+}
+
+.form-title {
+    -fx-font: normal Bold 24 'Roboto';
+    -fx-text-fill: -header-color;
+}
+
+.form-description {
+    -fx-font: normal normal 14 'Roboto';
+    -fx-text-fill: black;
 }
 
 .form-component-label {
-    -fx-font: normal Bold 16 'Roboto';
+    -fx-font: normal Bold 14 'Roboto';
+    -fx-text-fill: black;
 }
 
 .form-component-description {
     -fx-font: normal normal 12 'Roboto';
+    -fx-text-fill: black;
 }
 
 /*-------------------*/
@@ -182,30 +193,12 @@ Button {
     -fx-padding: 2 10 2 10;
     -fx-alignment: center-left;
     -fx-cursor: hand;
-}
-
-.list-elem-first {
-    -fx-background-radius: 10 10 0 0;
-}
-
-.list-elem-last {
-    -fx-background-radius: 0 0 10 10;
-}
-
-.list-elem-odd {
     -fx-background-color: white;
+    -fx-background-radius: 10;
 }
 
-.list-elem-odd:hover {
+.list-elem:hover {
     -fx-background-color: derive(white, -3%);
-}
-
-.list-elem-even {
-    -fx-background-color: derive(white, -8%);
-}
-
-.list-elem-even:hover {
-    -fx-background-color: derive(white, -11%);
 }
 
 .list-elem-title {

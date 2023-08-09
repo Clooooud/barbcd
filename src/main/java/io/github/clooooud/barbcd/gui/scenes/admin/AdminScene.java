@@ -14,7 +14,7 @@ public enum AdminScene {
     BORROWING_PAGE("Emprunts", false, MainAdminScene::new, "shopping-bag.png"), // shopping bag
     USER_PAGE("Utilisateurs", true, UsersScene::new, "users.png"), // users
     CLASSES_PAGE("Classes", false, MainAdminScene::new, "list.png"), // list
-    SETTING_PAGE("Paramètres", true, SettingsAdminScene::new, "settings.png"); // setting
+    SETTING_PAGE("Paramètres", true, SettingsScene::new, "settings.png"); // setting
 
     private final String sceneName;
     private final boolean adminOnly;

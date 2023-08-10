@@ -124,8 +124,8 @@ public class SettingsScene extends RootAdminScene {
                 ))
                 .addComponent("Service Account", serviceAccount)
                 .addComponent("API Key", apiKey)
-                .addButton("Annuler", event -> this.getApp().getStageWrapper().setContent(new MainAdminScene(this.getApp())))
                 .addButton("Sauvegarder", event -> consumeForm())
+                .addButton("Annuler", event -> this.getApp().getStageWrapper().setContent(new MainAdminScene(this.getApp())))
                 .build();
 
         vBox.getChildren().add(formBox);

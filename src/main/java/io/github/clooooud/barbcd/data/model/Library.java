@@ -7,6 +7,7 @@ import io.github.clooooud.barbcd.data.api.GSheetApi;
 import io.github.clooooud.barbcd.data.auth.User;
 import io.github.clooooud.barbcd.data.model.classes.Student;
 import io.github.clooooud.barbcd.data.model.document.Borrowing;
+import io.github.clooooud.barbcd.data.model.document.Editor;
 import io.github.clooooud.barbcd.data.model.document.ViewableDocument;
 import io.github.clooooud.barbcd.util.AESUtil;
 
@@ -93,6 +94,14 @@ public class Library implements Saveable {
                 .filter(saveable -> saveable.getId() == id)
                 .findFirst()
                 .orElse(null);
+    }
+
+    public void createEditor(String name) {
+        Editor editor = new Editor(
+                getNextDocumentId(SaveableType.EDITOR),
+                name
+        );
+        addDocument(editor);
     }
 
     public void createBorrowing(User user, ViewableDocument viewableDocument, Student student) {

@@ -193,7 +193,7 @@ Button {
 
 .admin-scene-title {
     -fx-font: normal Bold 28 'Roboto';
-    -fx-text-fill: black;
+    -fx-text-fill: -header-color;
     -fx-text-alignment: center;
 }
 

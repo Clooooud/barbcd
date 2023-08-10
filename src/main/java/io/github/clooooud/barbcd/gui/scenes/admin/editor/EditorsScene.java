@@ -1,12 +1,17 @@
-package io.github.clooooud.barbcd.gui.scenes.admin.user;
+package io.github.clooooud.barbcd.gui.scenes.admin.editor;
 
 import io.github.clooooud.barbcd.BarBCD;
+import io.github.clooooud.barbcd.data.SaveableType;
 import io.github.clooooud.barbcd.data.api.tasks.SaveRunnable;
 import io.github.clooooud.barbcd.data.auth.User;
 import io.github.clooooud.barbcd.data.model.classes.Class;
+import io.github.clooooud.barbcd.data.model.document.Editor;
 import io.github.clooooud.barbcd.gui.StageWrapper;
 import io.github.clooooud.barbcd.gui.element.ScrollBox;
 import io.github.clooooud.barbcd.gui.scenes.admin.RootAdminScene;
+import io.github.clooooud.barbcd.gui.scenes.admin.user.NewUserScene;
+import io.github.clooooud.barbcd.gui.scenes.admin.user.UserScene;
+import io.github.clooooud.barbcd.gui.scenes.admin.user.UsersScene;
 import io.github.clooooud.barbcd.util.GuiUtil;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -24,39 +29,40 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class UsersScene extends RootAdminScene {
+public class EditorsScene extends RootAdminScene {
 
-    private final Map<CheckBox, User> checkBoxUserMap = new HashMap<>();
-    private final Map<User, HBox> userList = new HashMap<>();
+    public EditorsScene(BarBCD app) {
+        super(app);
+    }
+
+    private final Map<CheckBox, Editor> checkBoxEditorMap = new HashMap<>();
+    private final Map<Editor, HBox> userList = new HashMap<>();
 
     private VBox contentBox;
     private TextField filter;
     private HBox addButtonBox;
     private Button deleteButton;
 
-    public UsersScene(BarBCD app) {
-        super(app);
-    }
-
-    private List<User> getSelectedUsers() {
-        return checkBoxUserMap.entrySet().stream()
+    private List<Editor> getSelectedEditors() {
+        return checkBoxEditorMap.entrySet().stream()
                 .filter(entry -> entry.getKey().isSelected())
                 .map(Map.Entry::getValue)
                 .toList();
     }
 
-    private void deleteSelectedUsers() {
+    private void deleteSelectedEditors() {
+        // TODO: gérer supprimer sans toucher au doc / supprimer aussi les doc
         GuiUtil.wrapAlert(new Alert(
                 Alert.AlertType.CONFIRMATION,
-                "Voulez-vous vraiment supprimer ces utilisateurs ?"
+                "Voulez-vous vraiment supprimer ces éditeurs ?"
         )).showAndWait().ifPresent(buttonType -> {
             if (buttonType.getButtonData().isDefaultButton()) {
-                getSelectedUsers().forEach(user -> {
-                    this.getLibrary().removeDocument(user);
-                    user.getResponsibilities(this.getLibrary()).forEach(responsibility -> this.getLibrary().removeDocument(responsibility));
+                getSelectedEditors().forEach(editor -> {
+                    this.getLibrary().removeDocument(editor);
+                    // gérer les documents liés
                 });
                 SaveRunnable.create(this.getLibrary(), this.getApp().getGSheetApi(), this.getLibrary().getAdminPassword()).run();
-                this.getApp().getStageWrapper().setContent(new UsersScene(this.getApp()));
+                this.getApp().getStageWrapper().setContent(new EditorsScene(this.getApp()));
             }
         });
     }
@@ -65,9 +71,9 @@ public class UsersScene extends RootAdminScene {
     public void initAdminContent(VBox vBox) {
         vBox.getStyleClass().add("admin-content");
 
-        Label label = new Label("Utilisateurs");
+        Label label = new Label("Éditeurs");
         label.getStyleClass().add("admin-scene-title");
-        
+
         vBox.getChildren().add(label);
 
         HBox utilBar = new HBox();
@@ -79,7 +85,7 @@ public class UsersScene extends RootAdminScene {
 
         filter = new TextField();
         filter.setFocusTraversable(false);
-        filter.setPromptText("Rechercher un utilisateur");
+        filter.setPromptText("Rechercher un éditeur");
         filter.textProperty().addListener((observable, oldValue, newValue) -> {
             if (oldValue.strip().equals(newValue.strip())) {
                 return;
@@ -94,7 +100,7 @@ public class UsersScene extends RootAdminScene {
         imageView.setFitWidth(20);
         deleteButton.setGraphic(imageView);
         deleteButton.setCursor(Cursor.HAND);
-        deleteButton.setOnAction(event -> deleteSelectedUsers());
+        deleteButton.setOnAction(event -> deleteSelectedEditors());
         deleteButton.setDisable(true);
 
         utilBar.getChildren().addAll(filterLabel, filter, deleteButton);
@@ -111,8 +117,8 @@ public class UsersScene extends RootAdminScene {
             contentBox.getChildren().setAll(userList.entrySet().stream().sorted(Map.Entry.comparingByKey()).map(Map.Entry::getValue).toList());
         } else {
             contentBox.getChildren().setAll(userList.entrySet().stream().filter(entry -> {
-                User user = entry.getKey();
-                return user.getLogin().contains(filter.getText());
+                Editor user = entry.getKey();
+                return user.getName().contains(filter.getText());
             }).sorted(Map.Entry.comparingByKey()).map(Map.Entry::getValue).toList());
         }
         contentBox.getChildren().add(addButtonBox);
@@ -122,33 +128,31 @@ public class UsersScene extends RootAdminScene {
         VBox vBox = new VBox();
         vBox.setSpacing(10);
 
-        List<User> list = this.getLibrary().getUsers().stream().sorted().toList();
-        for (int i = 0; i < list.size(); i++) {
-            User user = list.get(i);
+        List<Editor> list = this.getLibrary().getDocuments(SaveableType.EDITOR).stream()
+                .map(document -> (Editor) document)
+                .sorted().toList();
 
-            HBox userLine = new HBox();
-            userLine.setAlignment(Pos.CENTER_LEFT);
-            userLine.setSpacing(10);
-            userLine.setPadding(new Insets(0, 0, 0, 10));
+        for (int i = 0; i < list.size(); i++) {
+            Editor editor = list.get(i);
+
+            HBox editorLine = new HBox();
+            editorLine.setAlignment(Pos.CENTER_LEFT);
+            editorLine.setSpacing(10);
+            editorLine.setPadding(new Insets(0, 0, 0, 10));
 
             CheckBox checkBox = new CheckBox();
             checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                deleteButton.setDisable(getSelectedUsers().isEmpty());
+                deleteButton.setDisable(getSelectedEditors().isEmpty());
             });
-            checkBoxUserMap.put(checkBox, user);
+            checkBoxEditorMap.put(checkBox, editor);
 
-            if (user.isAdmin()) {
-                checkBox.setVisible(false);
-                checkBox.setDisable(true);
-            }
+            HBox userBox = createEditorBox(editor);
 
-            HBox userBox = createUserBox(user);
-
-            userLine.getChildren().addAll(checkBox, userBox);
+            editorLine.getChildren().addAll(checkBox, userBox);
             HBox.setHgrow(userBox, Priority.ALWAYS);
 
-            vBox.getChildren().add(userLine);
-            userList.put(user, userLine);
+            vBox.getChildren().add(editorLine);
+            userList.put(editor, editorLine);
         }
 
         addButtonBox = new HBox();
@@ -158,7 +162,7 @@ public class UsersScene extends RootAdminScene {
         addButton.setFitWidth(50);
         addButton.setFitHeight(50);
         addButton.setCursor(Cursor.HAND);
-        addButton.setOnMouseClicked(event -> this.getApp().getStageWrapper().setContent(new NewUserScene(this.getApp())));
+        addButton.setOnMouseClicked(event -> this.getApp().getStageWrapper().setContent(new NewEditorScene(this.getApp())));
 
         addButtonBox.getChildren().add(addButton);
         vBox.getChildren().add(addButtonBox);
@@ -166,21 +170,21 @@ public class UsersScene extends RootAdminScene {
         return vBox;
     }
 
-    private void deleteUser(User user) {
+    private void deleteEditor(Editor editor) {
         GuiUtil.wrapAlert(new Alert(
                 Alert.AlertType.CONFIRMATION,
                 "Voulez-vous vraiment supprimer cet utilisateur ?"
         )).showAndWait().ifPresent(buttonType -> {
             if (buttonType.getButtonData().isDefaultButton()) {
-                this.getLibrary().removeDocument(user);
-                user.getResponsibilities(this.getLibrary()).forEach(responsibility -> this.getLibrary().removeDocument(responsibility));
+                this.getLibrary().removeDocument(editor);
+                // Gérer les documents liés
                 SaveRunnable.create(this.getLibrary(), this.getApp().getGSheetApi(), this.getLibrary().getAdminPassword()).run();
-                this.getApp().getStageWrapper().setContent(new UsersScene(this.getApp()));
+                this.getApp().getStageWrapper().setContent(new EditorsScene(this.getApp()));
             }
         });
     }
 
-    private HBox createUserBox(User user) {
+    private HBox createEditorBox(Editor editor) {
         HBox hBox = new HBox();
         hBox.getStyleClass().add("list-elem");
 
@@ -189,8 +193,8 @@ public class UsersScene extends RootAdminScene {
         vBox.setMinHeight(50);
         vBox.setMaxHeight(50);
 
-        Label nameLabel = new Label(user.getLogin());
-        Label classLabel = new Label(getClassString(user));
+        Label nameLabel = new Label(editor.getName());
+        Label classLabel = new Label(getEditorString(editor));
 
         nameLabel.getStyleClass().add("list-elem-title");
         classLabel.getStyleClass().add("list-elem-content");
@@ -199,22 +203,17 @@ public class UsersScene extends RootAdminScene {
         hBox.getChildren().add(vBox);
         HBox.setHgrow(vBox, Priority.ALWAYS);
 
-        if (user.isAdmin()) {
-            hBox.setOnMouseClicked(event -> this.getApp().getStageWrapper().setContent(new UserScene(this.getApp(), user)));
-            return hBox;
-        }
-
         HBox deleteButtonBox = new HBox();
         deleteButtonBox.setAlignment(Pos.CENTER);
         deleteButtonBox.setCursor(Cursor.HAND);
-        deleteButtonBox.setOnMouseClicked(event -> deleteUser(user));
+        deleteButtonBox.setOnMouseClicked(event -> deleteEditor(editor));
 
         ImageView deleteButton = new ImageView(new Image(StageWrapper.getResource("assets/x.png")));
         deleteButton.setFitWidth(25);
         deleteButton.setFitHeight(25);
 
         deleteButtonBox.getChildren().add(deleteButton);
-        
+
         hBox.getChildren().add(deleteButtonBox);
 
         hBox.setOnMouseClicked(event -> {
@@ -222,29 +221,21 @@ public class UsersScene extends RootAdminScene {
                 return;
             }
 
-            this.getApp().getStageWrapper().setContent(new UserScene(this.getApp(), user));
+            this.getApp().getStageWrapper().setContent(new EditorScene(this.getApp(), editor));
         });
 
         return hBox;
     }
 
-    private String getClassString(User user) {
-        if (user.isAdmin()) {
-            return "Cet utilisateur a accès à toutes les classes.";
-        }
-
-        List<String> classesName = user.getOwnedClasses(this.getLibrary())
-                .stream()
-                .map(Class::getClassName)
-                .toList();
+    private String getEditorString(Editor editor) {
+        int documentCount = editor.getEditedDocuments(this.getLibrary()).size();
 
         String content;
 
-        if (classesName.isEmpty()) {
-            content = "Cet utilisateur n'a aucune classe assignée.";
+        if (documentCount == 0) {
+            content = "Cet éditeur n'est lié à aucun document.";
         } else {
-            content = "Classe" + (classesName.size() > 1 ? "s" : "") + " assignée" + (classesName.size() > 1 ? "s" : "") + " : " +
-                    String.join(", ", classesName);
+            content = "Cet éditeur est lié à " + documentCount + " document" + (documentCount > 1 ? "s" : "") + ".";
         }
 
         return content;

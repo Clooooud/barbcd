@@ -46,8 +46,8 @@ public class StartScene extends RootScene {
                 .addField("Mot de passe Admin",true)
                 .addField("Compte de service Google", "Copiez le contenu du fichier json directement")
                 .addField("Clé API Google")
-                .addButton("Tutoriel", (event) -> openTutorial())
                 .addButton("Finaliser", (event) -> consumeForm())
+                .addButton("Tutoriel", (event) -> openTutorial())
                 .build();
 
         vBox.getChildren().add(this.formBox);

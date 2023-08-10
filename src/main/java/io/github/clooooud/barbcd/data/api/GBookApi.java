@@ -11,7 +11,7 @@ import java.security.GeneralSecurityException;
 
 public class GBookApi {
 
-    private PublicCredentials publicCredentials;
+    private final PublicCredentials publicCredentials;
 
     public GBookApi(PublicCredentials publicCredentials) {
         this.publicCredentials = publicCredentials;

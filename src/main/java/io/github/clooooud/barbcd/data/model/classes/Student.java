@@ -7,10 +7,10 @@ import java.util.List;
 
 public class Student implements Saveable {
 
-    private int id;
+    private final int id;
     private String firstName;
     private String lastName;
-    private Class currentClass;
+    private final Class currentClass;
 
     public Student(int id, String firstName, String lastName, Class currentClass) {
         this.id = id;

@@ -4,7 +4,7 @@ public class RunnableWrapper implements Runnable {
 
     private Thread thread;
     private Runnable before;
-    private Runnable runnable;
+    private final Runnable runnable;
     private Runnable after;
 
     public RunnableWrapper(Runnable runnable) {

@@ -19,7 +19,7 @@ public class StageWrapper {
         return StageWrapper.class.getResource(url).toExternalForm();
     }
 
-    private Stage stage;
+    private final Stage stage;
     private RootScene scene;
 
     public StageWrapper(Stage stage) {

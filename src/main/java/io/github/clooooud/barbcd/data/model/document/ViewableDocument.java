@@ -6,7 +6,7 @@ import io.github.clooooud.barbcd.data.model.Library;
 public interface ViewableDocument {
 
     default String getSearchString(Library library) {
-        return String.join(" ", getAuthor(), getTitle(), getISBN(), getCategorie().getNom(), getEditor().getNom(), isAvailable(library) ? "Disponible" : "Indisponible");
+        return String.join(" ", getAuthor(), getTitle(), getISBN(), getCategorie().getNom(), getEditor().getName(), isAvailable(library) ? "Disponible" : "Indisponible");
     }
 
     String getISBN();

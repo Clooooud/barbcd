@@ -12,6 +12,7 @@ import io.github.clooooud.barbcd.gui.element.ButtonComponent;
 import io.github.clooooud.barbcd.gui.element.FieldComponent;
 import io.github.clooooud.barbcd.gui.element.FormBox;
 import io.github.clooooud.barbcd.util.AESUtil;
+import io.github.clooooud.barbcd.util.GuiUtil;
 import io.github.clooooud.barbcd.util.Sha256Util;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -42,10 +43,10 @@ public class SettingsScene extends RootAdminScene {
 
     public void consumeForm() {
         if (hasServiceAccountChanged) {
-            ButtonType buttonType = new Alert(
+            ButtonType buttonType = GuiUtil.wrapAlert(new Alert(
                     Alert.AlertType.CONFIRMATION,
                     "Voulez-vous vraiment mettre à jour le compte de service ? Si vous n'avez pas de sauvegarde de l'ancien compte de service, vous aurez sûrement des problèmes !"
-            ).showAndWait().orElse(null);
+            )).showAndWait().orElse(null);
 
             if (buttonType != null && buttonType.getButtonData().isDefaultButton()) {
                 File file = new File("pr_credentials.enc");
@@ -58,10 +59,10 @@ public class SettingsScene extends RootAdminScene {
         }
 
         if (hasApiKeyChanged) {
-            ButtonType buttonType = new Alert(
+            ButtonType buttonType = GuiUtil.wrapAlert(new Alert(
                     Alert.AlertType.CONFIRMATION,
                     "Voulez-vous vraiment mettre à jour la clé API ? Si vous n'avez pas de sauvegarde de l'ancienne clé, vous aurez sûrement des problèmes !"
-            ).showAndWait().orElse(null);
+            )).showAndWait().orElse(null);
 
             if (buttonType != null && buttonType.getButtonData().isDefaultButton()) {
                 PublicCredentials credentials = this.getApp().getCredentials();
@@ -131,7 +132,7 @@ public class SettingsScene extends RootAdminScene {
     }
 
     private void onResetButtonClicked() {
-        Optional<ButtonType> buttonType = new Alert(Alert.AlertType.CONFIRMATION, "Voulez-vous vraiment remettre à zéro la base ?").showAndWait();
+        Optional<ButtonType> buttonType = GuiUtil.wrapAlert(new Alert(Alert.AlertType.CONFIRMATION, "Voulez-vous vraiment remettre à zéro la base ?")).showAndWait();
 
         if (buttonType.isEmpty()) {
             return;
@@ -159,7 +160,7 @@ public class SettingsScene extends RootAdminScene {
                 library.addDocument(library);
 
                 this.getApp().getGSheetApi().save(library);
-                Platform.runLater(() -> new Alert(Alert.AlertType.INFORMATION, "La base a été remise à zéro.").show());
+                Platform.runLater(() -> GuiUtil.wrapAlert(new Alert(Alert.AlertType.INFORMATION, "La base a été remise à zéro.")).show());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             } finally {

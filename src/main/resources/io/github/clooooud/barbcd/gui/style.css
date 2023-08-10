@@ -127,6 +127,17 @@ Button {
 
 /*------------------*/
 
+/* Dialog pane */
+
+.dialog-pane .button {
+    -fx-background-color: -content-color;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+}
+
+/*------------------*/
+
 /* Form page */
 
 .box {
@@ -142,6 +153,7 @@ Button {
 .form-button {
     -fx-background-color: -content-color;
     -fx-text-fill: white;
+    -fx-font-weight: bold;
     -fx-background-radius: 8;
 }
 

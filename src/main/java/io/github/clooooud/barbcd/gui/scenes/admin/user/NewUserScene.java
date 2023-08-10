@@ -5,6 +5,7 @@ import io.github.clooooud.barbcd.data.api.tasks.SaveRunnable;
 import io.github.clooooud.barbcd.gui.element.FieldComponent;
 import io.github.clooooud.barbcd.gui.element.FormBox;
 import io.github.clooooud.barbcd.gui.scenes.admin.RootAdminScene;
+import io.github.clooooud.barbcd.util.GuiUtil;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.VBox;
@@ -36,7 +37,7 @@ public class NewUserScene extends RootAdminScene {
         String password = ((FieldComponent) formBox.getComponent("password")).getField().getText();
 
         if (name.isBlank() || password.isBlank()) {
-            new Alert(Alert.AlertType.ERROR, "Veuillez remplir tous les champs !").showAndWait();
+            GuiUtil.wrapAlert(new Alert(Alert.AlertType.ERROR, "Veuillez remplir tous les champs !")).showAndWait();
             return;
         }
 

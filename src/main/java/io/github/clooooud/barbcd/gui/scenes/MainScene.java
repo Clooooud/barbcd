@@ -3,6 +3,7 @@ package io.github.clooooud.barbcd.gui.scenes;
 import io.github.clooooud.barbcd.BarBCD;
 import io.github.clooooud.barbcd.data.SaveableType;
 import io.github.clooooud.barbcd.data.model.document.ViewableDocument;
+import io.github.clooooud.barbcd.util.GuiUtil;
 import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
@@ -38,11 +39,6 @@ public class MainScene extends RootScene {
 
     public MainScene(BarBCD app) {
         super(app);
-    }
-
-    public static boolean isNodeClicked(double clickX, double clickY, Region node) {
-        return (clickX >= (node.getLayoutX() + node.getTranslateX()) && clickX <= (node.getLayoutX() + node.getTranslateX()) + node.getWidth())
-                && (clickY >= (node.getLayoutY() + node.getTranslateY()) && clickY <= (node.getLayoutY() + node.getTranslateY()) + node.getHeight());
     }
 
     @Override
@@ -209,7 +205,7 @@ public class MainScene extends RootScene {
         searchBar.setOnMouseClicked(event -> searchField.requestFocus());
 
         contentBox.setOnMouseClicked(event -> {
-            if (isNodeClicked(event.getX(), event.getY(), searchBar)) {
+            if (GuiUtil.isNodeClicked(event.getX(), event.getY(), searchBar)) {
                 return;
             }
 

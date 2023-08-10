@@ -7,6 +7,7 @@ import io.github.clooooud.barbcd.data.api.tasks.SaveRunnable;
 import io.github.clooooud.barbcd.data.auth.AdminUser;
 import io.github.clooooud.barbcd.gui.element.SimpleFormBox;
 import io.github.clooooud.barbcd.util.AESUtil;
+import io.github.clooooud.barbcd.util.GuiUtil;
 import io.github.clooooud.barbcd.util.Sha256Util;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
@@ -91,7 +92,10 @@ public class StartScene extends RootScene {
                 SaveRunnable.create(this.getLibrary(), gSheetApi, password).run(false);
             } catch (Exception e) {
                 e.printStackTrace();
-                new Alert(Alert.AlertType.ERROR, "Une erreur s'est produite lors d'un appel à l'API de Google. Une des clés est mauvaise.").show();
+                GuiUtil.wrapAlert(new Alert(
+                        Alert.AlertType.ERROR,
+                                "Une erreur s'est produite lors d'un appel à l'API de Google. Une des clés est mauvaise."
+                        )).show();
             }
         }).then(gSheetApi::closeAdminMode).run(false);
 
@@ -99,7 +103,7 @@ public class StartScene extends RootScene {
             return;
         }
 
-        new Alert(Alert.AlertType.INFORMATION, "La création des bases de données a été réalisée").showAndWait();
+        GuiUtil.wrapAlert(new Alert(Alert.AlertType.INFORMATION, "La création des bases de données a été réalisée")).showAndWait();
         this.getApp().getStageWrapper().setContent(new MainScene(this.getApp()));
     }
 

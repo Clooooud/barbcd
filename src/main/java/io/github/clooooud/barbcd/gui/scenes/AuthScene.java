@@ -5,6 +5,7 @@ import io.github.clooooud.barbcd.data.auth.User;
 import io.github.clooooud.barbcd.gui.element.SimpleFormBox;
 import io.github.clooooud.barbcd.gui.scenes.admin.MainAdminScene;
 import io.github.clooooud.barbcd.util.AESUtil;
+import io.github.clooooud.barbcd.util.GuiUtil;
 import io.github.clooooud.barbcd.util.Sha256Util;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
@@ -61,7 +62,7 @@ public class AuthScene extends RootScene {
         User user = this.getLibrary().getUser(login);
 
         if (user == null) {
-            new Alert(Alert.AlertType.ERROR, "Cet utilisateur n'existe pas.").showAndWait();
+            GuiUtil.wrapAlert(new Alert(Alert.AlertType.ERROR, "Cet utilisateur n'existe pas.")).showAndWait();
             return;
         }
 
@@ -81,7 +82,7 @@ public class AuthScene extends RootScene {
         boolean goodPassword = adminPasswordHash.equals(hashToTest);
 
         if (!goodPassword) {
-            new Alert(Alert.AlertType.ERROR, "Le mot de passe est incorrect.").showAndWait();
+            GuiUtil.wrapAlert(new Alert(Alert.AlertType.ERROR, "Le mot de passe est incorrect.")).showAndWait();
             return;
         }
 

@@ -15,6 +15,10 @@ public class StageWrapper {
         return StageWrapper.class.getResourceAsStream(url);
     }
 
+    public static String getResourceUrl(String url) {
+        return StageWrapper.class.getResource(url).toExternalForm();
+    }
+
     private Stage stage;
     private RootScene scene;
 
@@ -39,7 +43,7 @@ public class StageWrapper {
 
         if (stage.getScene() == null) {
             stage.setScene(new Scene(new VBox()));
-            stage.getScene().getStylesheets().add(StageWrapper.class.getResource("style.css").toExternalForm());
+            stage.getScene().getStylesheets().add(getResourceUrl("style.css"));
         }
 
         VBox root = (VBox) stage.getScene().getRoot();

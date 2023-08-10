@@ -14,16 +14,18 @@ import javafx.scene.layout.VBox;
 public class NewEditorScene extends RootAdminScene {
 
     protected SimpleFormBox formBox;
+    protected String formName;
 
     public NewEditorScene(BarBCD app) {
         super(app);
+        this.formName = "Nouvel éditeur";
     }
 
     @Override
     public void initAdminContent(VBox vBox) {
         vBox.setAlignment(Pos.CENTER);
 
-        formBox = new SimpleFormBox.Builder("Nouvel éditeur")
+        formBox = new SimpleFormBox.Builder(formName)
                 .addField("Nom de l'éditeur")
                 .addButton("Sauvegarder", event -> this.consumeForm())
                 .addButton("Annuler", event -> this.getApp().getStageWrapper().setContent(new EditorsScene(this.getApp())))

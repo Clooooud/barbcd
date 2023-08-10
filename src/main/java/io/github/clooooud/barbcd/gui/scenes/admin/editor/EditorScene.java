@@ -15,6 +15,7 @@ public class EditorScene extends NewEditorScene {
     public EditorScene(BarBCD app, Editor editor) {
         super(app);
         this.editor = editor;
+        this.formName = "Éditeur - " + editor.getName();
     }
 
     @Override

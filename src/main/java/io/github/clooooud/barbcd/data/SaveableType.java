@@ -9,14 +9,14 @@ public enum SaveableType {
     MAGAZINE_SERIE("MagazineSeries", List.of("id", "title", "isbn", "editor id")),
     EDITOR("Editors", List.of("id", "nom")),
     USER("Users", List.of("id", "login", "password hash", "main password")),
-    BORROWING("Borrowings", List.of("id", "user id", "is magazine", "document id", "is finished")),
+    BORROWING("Borrowings", List.of("id", "student id", "is magazine", "document id", "is finished")),
     STUDENT("Students", List.of("id", "first name", "last name", "class id")),
     CLASS("Classes", List.of("id", "class name")),
     SETTINGS("Settings", List.of("id", "library name")),
     RESPONSIBILITY("Responsibilities", List.of("id", "user id", "class id"));
 
     public static List<SaveableType> getOrderedTypes() {
-        return List.of(SETTINGS, CATEGORIE, EDITOR, MAGAZINE_SERIE, MAGAZINE, OEUVRE, USER, BORROWING, STUDENT, CLASS, RESPONSIBILITY);
+        return List.of(SETTINGS, CATEGORIE, EDITOR, MAGAZINE_SERIE, MAGAZINE, OEUVRE, USER, BORROWING, CLASS, STUDENT, RESPONSIBILITY);
     }
 
     private final String sheetName;

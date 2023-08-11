@@ -1,65 +1,51 @@
 package io.github.clooooud.barbcd.gui.scenes.admin.editor;
 
 import io.github.clooooud.barbcd.BarBCD;
+import io.github.clooooud.barbcd.data.Saveable;
 import io.github.clooooud.barbcd.data.SaveableType;
 import io.github.clooooud.barbcd.data.api.tasks.SaveRunnable;
-import io.github.clooooud.barbcd.data.auth.User;
-import io.github.clooooud.barbcd.data.model.classes.Class;
 import io.github.clooooud.barbcd.data.model.document.Editor;
 import io.github.clooooud.barbcd.gui.StageWrapper;
-import io.github.clooooud.barbcd.gui.element.ScrollBox;
+import io.github.clooooud.barbcd.gui.scenes.admin.ListAdminScene;
 import io.github.clooooud.barbcd.gui.scenes.admin.RootAdminScene;
-import io.github.clooooud.barbcd.gui.scenes.admin.user.NewUserScene;
-import io.github.clooooud.barbcd.gui.scenes.admin.user.UserScene;
-import io.github.clooooud.barbcd.gui.scenes.admin.user.UsersScene;
 import io.github.clooooud.barbcd.util.GuiUtil;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
-public class EditorsScene extends RootAdminScene {
+public class EditorsScene extends ListAdminScene<Editor> {
 
     public EditorsScene(BarBCD app) {
         super(app);
     }
 
-    private final Map<CheckBox, Editor> checkBoxEditorMap = new HashMap<>();
-    private final Map<Editor, HBox> userList = new HashMap<>();
-
-    private VBox contentBox;
-    private TextField filter;
-    private HBox addButtonBox;
-    private Button deleteButton;
-
-    private List<Editor> getSelectedEditors() {
-        return checkBoxEditorMap.entrySet().stream()
-                .filter(entry -> entry.getKey().isSelected())
-                .map(Map.Entry::getValue)
-                .toList();
+    @Override
+    protected List<Editor> getObjects() {
+        return this.getLibrary().getDocuments(SaveableType.EDITOR).stream()
+                .map(document -> (Editor) document)
+                .sorted().toList();
     }
 
-    private void deleteSelectedEditors() {
-        // TODO: gérer supprimer sans toucher au doc / supprimer aussi les doc
+    @Override
+    protected void massDelete() {
         GuiUtil.wrapAlert(new Alert(
                 Alert.AlertType.CONFIRMATION,
-                "Voulez-vous vraiment supprimer ces éditeurs ?"
+                "Voulez-vous vraiment supprimer ces éditeurs ? Supprimer des éditeurs en masse supprime aussi leurs documents associés."
         )).showAndWait().ifPresent(buttonType -> {
             if (buttonType.getButtonData().isDefaultButton()) {
-                getSelectedEditors().forEach(editor -> {
+                getSelectedObjects().forEach(editor -> {
                     this.getLibrary().removeDocument(editor);
-                    // gérer les documents liés
+                    editor.getEditedDocuments(this.getLibrary()).forEach(document -> this.getLibrary().removeDocument((Saveable) document));
                 });
                 SaveRunnable.create(this.getLibrary(), this.getApp().getGSheetApi(), this.getLibrary().getAdminPassword()).run();
                 this.getApp().getStageWrapper().setContent(new EditorsScene(this.getApp()));
@@ -68,123 +54,36 @@ public class EditorsScene extends RootAdminScene {
     }
 
     @Override
-    public void initAdminContent(VBox vBox) {
-        vBox.getStyleClass().add("admin-content");
+    protected void deleteObject(Editor editor) {
+        Optional<ButtonType> buttonType;
 
-        Label label = new Label("Éditeurs");
-        label.getStyleClass().add("admin-scene-title");
-
-        vBox.getChildren().add(label);
-
-        HBox utilBar = new HBox();
-        utilBar.setSpacing(5);
-        utilBar.setAlignment(Pos.CENTER);
-
-        Label filterLabel = new Label("Filtre");
-        filterLabel.setFont(Font.font(null, FontWeight.BOLD, 14));
-
-        filter = new TextField();
-        filter.setFocusTraversable(false);
-        filter.setPromptText("Rechercher un éditeur");
-        filter.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (oldValue.strip().equals(newValue.strip())) {
-                return;
-            }
-
-            updateContent();
-        });
-
-        deleteButton = new Button();
-        ImageView imageView = new ImageView(new Image(StageWrapper.getResource("assets/trash-2.png")));
-        imageView.setFitHeight(20);
-        imageView.setFitWidth(20);
-        deleteButton.setGraphic(imageView);
-        deleteButton.setCursor(Cursor.HAND);
-        deleteButton.setOnAction(event -> deleteSelectedEditors());
-        deleteButton.setDisable(true);
-
-        utilBar.getChildren().addAll(filterLabel, filter, deleteButton);
-        vBox.getChildren().add(utilBar);
-
-        contentBox = createContent();
-        ScrollBox scrollBox = new ScrollBox(vBox, contentBox, true);
-        scrollBox.setMaxWidth(800);
-        vBox.getChildren().add(scrollBox);
-    }
-
-    private void updateContent() {
-        if (filter.getText().isBlank()) {
-            contentBox.getChildren().setAll(userList.entrySet().stream().sorted(Map.Entry.comparingByKey()).map(Map.Entry::getValue).toList());
+        if (!editor.getEditedDocuments(this.getLibrary()).isEmpty()) {
+            buttonType = GuiUtil.wrapAlert(new Alert(
+                    Alert.AlertType.CONFIRMATION,
+                    "Cet éditeur est lié à des documents. Voulez-vous supprimer les documents qui sont liés ou annuler ?"
+            )).showAndWait();
         } else {
-            contentBox.getChildren().setAll(userList.entrySet().stream().filter(entry -> {
-                Editor user = entry.getKey();
-                return user.getName().contains(filter.getText());
-            }).sorted(Map.Entry.comparingByKey()).map(Map.Entry::getValue).toList());
-        }
-        contentBox.getChildren().add(addButtonBox);
-    }
-
-    private VBox createContent() {
-        VBox vBox = new VBox();
-        vBox.setSpacing(10);
-
-        List<Editor> list = this.getLibrary().getDocuments(SaveableType.EDITOR).stream()
-                .map(document -> (Editor) document)
-                .sorted().toList();
-
-        for (int i = 0; i < list.size(); i++) {
-            Editor editor = list.get(i);
-
-            HBox editorLine = new HBox();
-            editorLine.setAlignment(Pos.CENTER_LEFT);
-            editorLine.setSpacing(10);
-            editorLine.setPadding(new Insets(0, 0, 0, 10));
-
-            CheckBox checkBox = new CheckBox();
-            checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                deleteButton.setDisable(getSelectedEditors().isEmpty());
-            });
-            checkBoxEditorMap.put(checkBox, editor);
-
-            HBox userBox = createEditorBox(editor);
-
-            editorLine.getChildren().addAll(checkBox, userBox);
-            HBox.setHgrow(userBox, Priority.ALWAYS);
-
-            vBox.getChildren().add(editorLine);
-            userList.put(editor, editorLine);
+            buttonType = GuiUtil.wrapAlert(new Alert(
+                    Alert.AlertType.CONFIRMATION,
+                    "Voulez-vous vraiment supprimer cet éditeur ?"
+            )).showAndWait();
         }
 
-        addButtonBox = new HBox();
-        addButtonBox.setAlignment(Pos.CENTER);
+        if (buttonType.isEmpty()) {
+            return;
+        }
 
-        ImageView addButton = new ImageView(new Image(StageWrapper.getResource("assets/add.png")));
-        addButton.setFitWidth(50);
-        addButton.setFitHeight(50);
-        addButton.setCursor(Cursor.HAND);
-        addButton.setOnMouseClicked(event -> this.getApp().getStageWrapper().setContent(new NewEditorScene(this.getApp())));
+        if (buttonType.get().getButtonData().isCancelButton()) {
+            return;
+        }
 
-        addButtonBox.getChildren().add(addButton);
-        vBox.getChildren().add(addButtonBox);
-
-        return vBox;
+        editor.getEditedDocuments(this.getLibrary()).forEach(document -> this.getLibrary().removeDocument((Saveable) document));
+        this.getLibrary().removeDocument(editor);
+        SaveRunnable.create(this.getLibrary(), this.getApp().getGSheetApi(), this.getLibrary().getAdminPassword()).run();
+        this.getApp().getStageWrapper().setContent(new EditorsScene(this.getApp()));
     }
 
-    private void deleteEditor(Editor editor) {
-        GuiUtil.wrapAlert(new Alert(
-                Alert.AlertType.CONFIRMATION,
-                "Voulez-vous vraiment supprimer cet utilisateur ?"
-        )).showAndWait().ifPresent(buttonType -> {
-            if (buttonType.getButtonData().isDefaultButton()) {
-                this.getLibrary().removeDocument(editor);
-                // Gérer les documents liés
-                SaveRunnable.create(this.getLibrary(), this.getApp().getGSheetApi(), this.getLibrary().getAdminPassword()).run();
-                this.getApp().getStageWrapper().setContent(new EditorsScene(this.getApp()));
-            }
-        });
-    }
-
-    private HBox createEditorBox(Editor editor) {
+    protected HBox createObjectBox(Editor editor) {
         HBox hBox = new HBox();
         hBox.getStyleClass().add("list-elem");
 
@@ -206,7 +105,7 @@ public class EditorsScene extends RootAdminScene {
         HBox deleteButtonBox = new HBox();
         deleteButtonBox.setAlignment(Pos.CENTER);
         deleteButtonBox.setCursor(Cursor.HAND);
-        deleteButtonBox.setOnMouseClicked(event -> deleteEditor(editor));
+        deleteButtonBox.setOnMouseClicked(event -> deleteObject(editor));
 
         ImageView deleteButton = new ImageView(new Image(StageWrapper.getResource("assets/x.png")));
         deleteButton.setFitWidth(25);
@@ -221,10 +120,35 @@ public class EditorsScene extends RootAdminScene {
                 return;
             }
 
-            this.getApp().getStageWrapper().setContent(new EditorScene(this.getApp(), editor));
+            this.getApp().getStageWrapper().setContent(getObjectScene(editor));
         });
 
         return hBox;
+    }
+
+    @Override
+    protected String getTitle() {
+        return "Éditeurs";
+    }
+
+    @Override
+    protected String getFilterPrompt() {
+        return "Rechercher un éditeur";
+    }
+
+    @Override
+    protected String getFilterString(Editor object) {
+        return object.getName();
+    }
+
+    @Override
+    protected RootAdminScene getNewObjectScene() {
+        return new NewEditorScene(this.getApp());
+    }
+
+    @Override
+    protected RootAdminScene getObjectScene(Editor object) {
+        return new EditorScene(this.getApp(), object);
     }
 
     private String getEditorString(Editor editor) {

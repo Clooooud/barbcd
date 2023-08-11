@@ -2,6 +2,7 @@ package io.github.clooooud.barbcd.gui.scenes.admin;
 
 import io.github.clooooud.barbcd.BarBCD;
 import io.github.clooooud.barbcd.gui.scenes.admin.editor.EditorsScene;
+import io.github.clooooud.barbcd.gui.scenes.admin.student.ClassesScene;
 import io.github.clooooud.barbcd.gui.scenes.admin.user.UsersScene;
 
 import java.util.function.Function;
@@ -14,7 +15,7 @@ public enum AdminScene {
     MAGAZINE_PAGE("Périodiques", true, MainAdminScene::new, "book-open.png"), // book open
     BORROWING_PAGE("Emprunts", false, MainAdminScene::new, "shopping-bag.png"), // shopping bag
     USER_PAGE("Utilisateurs", true, UsersScene::new, "users.png"), // users
-    CLASSES_PAGE("Classes", false, MainAdminScene::new, "list.png"), // list
+    CLASSES_PAGE("Classes", false, ClassesScene::new, "list.png"), // list
     SETTING_PAGE("Paramètres", true, SettingsScene::new, "settings.png"); // setting
 
     private final String sceneName;

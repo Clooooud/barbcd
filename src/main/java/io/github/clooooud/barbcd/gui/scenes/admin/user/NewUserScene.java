@@ -22,6 +22,7 @@ public class NewUserScene extends RootAdminScene {
         vBox.setAlignment(Pos.CENTER);
 
         formBox = new SimpleFormBox.Builder("Nouvel utilisateur")
+                .setDesc("Après la création de l'utilisateur, vous pourrez le modifier dans la liste des utilisateurs et ainsi configurer la liste des classes dont il a l'accès.")
                 .addField("Nom d'utilisateur")
                 .addField("Mot de passe", true)
                 .addButton("Sauvegarder", event -> consumeForm())
@@ -47,6 +48,6 @@ public class NewUserScene extends RootAdminScene {
 
         this.getLibrary().createUser(name, password, this.getLibrary().getAdminPassword());
         SaveRunnable.create(this.getLibrary(), this.getApp().getGSheetApi(), this.getLibrary().getAdminPassword()).run();
-        this.getApp().getStageWrapper().setContent(new UsersScene(this.getApp()));
+        this.getApp().getStageWrapper().setContent(new UserScene(this.getApp(), this.getLibrary().getUser(name)));
     }
 }

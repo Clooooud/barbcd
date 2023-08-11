@@ -10,21 +10,19 @@ import java.util.List;
 public class Borrowing implements Saveable {
 
     private final int id;
-    private final User user;
     private final ViewableDocument borrowedDocument;
     private final Student student;
     private boolean finished;
 
-    public Borrowing(int id, User user, ViewableDocument borrowedDocument, Student student, boolean finished) {
+    public Borrowing(int id, ViewableDocument borrowedDocument, Student student, boolean finished) {
         this.id = id;
-        this.user = user;
         this.borrowedDocument = borrowedDocument;
         this.student = student;
         this.finished = finished;
     }
 
-    public Borrowing(int id, User user, ViewableDocument borrowedDocument, Student student) {
-        this(id, user, borrowedDocument, student, false);
+    public Borrowing(int id, ViewableDocument borrowedDocument, Student student) {
+        this(id, borrowedDocument, student, false);
     }
 
     public boolean isFinished() {
@@ -35,8 +33,8 @@ public class Borrowing implements Saveable {
         this.finished = finished;
     }
 
-    public User getUser() {
-        return user;
+    public Student getStudent() {
+        return student;
     }
 
     public ViewableDocument getBorrowedDocument() {
@@ -57,10 +55,9 @@ public class Borrowing implements Saveable {
     public List<Object> getValues() {
         return List.of(
                 id,
-                user.getId(),
+                this.student.getId(),
                 this.borrowedDocument.getCategorie().equals(Categorie.MAGAZINE),
                 ((Saveable) this.borrowedDocument).getId(),
-                this.student.getId(),
                 isFinished()
         );
     }

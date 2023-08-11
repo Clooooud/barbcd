@@ -5,6 +5,7 @@ import io.github.clooooud.barbcd.data.Saveable;
 import io.github.clooooud.barbcd.data.SaveableType;
 import io.github.clooooud.barbcd.data.api.GSheetApi;
 import io.github.clooooud.barbcd.data.auth.User;
+import io.github.clooooud.barbcd.data.model.classes.Class;
 import io.github.clooooud.barbcd.data.model.classes.Student;
 import io.github.clooooud.barbcd.data.model.document.Borrowing;
 import io.github.clooooud.barbcd.data.model.document.Editor;
@@ -104,10 +105,9 @@ public class Library implements Saveable {
         addDocument(editor);
     }
 
-    public void createBorrowing(User user, ViewableDocument viewableDocument, Student student) {
+    public void createBorrowing(ViewableDocument viewableDocument, Student student) {
         Borrowing borrowing = new Borrowing(
                 getNextDocumentId(SaveableType.BORROWING),
-                user,
                 viewableDocument,
                 student
         );
@@ -173,5 +173,25 @@ public class Library implements Saveable {
     @Override
     public List<Object> getValues() {
         return List.of(getId(), this.name);
+    }
+
+    public Class createClass(String className) {
+        Class newClass = new Class(
+                getNextDocumentId(SaveableType.CLASS),
+                className
+        );
+
+        addDocument(newClass);
+        return newClass;
+    }
+
+    public void createStudent(String firstName, String lastName, Class studentClass) {
+        Student student = new Student(
+                getNextDocumentId(SaveableType.STUDENT),
+                firstName,
+                lastName,
+                studentClass
+        );
+        addDocument(student);
     }
 }

@@ -244,15 +244,13 @@ public class GSheetApi {
                 library.addDocument(user);
             }
             case BORROWING -> {
-                User user = (User) library.getDocumentById(SaveableType.USER, Integer.parseInt(values.get(1)));
+                Student student = (Student) library.getDocumentById(SaveableType.STUDENT, Integer.parseInt(values.get(1)));
                 boolean isMagazine = Boolean.parseBoolean(values.get(2));
                 SaveableType documentType = isMagazine ? SaveableType.MAGAZINE : SaveableType.OEUVRE;
                 ViewableDocument document = (ViewableDocument) library.getDocumentById(documentType, Integer.parseInt(values.get(3)));
-                Student student = (Student) library.getDocumentById(SaveableType.USER, Integer.parseInt(values.get(4)));
 
                 Borrowing borrowing = new Borrowing(
                         id,
-                        user,
                         document,
                         student,
                         Boolean.parseBoolean(values.get(5))

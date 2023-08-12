@@ -2,16 +2,14 @@ package io.github.clooooud.barbcd.gui.scenes.admin;
 
 import io.github.clooooud.barbcd.BarBCD;
 import io.github.clooooud.barbcd.data.Saveable;
+import io.github.clooooud.barbcd.data.api.tasks.SaveRunnable;
 import io.github.clooooud.barbcd.gui.StageWrapper;
 import io.github.clooooud.barbcd.gui.element.ScrollBox;
 import io.github.clooooud.barbcd.util.GuiUtil;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -38,6 +36,36 @@ public abstract class ListAdminScene<T extends Saveable> extends RootAdminScene 
         super(app);
     }
 
+    protected abstract List<T> getObjects();
+
+    protected abstract void delete(T object);
+
+    protected abstract String getTitle();
+
+    protected String getFilterPrompt() {
+        return "Rechercher";
+    }
+
+    protected abstract String getFilterString(T object);
+
+    protected abstract RootAdminScene getRefreshedScene();
+
+    protected abstract RootAdminScene getNewObjectScene();
+
+    protected abstract RootAdminScene getObjectScene(T object);
+
+    protected abstract String getListObjectName(T object);
+
+    protected abstract String getListObjectDesc(T object);
+
+    protected boolean canDeleteObject(T object) {
+        return isAdmin();
+    }
+
+    protected abstract String getDeleteObjectMessage();
+
+    protected abstract String getDeleteObjectsMessage();
+
     protected List<T> getSelectedObjects() {
         return checkedObjects.entrySet().stream()
                 .filter(entry -> entry.getKey().isSelected())
@@ -49,27 +77,31 @@ public abstract class ListAdminScene<T extends Saveable> extends RootAdminScene 
         return this.getLibrary().getUser().isAdmin();
     }
 
-    protected abstract List<T> getObjects();
+    private void deleteObject(T object) {
+        GuiUtil.wrapAlert(new Alert(
+                Alert.AlertType.CONFIRMATION,
+                getDeleteObjectMessage()
+        )).showAndWait().ifPresent(buttonType -> {
+            if (buttonType.getButtonData().isDefaultButton()) {
+                delete(object);
+                SaveRunnable.create(this.getLibrary(), this.getApp().getGSheetApi(), this.getLibrary().getAdminPassword()).run();
+                this.getApp().getStageWrapper().setContent(getRefreshedScene());
+            }
+        });
+    }
 
-    protected abstract void massDelete();
-
-    protected abstract void deleteObject(T object);
-
-    protected abstract String getTitle();
-
-    protected abstract String getFilterPrompt();
-
-    protected abstract String getFilterString(T object);
-
-    protected abstract RootAdminScene getNewObjectScene();
-
-    protected abstract RootAdminScene getObjectScene(T object);
-
-    protected abstract String getListObjectName(T object);
-
-    protected abstract String getListObjectDesc(T object);
-
-    protected abstract boolean canDeleteObject(T object);
+    private void massDeleteObjects() {
+        GuiUtil.wrapAlert(new Alert(
+                Alert.AlertType.CONFIRMATION,
+                getDeleteObjectsMessage()
+        )).showAndWait().ifPresent(buttonType -> {
+            if (buttonType.getButtonData().isDefaultButton()) {
+                getSelectedObjects().forEach(this::delete);
+                SaveRunnable.create(this.getLibrary(), this.getApp().getGSheetApi(), this.getLibrary().getAdminPassword()).run();
+                this.getApp().getStageWrapper().setContent(getRefreshedScene());
+            }
+        });
+    }
 
     @Override
     public void initAdminContent(VBox vBox) {
@@ -104,7 +136,7 @@ public abstract class ListAdminScene<T extends Saveable> extends RootAdminScene 
         imageView.setFitWidth(20);
         deleteButton.setGraphic(imageView);
         deleteButton.setCursor(Cursor.HAND);
-        deleteButton.setOnAction(event -> massDelete());
+        deleteButton.setOnAction(event -> massDeleteObjects());
         deleteButton.setDisable(true);
 
         utilBar.getChildren().addAll(filterLabel, filter, deleteButton);

@@ -1,13 +1,10 @@
 package io.github.clooooud.barbcd.gui.scenes.admin.user;
 
 import io.github.clooooud.barbcd.BarBCD;
-import io.github.clooooud.barbcd.data.api.tasks.SaveRunnable;
 import io.github.clooooud.barbcd.data.auth.User;
 import io.github.clooooud.barbcd.data.model.classes.Class;
 import io.github.clooooud.barbcd.gui.scenes.admin.ListAdminScene;
 import io.github.clooooud.barbcd.gui.scenes.admin.RootAdminScene;
-import io.github.clooooud.barbcd.util.GuiUtil;
-import javafx.scene.control.Alert;
 
 import java.util.List;
 
@@ -23,35 +20,9 @@ public class UsersScene extends ListAdminScene<User> {
                 .sorted().toList();
     }
 
-    @Override
-    protected void massDelete() {
-        GuiUtil.wrapAlert(new Alert(
-                Alert.AlertType.CONFIRMATION,
-                "Voulez-vous vraiment supprimer ces utilisateurs ?"
-        )).showAndWait().ifPresent(buttonType -> {
-            if (buttonType.getButtonData().isDefaultButton()) {
-                getSelectedObjects().forEach(user -> {
-                    this.getLibrary().removeDocument(user);
-                    user.getResponsibilities(this.getLibrary()).forEach(responsibility -> this.getLibrary().removeDocument(responsibility));
-                });
-                SaveRunnable.create(this.getLibrary(), this.getApp().getGSheetApi(), this.getLibrary().getAdminPassword()).run();
-                this.getApp().getStageWrapper().setContent(new UsersScene(this.getApp()));
-            }
-        });
-    }
-
-    protected void deleteObject(User user) {
-        GuiUtil.wrapAlert(new Alert(
-                Alert.AlertType.CONFIRMATION,
-                "Voulez-vous vraiment supprimer cet utilisateur ?"
-        )).showAndWait().ifPresent(buttonType -> {
-            if (buttonType.getButtonData().isDefaultButton()) {
-                this.getLibrary().removeDocument(user);
-                user.getResponsibilities(this.getLibrary()).forEach(responsibility -> this.getLibrary().removeDocument(responsibility));
-                SaveRunnable.create(this.getLibrary(), this.getApp().getGSheetApi(), this.getLibrary().getAdminPassword()).run();
-                this.getApp().getStageWrapper().setContent(new UsersScene(this.getApp()));
-            }
-        });
+    protected void delete(User user) {
+        this.getLibrary().removeDocument(user);
+        user.getResponsibilities(this.getLibrary()).forEach(responsibility -> this.getLibrary().removeDocument(responsibility));
     }
 
     @Override
@@ -67,6 +38,11 @@ public class UsersScene extends ListAdminScene<User> {
     @Override
     protected String getFilterString(User object) {
         return object.getLogin();
+    }
+
+    @Override
+    protected RootAdminScene getRefreshedScene() {
+        return new UsersScene(this.getApp());
     }
 
     @Override
@@ -86,7 +62,17 @@ public class UsersScene extends ListAdminScene<User> {
 
     @Override
     protected boolean canDeleteObject(User object) {
-        return !object.isAdmin();
+        return super.canDeleteObject(object) && !object.isAdmin();
+    }
+
+    @Override
+    protected String getDeleteObjectMessage() {
+        return "Voulez-vous vraiment supprimer cet utilisateur ?";
+    }
+
+    @Override
+    protected String getDeleteObjectsMessage() {
+        return "Voulez-vous vraiment supprimer ces utilisateurs ?";
     }
 
     protected String getListObjectDesc(User object) {

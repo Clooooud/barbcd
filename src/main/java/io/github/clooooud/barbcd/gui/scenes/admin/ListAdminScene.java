@@ -2,9 +2,9 @@ package io.github.clooooud.barbcd.gui.scenes.admin;
 
 import io.github.clooooud.barbcd.BarBCD;
 import io.github.clooooud.barbcd.data.Saveable;
-import io.github.clooooud.barbcd.data.auth.User;
 import io.github.clooooud.barbcd.gui.StageWrapper;
 import io.github.clooooud.barbcd.gui.element.ScrollBox;
+import io.github.clooooud.barbcd.util.GuiUtil;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -55,8 +55,6 @@ public abstract class ListAdminScene<T extends Saveable> extends RootAdminScene 
 
     protected abstract void deleteObject(T object);
 
-    protected abstract HBox createObjectBox(T object);
-
     protected abstract String getTitle();
 
     protected abstract String getFilterPrompt();
@@ -66,6 +64,12 @@ public abstract class ListAdminScene<T extends Saveable> extends RootAdminScene 
     protected abstract RootAdminScene getNewObjectScene();
 
     protected abstract RootAdminScene getObjectScene(T object);
+
+    protected abstract String getListObjectName(T object);
+
+    protected abstract String getListObjectDesc(T object);
+
+    protected abstract boolean canDeleteObject(T object);
 
     @Override
     public void initAdminContent(VBox vBox) {
@@ -130,30 +134,25 @@ public abstract class ListAdminScene<T extends Saveable> extends RootAdminScene 
 
         List<T> list = this.getObjects();
 
-        for (int i = 0; i < list.size(); i++) {
-            T object = list.get(i);
-
+        for (T object : list) {
             HBox objectLine = new HBox();
             objectLine.setAlignment(Pos.CENTER_LEFT);
             objectLine.setSpacing(10);
             objectLine.setPadding(new Insets(0, 0, 0, 10));
 
             CheckBox checkBox = new CheckBox();
-            checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                deleteButton.setDisable(getSelectedObjects().isEmpty());
-            });
+            checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> deleteButton.setDisable(getSelectedObjects().isEmpty()));
             checkedObjects.put(checkBox, object);
+            objectLine.getChildren().add(checkBox);
+
+            if (!canDeleteObject(object)) {
+                checkBox.setVisible(false);
+                checkBox.setDisable(true);
+            }
 
             HBox objectBox = createObjectBox(object);
 
-            if (object instanceof User) {
-                if (((User) object).isAdmin()) {
-                    checkBox.setDisable(true);
-                    checkBox.setVisible(false);
-                }
-            }
-
-            objectLine.getChildren().addAll(checkBox, objectBox);
+            objectLine.getChildren().add(objectBox);
             HBox.setHgrow(objectBox, Priority.ALWAYS);
 
             vBox.getChildren().add(objectLine);
@@ -178,5 +177,53 @@ public abstract class ListAdminScene<T extends Saveable> extends RootAdminScene 
         }
 
         return vBox;
+    }
+
+    protected HBox createObjectBox(T object) {
+        HBox hBox = new HBox();
+        hBox.getStyleClass().add("list-elem");
+
+        VBox vBox = new VBox();
+        vBox.setPrefHeight(50);
+        vBox.setMinHeight(50);
+        vBox.setMaxHeight(50);
+
+        Label nameLabel = new Label(getListObjectName(object));
+        Label classLabel = new Label(getListObjectDesc(object));
+
+        nameLabel.getStyleClass().add("list-elem-title");
+        classLabel.getStyleClass().add("list-elem-content");
+
+        vBox.getChildren().addAll(nameLabel, classLabel);
+        hBox.getChildren().add(vBox);
+        HBox.setHgrow(vBox, Priority.ALWAYS);
+
+        if (!canDeleteObject(object)) {
+            hBox.setOnMouseClicked(event -> this.getApp().getStageWrapper().setContent(getObjectScene(object)));
+            return hBox;
+        }
+
+        HBox deleteButtonBox = new HBox();
+        deleteButtonBox.setAlignment(Pos.CENTER);
+        deleteButtonBox.setCursor(Cursor.HAND);
+        deleteButtonBox.setOnMouseClicked(event -> deleteObject(object));
+
+        ImageView deleteButton = new ImageView(new Image(StageWrapper.getResource("assets/x.png")));
+        deleteButton.setFitWidth(25);
+        deleteButton.setFitHeight(25);
+
+        deleteButtonBox.getChildren().add(deleteButton);
+
+        hBox.getChildren().add(deleteButtonBox);
+
+        hBox.setOnMouseClicked(event -> {
+            if (GuiUtil.isNodeClicked(event.getX(), event.getY(), deleteButtonBox)) {
+                return;
+            }
+
+            this.getApp().getStageWrapper().setContent(getObjectScene(object));
+        });
+
+        return hBox;
     }
 }

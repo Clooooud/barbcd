@@ -24,13 +24,12 @@ public interface ViewableDocument {
     int getQuantity();
 
     default boolean isAvailable(Library library) {
-        return getQuantity() - getNumberOfActiveBorrowings(library) > 0;
+        return getQuantity() - getNumberOfBorrowings(library) > 0;
     }
 
-    private int getNumberOfActiveBorrowings(Library library) {
+    private int getNumberOfBorrowings(Library library) {
         return (int) library.getDocuments(SaveableType.BORROWING).stream()
                 .map(saveable -> (Borrowing) saveable)
-                .filter(borrowing -> !borrowing.isFinished())
                 .filter(borrowing -> borrowing.getBorrowedDocument().equals(this))
                 .count();
     }

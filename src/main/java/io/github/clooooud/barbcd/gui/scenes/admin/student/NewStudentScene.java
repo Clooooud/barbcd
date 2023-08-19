@@ -46,7 +46,7 @@ public class NewStudentScene extends RootAdminScene {
             return;
         }
 
-        this.getLibrary().createStudent(lastName, firstName, classObject);
+        this.getLibrary().createStudent(firstName, lastName, classObject);
         SaveRunnable.create(this.getLibrary(), this.getApp().getGSheetApi(), this.getLibrary().getAdminPassword()).run();
         this.getApp().getStageWrapper().setContent(new ClassScene(this.getApp(), classObject));
     }

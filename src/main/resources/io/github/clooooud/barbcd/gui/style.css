@@ -176,6 +176,10 @@ Button {
     -fx-text-fill: black;
 }
 
+.text-component {
+    -fx-font: normal normal 14 'Roboto';
+}
+
 .form-component-description {
     -fx-font: normal normal 12 'Roboto';
     -fx-text-fill: black;

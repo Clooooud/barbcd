@@ -252,8 +252,7 @@ public class GSheetApi {
                 Borrowing borrowing = new Borrowing(
                         id,
                         document,
-                        student,
-                        Boolean.parseBoolean(values.get(5))
+                        student
                 );
                 library.addDocument(borrowing);
             }

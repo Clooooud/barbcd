@@ -51,7 +51,7 @@ public class Magazine implements ViewableDocument, Saveable {
 
     @Override
     public String getAuthor() {
-        return "";
+        return getEditor().getName();
     }
 
     @Override

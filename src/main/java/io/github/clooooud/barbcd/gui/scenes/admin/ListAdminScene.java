@@ -29,7 +29,7 @@ public abstract class ListAdminScene<T extends Saveable> extends RootAdminScene 
 
     private VBox contentBox;
     private TextField filter;
-    protected HBox addButtonBox;
+    private HBox addButtonBox;
     private Button deleteButton;
 
     public ListAdminScene(BarBCD app) {
@@ -71,6 +71,10 @@ public abstract class ListAdminScene<T extends Saveable> extends RootAdminScene 
                 .filter(entry -> entry.getKey().isSelected())
                 .map(Map.Entry::getValue)
                 .toList();
+    }
+
+    protected TextField getFilter() {
+        return filter;
     }
 
     private boolean isAdmin() {
@@ -130,16 +134,19 @@ public abstract class ListAdminScene<T extends Saveable> extends RootAdminScene 
             updateContent();
         });
 
-        deleteButton = new Button();
-        ImageView imageView = new ImageView(new Image(StageWrapper.getResource("assets/trash-2.png")));
-        imageView.setFitHeight(20);
-        imageView.setFitWidth(20);
-        deleteButton.setGraphic(imageView);
-        deleteButton.setCursor(Cursor.HAND);
-        deleteButton.setOnAction(event -> massDeleteObjects());
-        deleteButton.setDisable(true);
+        utilBar.getChildren().addAll(filterLabel, filter);
 
-        utilBar.getChildren().addAll(filterLabel, filter, deleteButton);
+        if (isAdmin()) {
+            deleteButton = new Button();
+            ImageView imageView = new ImageView(new Image(StageWrapper.getResource("assets/trash-2.png")));
+            imageView.setFitHeight(20);
+            imageView.setFitWidth(20);
+            deleteButton.setGraphic(imageView);
+            deleteButton.setCursor(Cursor.HAND);
+            deleteButton.setOnAction(event -> massDeleteObjects());
+            deleteButton.setDisable(true);
+        }
+
         vBox.getChildren().add(utilBar);
 
         contentBox = createContent();
@@ -175,7 +182,10 @@ public abstract class ListAdminScene<T extends Saveable> extends RootAdminScene 
             CheckBox checkBox = new CheckBox();
             checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> deleteButton.setDisable(getSelectedObjects().isEmpty()));
             checkedObjects.put(checkBox, object);
-            objectLine.getChildren().add(checkBox);
+
+            if (isAdmin()) {
+                objectLine.getChildren().add(checkBox);
+            }
 
             if (!canDeleteObject(object)) {
                 checkBox.setVisible(false);
@@ -216,6 +226,7 @@ public abstract class ListAdminScene<T extends Saveable> extends RootAdminScene 
         hBox.getStyleClass().add("list-elem");
 
         VBox vBox = new VBox();
+        vBox.setAlignment(Pos.CENTER_LEFT);
         vBox.setPrefHeight(50);
         vBox.setMinHeight(50);
         vBox.setMaxHeight(50);

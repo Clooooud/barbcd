@@ -12,25 +12,11 @@ public class Borrowing implements Saveable {
     private final int id;
     private final ViewableDocument borrowedDocument;
     private final Student student;
-    private boolean finished;
 
-    public Borrowing(int id, ViewableDocument borrowedDocument, Student student, boolean finished) {
+    public Borrowing(int id, ViewableDocument borrowedDocument, Student student) {
         this.id = id;
         this.borrowedDocument = borrowedDocument;
         this.student = student;
-        this.finished = finished;
-    }
-
-    public Borrowing(int id, ViewableDocument borrowedDocument, Student student) {
-        this(id, borrowedDocument, student, false);
-    }
-
-    public boolean isFinished() {
-        return finished;
-    }
-
-    public void setFinished(boolean finished) {
-        this.finished = finished;
     }
 
     public Student getStudent() {
@@ -57,8 +43,7 @@ public class Borrowing implements Saveable {
                 id,
                 this.student.getId(),
                 this.borrowedDocument.getCategorie().equals(Categorie.MAGAZINE),
-                ((Saveable) this.borrowedDocument).getId(),
-                isFinished()
+                ((Saveable) this.borrowedDocument).getId()
         );
     }
 }

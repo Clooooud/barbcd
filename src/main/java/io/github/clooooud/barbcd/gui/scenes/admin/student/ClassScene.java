@@ -7,6 +7,7 @@ import io.github.clooooud.barbcd.data.model.classes.Student;
 import io.github.clooooud.barbcd.data.model.document.Borrowing;
 import io.github.clooooud.barbcd.gui.scenes.admin.ListAdminScene;
 import io.github.clooooud.barbcd.gui.scenes.admin.RootAdminScene;
+import io.github.clooooud.barbcd.gui.scenes.admin.borrowing.BorrowingsScene;
 
 import java.util.List;
 
@@ -63,8 +64,7 @@ public class ClassScene extends ListAdminScene<Student> {
 
     @Override
     protected RootAdminScene getObjectScene(Student object) {
-        // Redirection page emprunt avec le filtre déjà rempli
-        return this;
+        return new BorrowingsScene(this.getApp(), object.getFirstName() + " " + object.getLastName());
     }
 
     @Override
@@ -74,11 +74,12 @@ public class ClassScene extends ListAdminScene<Student> {
 
     @Override
     protected String getListObjectDesc(Student object) {
-        long borrowCount = this.getLibrary().getDocuments(SaveableType.BORROWING).stream()
+        List<Borrowing> borrowings = this.getLibrary().getDocuments(SaveableType.BORROWING).stream()
                 .map(document -> (Borrowing) document)
-                .filter(borrowing -> borrowing.getStudent().equals(object))
-                .filter(borrowing -> !borrowing.isFinished())
-                .count();
+                .filter(borrowing -> borrowing.getStudent().equals(object)).toList();
+
+        long borrowCount = borrowings.size();
+
         return borrowCount + " emprunt" + (borrowCount > 1 ? "s" : "") + " en cours";
     }
 

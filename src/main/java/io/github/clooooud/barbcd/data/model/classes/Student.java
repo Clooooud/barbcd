@@ -42,6 +42,11 @@ public class Student implements Saveable {
     }
 
     @Override
+    public String toString() {
+        return this.getCurrentClass().getClassName() + " - " + this.getFirstName() + " " + this.getLastName();
+    }
+
+    @Override
     public SaveableType getSaveableType() {
         return SaveableType.STUDENT;
     }

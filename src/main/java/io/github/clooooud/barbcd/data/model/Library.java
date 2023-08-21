@@ -15,6 +15,7 @@ import io.github.clooooud.barbcd.util.AESUtil;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Library implements Saveable {
 
@@ -83,6 +84,13 @@ public class Library implements Saveable {
 
     public Set<Saveable> getDocuments(SaveableType type) {
         return this.saveables.get(type);
+    }
+
+    public Set<ViewableDocument> getViewableDocuments() {
+        return Stream.concat(
+                this.getDocuments(SaveableType.OEUVRE).stream(),
+                this.getDocuments(SaveableType.MAGAZINE).stream()
+        ).map(document -> (ViewableDocument) document).collect(Collectors.toSet());
     }
 
     public Map<GSheetApi.RequestType, Collection<Saveable>> getDataUpdateList() {

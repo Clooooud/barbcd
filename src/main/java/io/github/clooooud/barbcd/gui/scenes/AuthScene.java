@@ -62,7 +62,7 @@ public class AuthScene extends RootScene {
         User user = this.getLibrary().getUser(login);
 
         if (user == null) {
-            GuiUtil.wrapAlert(new Alert(Alert.AlertType.ERROR, "Cet utilisateur n'existe pas.")).showAndWait();
+            GuiUtil.alertError("Cet utilisateur n'existe pas.");
             return;
         }
 
@@ -82,7 +82,7 @@ public class AuthScene extends RootScene {
         boolean goodPassword = adminPasswordHash.equals(hashToTest);
 
         if (!goodPassword) {
-            GuiUtil.wrapAlert(new Alert(Alert.AlertType.ERROR, "Le mot de passe est incorrect.")).showAndWait();
+            GuiUtil.alertError("Le mot de passe est incorrect.");
             return;
         }
 

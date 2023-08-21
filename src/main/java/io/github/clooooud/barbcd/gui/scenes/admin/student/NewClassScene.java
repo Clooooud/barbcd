@@ -89,7 +89,7 @@ public class NewClassScene extends RootAdminScene {
             }
             GuiUtil.wrapAlert(new Alert(Alert.AlertType.INFORMATION, "Fichier importé avec succès !")).showAndWait();
         } catch (IOException e) {
-            GuiUtil.wrapAlert(new Alert(Alert.AlertType.ERROR, "Une erreur est survenue lors de la lecture du fichier !")).showAndWait();
+            GuiUtil.alertError("Une erreur est survenue lors de la lecture du fichier !");
         }
     }
 
@@ -97,21 +97,19 @@ public class NewClassScene extends RootAdminScene {
         String className = nameField.getField().getText();
 
         if (className.isBlank()) {
-            GuiUtil.wrapAlert(new Alert(Alert.AlertType.ERROR, "Veuillez remplir tous les champs !")).showAndWait();
+            GuiUtil.alertError("Veuillez remplir tous les champs !");
             return;
         }
 
         if (this.studentInfoList.isEmpty()) {
-            GuiUtil.wrapAlert(
-                    new Alert(Alert.AlertType.ERROR, "Veuillez importer un fichier CSV avec les élèves de la classe !")
-            ).showAndWait();
+            GuiUtil.alertError("Veuillez importer un fichier CSV avec les élèves de la classe !");
             return;
         }
 
         if (this.getLibrary().getDocuments(SaveableType.CLASS).stream()
                 .map(document -> (Class) document)
                 .anyMatch(aClass -> aClass.getClassName().equalsIgnoreCase(className))) {
-            GuiUtil.wrapAlert(new Alert(Alert.AlertType.ERROR, "Une classe avec ce nom existe déjà !")).showAndWait();
+            GuiUtil.alertError("Une classe avec ce nom existe déjà !");
             return;
         }
 

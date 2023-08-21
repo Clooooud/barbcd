@@ -15,4 +15,12 @@ public class GuiUtil {
         alert.getDialogPane().getStylesheets().add(StageWrapper.getResourceUrl("style.css"));
         return alert;
     }
+
+    public static void alertError(String error) {
+        wrapAlert(new Alert(Alert.AlertType.ERROR, error)).showAndWait();
+    }
+
+    public static void alertEmptyField() {
+        alertError("Veuillez remplir tous les champs !");
+    }
 }

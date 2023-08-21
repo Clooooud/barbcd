@@ -35,7 +35,7 @@ public class EditorScene extends NewEditorScene {
         if (this.getLibrary().getDocuments(SaveableType.EDITOR).stream()
                 .map(document -> (Editor) document)
                 .anyMatch(editor -> editor.getName().equalsIgnoreCase(name) && !editor.equals(this.editor))) {
-            GuiUtil.wrapAlert(new Alert(Alert.AlertType.ERROR, "Un éditeur avec ce nom existe déjà !")).showAndWait();
+            GuiUtil.alertError("Un éditeur avec ce nom existe déjà !");
             return;
         }
 

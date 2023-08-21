@@ -3,10 +3,11 @@ package io.github.clooooud.barbcd.gui.scenes.admin.borrowing;
 import io.github.clooooud.barbcd.BarBCD;
 import io.github.clooooud.barbcd.data.SaveableType;
 import io.github.clooooud.barbcd.data.model.classes.Student;
-import io.github.clooooud.barbcd.gui.element.FieldComponent;
 import io.github.clooooud.barbcd.gui.element.FormBox;
 import io.github.clooooud.barbcd.gui.element.SearchFieldComponent;
+import io.github.clooooud.barbcd.gui.element.ValidableFieldComponent;
 import io.github.clooooud.barbcd.gui.scenes.admin.RootAdminScene;
+import io.github.clooooud.barbcd.util.GuiUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -15,7 +16,7 @@ import javafx.scene.layout.VBox;
 public class NewBorrowingScene extends RootAdminScene {
 
     private FormBox formBox;
-    private FieldComponent isbn;
+    private ValidableFieldComponent isbn;
     private SearchFieldComponent<Student> studentSearchField;
 
     public NewBorrowingScene(BarBCD app) {
@@ -29,7 +30,9 @@ public class NewBorrowingScene extends RootAdminScene {
         ObservableList<Student> students = FXCollections.observableArrayList(this.getLibrary().getDocuments(SaveableType.STUDENT).stream().map(document -> (Student) document).toList())
                 .sorted((student, student2) -> student.toString().compareToIgnoreCase(student2.toString()));
 
-        isbn = new FieldComponent("ISBN du document");
+        ValidableFieldComponent.Validable validable = string -> getLibrary().getViewableDocuments().stream().anyMatch(document -> document.getISBN().equalsIgnoreCase(string));
+
+        isbn = new ValidableFieldComponent("ISBN du document", validable);
         studentSearchField = new SearchFieldComponent<>("Étudiant", students);
 
         this.formBox = new FormBox.Builder("Nouvel emprunt")
@@ -47,6 +50,7 @@ public class NewBorrowingScene extends RootAdminScene {
         Student student = this.studentSearchField.getSelected();
 
         if (isbn.isBlank() || student == null) {
+            GuiUtil.alertError("Veuillez remplir tous les champs.");
             return;
         }
 

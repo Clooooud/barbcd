@@ -19,7 +19,13 @@ public class SearchFieldComponent<E> extends FormComponent {
     }
 
     public E getSelected() {
-        return ((SearchField<E>) this.getCTA()).getButtonCell().getItem();
+        ListCell<E> buttonCell = ((SearchField<E>) this.getCTA()).getButtonCell();
+
+        if (buttonCell == null) {
+            return null;
+        }
+
+        return buttonCell.getItem();
     }
 
     private static class SearchField<E> extends SearchableComboBox<E> {

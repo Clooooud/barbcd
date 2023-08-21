@@ -37,12 +37,12 @@ public class NewUserScene extends RootAdminScene {
         String password = formBox.getField("Mot de passe").getText();
 
         if (name.isBlank() || password.isBlank()) {
-            GuiUtil.wrapAlert(new Alert(Alert.AlertType.ERROR, "Veuillez remplir tous les champs !")).showAndWait();
+            GuiUtil.alertEmptyField();
             return;
         }
 
         if (this.getLibrary().getUser(name) != null) {
-            GuiUtil.wrapAlert(new Alert(Alert.AlertType.ERROR, "Un utilisateur avec ce nom existe déjà !")).showAndWait();
+            GuiUtil.alertError("Un utilisateur avec ce nom existe déjà !");
             return;
         }
 

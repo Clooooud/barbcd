@@ -39,10 +39,7 @@ public class NewStudentScene extends RootAdminScene {
         String firstName = formBox.getField("Prénom").getText();
 
         if (lastName.isBlank() || firstName.isBlank()) {
-            GuiUtil.wrapAlert(new Alert(
-                    Alert.AlertType.ERROR,
-                    "Veuillez remplir tous les champs."
-            )).showAndWait();
+            GuiUtil.alertError("Veuillez remplir tous les champs.");
             return;
         }
 

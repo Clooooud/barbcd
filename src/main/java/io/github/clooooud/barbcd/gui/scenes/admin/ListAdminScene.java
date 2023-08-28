@@ -145,6 +145,7 @@ public abstract class ListAdminScene<T extends Saveable> extends RootAdminScene 
             deleteButton.setCursor(Cursor.HAND);
             deleteButton.setOnAction(event -> massDeleteObjects());
             deleteButton.setDisable(true);
+            utilBar.getChildren().add(deleteButton);
         }
 
         vBox.getChildren().add(utilBar);

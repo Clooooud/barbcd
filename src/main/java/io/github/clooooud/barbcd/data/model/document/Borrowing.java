@@ -2,7 +2,6 @@ package io.github.clooooud.barbcd.data.model.document;
 
 import io.github.clooooud.barbcd.data.Saveable;
 import io.github.clooooud.barbcd.data.SaveableType;
-import io.github.clooooud.barbcd.data.auth.User;
 import io.github.clooooud.barbcd.data.model.classes.Student;
 
 import java.util.List;
@@ -42,7 +41,7 @@ public class Borrowing implements Saveable {
         return List.of(
                 id,
                 this.student.getId(),
-                this.borrowedDocument.getCategorie().equals(Categorie.MAGAZINE),
+                this.borrowedDocument.getCategory().equals(Category.MAGAZINE),
                 ((Saveable) this.borrowedDocument).getId()
         );
     }

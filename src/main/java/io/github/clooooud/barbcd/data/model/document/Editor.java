@@ -12,9 +12,9 @@ public class Editor implements Saveable {
     private final int id;
     private String name;
 
-    public Editor(int id, String nom) {
+    public Editor(int id, String name) {
         this.id = id;
-        this.name = nom;
+        this.name = name;
     }
 
     public List<ViewableDocument> getEditedDocuments(Library library) {
@@ -24,6 +24,11 @@ public class Editor implements Saveable {
         ).map(document -> (ViewableDocument) document)
                 .filter(document -> document.getEditor().equals(this))
                 .toList();
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 
     public void setName(String name) {

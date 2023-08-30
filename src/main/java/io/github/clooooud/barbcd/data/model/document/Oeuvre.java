@@ -12,17 +12,17 @@ public class Oeuvre implements ViewableDocument, Saveable {
     private final String author;
     private final String isbn;
     private final Editor editor;
-    private final Categorie categorie;
+    private Category category;
     private final int quantity;
     private final int year;
 
-    public Oeuvre(int id, String title, String author, String isbn, Editor editor, Categorie categorie, int quantity, int year) {
+    public Oeuvre(int id, String title, String author, String isbn, Editor editor, Category category, int quantity, int year) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.isbn = isbn;
         this.editor = editor;
-        this.categorie = categorie;
+        this.category = category;
         this.quantity = quantity;
         this.year = year;
     }
@@ -57,13 +57,17 @@ public class Oeuvre implements ViewableDocument, Saveable {
     }
 
     @Override
-    public Categorie getCategorie() {
-        return this.categorie;
+    public Category getCategory() {
+        return this.category;
     }
 
     @Override
     public int getQuantity() {
         return this.quantity;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     @Override
@@ -73,6 +77,6 @@ public class Oeuvre implements ViewableDocument, Saveable {
 
     @Override
     public List<Object> getValues() {
-        return List.of(id, title, author, isbn, editor.getId(), categorie.getId(), quantity, year);
+        return List.of(id, title, author, isbn, editor.getId(), category == null ? -1 : category.getId(), quantity, year);
     }
 }

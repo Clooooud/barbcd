@@ -6,8 +6,6 @@ import javafx.scene.control.ListView;
 import javafx.util.Callback;
 import org.controlsfx.control.SearchableComboBox;
 
-import java.util.function.Function;
-
 public class SearchFieldComponent<E> extends FormComponent {
 
     public SearchFieldComponent(String componentLabel, ObservableList<E> list, String description) {
@@ -19,16 +17,14 @@ public class SearchFieldComponent<E> extends FormComponent {
     }
 
     public E getSelected() {
-        ListCell<E> buttonCell = ((SearchField<E>) this.getCTA()).getButtonCell();
-
-        if (buttonCell == null) {
-            return null;
-        }
-
-        return buttonCell.getItem();
+        return ((SearchField<E>) this.getCTA()).getSelectionModel().getSelectedItem();
     }
 
-    private static class SearchField<E> extends SearchableComboBox<E> {
+    public SearchField<E> getSearchField() {
+        return (SearchField<E>) this.getCTA();
+    }
+
+    public static class SearchField<E> extends SearchableComboBox<E> {
 
         public SearchField(ObservableList<E> list) {
             this.setItems(list);

@@ -1,5 +1,6 @@
 package io.github.clooooud.barbcd.data.api.tasks;
 
+import io.github.clooooud.barbcd.BarBCD;
 import io.github.clooooud.barbcd.data.api.GSheetApi;
 import io.github.clooooud.barbcd.data.model.Library;
 import javafx.application.Platform;
@@ -8,8 +9,8 @@ import java.io.IOException;
 
 public class SaveRunnable implements Runnable {
 
-    public static RunnableWrapper create(Library library, GSheetApi gSheetApi, String adminPassword) {
-        return new RunnableWrapper(new SaveRunnable(library, gSheetApi, adminPassword));
+    public static RunnableWrapper create(BarBCD app) {
+        return new RunnableWrapper(new SaveRunnable(app.getLibrary(), app.getGSheetApi(), app.getLibrary().getAdminPassword()));
     }
 
     private final GSheetApi gSheetApi;

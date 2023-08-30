@@ -1,6 +1,7 @@
 package io.github.clooooud.barbcd.gui.scenes.admin.borrowing;
 
 import io.github.clooooud.barbcd.BarBCD;
+import io.github.clooooud.barbcd.data.api.tasks.SaveRunnable;
 import io.github.clooooud.barbcd.data.model.classes.Student;
 import io.github.clooooud.barbcd.data.model.document.Borrowing;
 import io.github.clooooud.barbcd.data.model.document.ViewableDocument;
@@ -41,5 +42,6 @@ public class BorrowingScene extends RootAdminScene {
     private void endBorrowing() {
         this.getLibrary().removeDocument(borrowing);
         this.getApp().getStageWrapper().setContent(new BorrowingsScene(this.getApp()));
+        SaveRunnable.create(this.getApp()).run();
     }
 }

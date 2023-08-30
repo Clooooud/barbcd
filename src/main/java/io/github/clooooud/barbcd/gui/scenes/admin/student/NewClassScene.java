@@ -4,12 +4,10 @@ import io.github.clooooud.barbcd.BarBCD;
 import io.github.clooooud.barbcd.data.SaveableType;
 import io.github.clooooud.barbcd.data.api.tasks.SaveRunnable;
 import io.github.clooooud.barbcd.data.model.classes.Class;
-import io.github.clooooud.barbcd.data.model.classes.Student;
 import io.github.clooooud.barbcd.gui.element.ButtonComponent;
 import io.github.clooooud.barbcd.gui.element.FieldComponent;
 import io.github.clooooud.barbcd.gui.element.FormBox;
 import io.github.clooooud.barbcd.gui.scenes.admin.RootAdminScene;
-import io.github.clooooud.barbcd.gui.scenes.admin.editor.EditorsScene;
 import io.github.clooooud.barbcd.util.GuiUtil;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
@@ -17,8 +15,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
 import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +23,7 @@ public class NewClassScene extends RootAdminScene {
     private FormBox formBox;
     private FieldComponent nameField;
 
-    private List<String[]> studentInfoList = new ArrayList<>();
+    private final List<String[]> studentInfoList = new ArrayList<>();
 
     public NewClassScene(BarBCD app) {
         super(app);
@@ -41,9 +37,12 @@ public class NewClassScene extends RootAdminScene {
 
         formBox = new FormBox.Builder("Nouvelle classe")
                 .addComponent("Nom de la classe", nameField)
-                .addComponent("Elèves", new ButtonComponent("Importer les élèves", "Importer", event -> {
-                    importFile();
-                }, "Pour importer les élèves, il faut un fichier CSV qui contiendrait les noms et prénoms des élèves, le nom doit être dans la première colonne et le prénom dans la deuxième. Si les autres colonnes sont remplis, elles ne seront pas prises en compte."))
+                .addComponent("Elèves", new ButtonComponent(
+                        "Importer les élèves",
+                        "Importer",
+                        event -> importFile(),
+                        "Pour importer les élèves, il faut un fichier CSV qui contiendrait les noms et prénoms des élèves, le nom doit être dans la première colonne et le prénom dans la deuxième. Si les autres colonnes sont remplis, elles ne seront pas prises en compte."
+                ))
                 .addButton("Sauvegarder", event -> this.consumeForm())
                 .addButton("Annuler", event -> this.getApp().getStageWrapper().setContent(new ClassesScene(this.getApp())))
                 .build();
@@ -115,7 +114,7 @@ public class NewClassScene extends RootAdminScene {
 
         Class newClass = this.getLibrary().createClass(className);
         this.studentInfoList.forEach(info -> this.getLibrary().createStudent(info[1], info[0], newClass));
-        SaveRunnable.create(this.getLibrary(), this.getApp().getGSheetApi(), this.getLibrary().getAdminPassword()).run();
+        SaveRunnable.create(this.getApp()).run();
         this.getApp().getStageWrapper().setContent(new ClassScene(this.getApp(), newClass));
     }
 }

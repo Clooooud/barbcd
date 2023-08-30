@@ -7,43 +7,43 @@ import io.github.clooooud.barbcd.data.model.Library;
 import java.util.List;
 import java.util.Objects;
 
-public class Categorie implements Saveable {
+public class Category implements Saveable {
 
-    public static Categorie MAGAZINE = new Categorie(1, "Périodique");
+    public static Category MAGAZINE = new Category(1, "Périodique");
 
     private final int id;
-    private final String nom;
+    private final String name;
     private final int parentId;
 
-    public Categorie(int id, String nom) {
-        this(id, nom, -1);
+    public Category(int id, String name) {
+        this(id, name, -1);
     }
 
-    public Categorie(int id, String nom, int parentId) {
+    public Category(int id, String name, int parentId) {
         if (id == 1) {
             MAGAZINE = this;
         }
 
         this.id = id;
-        this.nom = nom;
+        this.name = name;
         this.parentId = parentId;
     }
 
     @Override
     public SaveableType getSaveableType() {
-        return SaveableType.CATEGORIE;
+        return SaveableType.CATEGORY;
     }
 
-    public String getNom() {
-        return nom;
+    public String getName() {
+        return name;
     }
 
-    public Categorie getParent(Library library) {
+    public Category getParent(Library library) {
         if (this.parentId < 0) {
             return null;
         }
 
-        return (Categorie) library.getDocumentById(SaveableType.CATEGORIE, this.parentId);
+        return (Category) library.getDocumentById(SaveableType.CATEGORY, this.parentId);
     }
 
     public int getId() {
@@ -51,16 +51,21 @@ public class Categorie implements Saveable {
     }
 
     @Override
+    public String toString() {
+        return this.name;
+    }
+
+    @Override
     public List<Object> getValues() {
-        return List.of(id, nom, parentId);
+        return List.of(id, name, parentId);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Categorie that = (Categorie) o;
-        return id == that.id && Objects.equals(nom, that.nom);
+        Category that = (Category) o;
+        return id == that.id && Objects.equals(name, that.name);
     }
 
     @Override

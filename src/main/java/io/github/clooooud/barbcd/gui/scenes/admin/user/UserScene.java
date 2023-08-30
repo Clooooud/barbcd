@@ -63,7 +63,7 @@ public class UserScene extends RootAdminScene {
             this.getLibrary().markDocumentAsUpdated(user);
         }
 
-        SaveRunnable.create(getLibrary(), getApp().getGSheetApi(), getLibrary().getAdminPassword()).run(true);
+        SaveRunnable.create(this.getApp()).run(true);
         this.getApp().getStageWrapper().setContent(new UsersScene(this.getApp()));
     }
 

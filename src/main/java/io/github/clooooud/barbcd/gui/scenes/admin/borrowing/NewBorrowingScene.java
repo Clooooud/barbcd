@@ -2,7 +2,10 @@ package io.github.clooooud.barbcd.gui.scenes.admin.borrowing;
 
 import io.github.clooooud.barbcd.BarBCD;
 import io.github.clooooud.barbcd.data.SaveableType;
+import io.github.clooooud.barbcd.data.api.tasks.SaveRunnable;
 import io.github.clooooud.barbcd.data.model.classes.Student;
+import io.github.clooooud.barbcd.data.model.document.Borrowing;
+import io.github.clooooud.barbcd.data.model.document.ViewableDocument;
 import io.github.clooooud.barbcd.gui.element.FormBox;
 import io.github.clooooud.barbcd.gui.element.SearchFieldComponent;
 import io.github.clooooud.barbcd.gui.element.ValidableFieldComponent;
@@ -54,6 +57,20 @@ public class NewBorrowingScene extends RootAdminScene {
             return;
         }
 
-        // TODO: need document creation before (magazine + oeuvre)
+        ViewableDocument document = this.getLibrary().getViewableDocuments().stream().filter(doc -> doc.getISBN().equalsIgnoreCase(isbn)).findFirst().orElse(null);
+
+        if (document == null) {
+            GuiUtil.alertError("Aucun document trouvé avec cet ISBN.");
+            return;
+        }
+
+        if (!document.isAvailable(this.getLibrary())) {
+            GuiUtil.alertError("Ce document est déjà emprunté.");
+            return;
+        }
+
+        Borrowing borrowing = this.getLibrary().createBorrowing(document, student);
+        this.getApp().getStageWrapper().setContent(new BorrowingScene(this.getApp(), borrowing));
+        SaveRunnable.create(this.getApp()).run();
     }
 }

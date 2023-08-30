@@ -88,7 +88,7 @@ public abstract class ListAdminScene<T extends Saveable> extends RootAdminScene 
         )).showAndWait().ifPresent(buttonType -> {
             if (buttonType.getButtonData().isDefaultButton()) {
                 delete(object);
-                SaveRunnable.create(this.getLibrary(), this.getApp().getGSheetApi(), this.getLibrary().getAdminPassword()).run();
+                SaveRunnable.create(this.getApp()).run();
                 this.getApp().getStageWrapper().setContent(getRefreshedScene());
             }
         });
@@ -101,7 +101,7 @@ public abstract class ListAdminScene<T extends Saveable> extends RootAdminScene 
         )).showAndWait().ifPresent(buttonType -> {
             if (buttonType.getButtonData().isDefaultButton()) {
                 getSelectedObjects().forEach(this::delete);
-                SaveRunnable.create(this.getLibrary(), this.getApp().getGSheetApi(), this.getLibrary().getAdminPassword()).run();
+                SaveRunnable.create(this.getApp()).run();
                 this.getApp().getStageWrapper().setContent(getRefreshedScene());
             }
         });

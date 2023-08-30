@@ -128,7 +128,7 @@ public class GSheetApi {
             }
 
             // Default Magazine Categorie
-            library.addDocument(Categorie.MAGAZINE);
+            library.addDocument(Category.MAGAZINE);
         }
 
         library.getDataUpdateList().get(RequestType.DELETE).removeIf(saveable -> {
@@ -185,13 +185,13 @@ public class GSheetApi {
     private void generateAndStoreComponent(Library library, List<String> values, SaveableType type) {
         final int id = Integer.parseInt(values.get(0));
         switch (type) {
-            case CATEGORIE -> {
-                Categorie categorie = new Categorie(
+            case CATEGORY -> {
+                Category category = new Category(
                         id,
                         values.get(1),
                         Integer.parseInt(values.get(2))
                 );
-                library.addDocument(categorie);
+                library.addDocument(category);
             }
             case EDITOR -> {
                 Editor editor = new Editor(
@@ -228,7 +228,7 @@ public class GSheetApi {
                         values.get(2),
                         values.get(3),
                         (Editor) library.getDocumentById(SaveableType.EDITOR, Integer.parseInt(values.get(4))),
-                        (Categorie) library.getDocumentById(SaveableType.CATEGORIE, Integer.parseInt(values.get(5))),
+                        (Category) library.getDocumentById(SaveableType.CATEGORY, Integer.parseInt(values.get(5))),
                         Integer.parseInt(values.get(6)),
                         Integer.parseInt(values.get(7))
                 );
@@ -379,7 +379,7 @@ public class GSheetApi {
             throw new IllegalArgumentException();
         }
 
-        if (credentials.getSpreadsheetId().equals("")) {
+        if (credentials.getSpreadsheetId().isEmpty()) {
             return null;
         }
 

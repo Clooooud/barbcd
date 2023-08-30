@@ -7,9 +7,7 @@ import io.github.clooooud.barbcd.data.api.GSheetApi;
 import io.github.clooooud.barbcd.data.auth.User;
 import io.github.clooooud.barbcd.data.model.classes.Class;
 import io.github.clooooud.barbcd.data.model.classes.Student;
-import io.github.clooooud.barbcd.data.model.document.Borrowing;
-import io.github.clooooud.barbcd.data.model.document.Editor;
-import io.github.clooooud.barbcd.data.model.document.ViewableDocument;
+import io.github.clooooud.barbcd.data.model.document.*;
 import io.github.clooooud.barbcd.util.AESUtil;
 
 import java.util.*;
@@ -113,13 +111,14 @@ public class Library implements Saveable {
         addDocument(editor);
     }
 
-    public void createBorrowing(ViewableDocument viewableDocument, Student student) {
+    public Borrowing createBorrowing(ViewableDocument viewableDocument, Student student) {
         Borrowing borrowing = new Borrowing(
                 getNextDocumentId(SaveableType.BORROWING),
                 viewableDocument,
                 student
         );
         addDocument(borrowing);
+        return borrowing;
     }
 
     public void createUser(String login, String password, String adminPassword) {
@@ -201,5 +200,29 @@ public class Library implements Saveable {
                 studentClass
         );
         addDocument(student);
+    }
+
+    public Category createCategory(String name, Category parent) {
+        Category category = new Category(
+                getNextDocumentId(SaveableType.CATEGORY),
+                name,
+                parent == null ? -1 : parent.getId()
+        );
+        addDocument(category);
+        return category;
+    }
+
+    public void createOeuvre(String title, String author, String isbn, Editor editor, Category category, int quantity, int year) {
+        Oeuvre oeuvre = new Oeuvre(
+                getNextDocumentId(SaveableType.OEUVRE),
+                title,
+                author,
+                isbn,
+                editor,
+                category,
+                quantity,
+                year
+        );
+        addDocument(oeuvre);
     }
 }

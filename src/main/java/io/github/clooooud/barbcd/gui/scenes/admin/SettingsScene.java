@@ -74,7 +74,7 @@ public class SettingsScene extends RootAdminScene {
         if (hasNameChanged) {
             this.getLibrary().setName(nameField.getText().strip());
             updateHeader();
-            SaveRunnable.create(getLibrary(), getApp().getGSheetApi(), getLibrary().getAdminPassword()).run();
+            SaveRunnable.create(this.getApp()).run();
         }
 
         this.getApp().getStageWrapper().setContent(new MainAdminScene(this.getApp()));

@@ -8,7 +8,6 @@ import io.github.clooooud.barbcd.gui.element.SimpleFormBox;
 import io.github.clooooud.barbcd.gui.scenes.admin.RootAdminScene;
 import io.github.clooooud.barbcd.util.GuiUtil;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
 import javafx.scene.layout.VBox;
 
 public class NewEditorScene extends RootAdminScene {
@@ -49,7 +48,7 @@ public class NewEditorScene extends RootAdminScene {
         }
 
         this.getLibrary().createEditor(name);
-        SaveRunnable.create(this.getLibrary(), this.getApp().getGSheetApi(), this.getLibrary().getAdminPassword()).run();
+        SaveRunnable.create(this.getApp()).run();
         this.getApp().getStageWrapper().setContent(new EditorsScene(this.getApp()));
     }
 }

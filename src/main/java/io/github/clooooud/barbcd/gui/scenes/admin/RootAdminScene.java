@@ -2,7 +2,6 @@ package io.github.clooooud.barbcd.gui.scenes.admin;
 
 import io.github.clooooud.barbcd.BarBCD;
 import io.github.clooooud.barbcd.gui.scenes.RootScene;
-import io.github.clooooud.barbcd.gui.scenes.admin.AdminScene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -59,6 +58,10 @@ public abstract class RootAdminScene extends RootScene {
                     .subtract(100)
                     .divide(values.length)
             );
+
+            if (scene != AdminScene.MAIN_PAGE && scene.getScene(this.getApp()).getClass().equals(AdminScene.MAIN_PAGE.getScene(this.getApp()).getClass())) {
+                sideButton.setStyle("-fx-background-color: red;");
+            }
 
             if (i < values.length-1) {
                 sideButton.getStyleClass().add("sidebox-button-notlast");

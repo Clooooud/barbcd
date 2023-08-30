@@ -5,7 +5,6 @@ import io.github.clooooud.barbcd.data.SaveableType;
 import io.github.clooooud.barbcd.data.api.tasks.SaveRunnable;
 import io.github.clooooud.barbcd.data.model.document.Editor;
 import io.github.clooooud.barbcd.util.GuiUtil;
-import javafx.scene.control.Alert;
 import javafx.scene.layout.VBox;
 
 public class EditorScene extends NewEditorScene {
@@ -41,7 +40,7 @@ public class EditorScene extends NewEditorScene {
 
         editor.setName(name);
         this.getLibrary().markDocumentAsUpdated(editor);
-        SaveRunnable.create(this.getLibrary(), this.getApp().getGSheetApi(), this.getLibrary().getAdminPassword()).run();
+        SaveRunnable.create(this.getApp()).run();
         this.getApp().getStageWrapper().setContent(new EditorsScene(this.getApp()));
     }
 }

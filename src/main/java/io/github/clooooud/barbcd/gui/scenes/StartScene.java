@@ -89,7 +89,7 @@ public class StartScene extends RootScene {
                 gSheetApi.initAdmin(password);
                 gSheetApi.reset();
                 result.set(true);
-                SaveRunnable.create(this.getLibrary(), gSheetApi, password).run(false);
+                SaveRunnable.create(this.getApp()).run(false);
             } catch (Exception e) {
                 e.printStackTrace();
                 GuiUtil.alertError("Une erreur s'est produite lors d'un appel à l'API de Google. Une des clés est mauvaise.");

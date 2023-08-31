@@ -1,4 +1,4 @@
-package io.github.clooooud.barbcd.gui.element;
+package io.github.clooooud.barbcd.gui.element.components;
 
 public class IntFieldComponent extends FieldComponent {
 

@@ -6,7 +6,7 @@ import io.github.clooooud.barbcd.data.model.classes.Student;
 import io.github.clooooud.barbcd.data.model.document.Borrowing;
 import io.github.clooooud.barbcd.data.model.document.ViewableDocument;
 import io.github.clooooud.barbcd.gui.element.FormBox;
-import io.github.clooooud.barbcd.gui.element.TextComponent;
+import io.github.clooooud.barbcd.gui.element.components.TextComponent;
 import io.github.clooooud.barbcd.gui.scenes.admin.RootAdminScene;
 import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;

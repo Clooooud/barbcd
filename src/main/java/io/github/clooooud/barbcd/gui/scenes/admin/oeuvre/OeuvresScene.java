@@ -59,7 +59,7 @@ public class OeuvresScene extends ListAdminScene<Oeuvre> {
 
     @Override
     protected String getListObjectName(Oeuvre oeuvre) {
-        return oeuvre.getTitle() + " - " + oeuvre.getAuthor();
+        return oeuvre.getTitle() + " - " + oeuvre.getAuthor() + " (x" + oeuvre.getQuantity() + ")";
     }
 
     @Override

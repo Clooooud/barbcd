@@ -103,12 +103,13 @@ public class Library implements Saveable {
                 .orElse(null);
     }
 
-    public void createEditor(String name) {
+    public Editor createEditor(String name) {
         Editor editor = new Editor(
                 getNextDocumentId(SaveableType.EDITOR),
                 name
         );
         addDocument(editor);
+        return editor;
     }
 
     public Borrowing createBorrowing(ViewableDocument viewableDocument, Student student) {

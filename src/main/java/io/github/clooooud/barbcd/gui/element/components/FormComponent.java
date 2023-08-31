@@ -1,4 +1,4 @@
-package io.github.clooooud.barbcd.gui.element;
+package io.github.clooooud.barbcd.gui.element.components;
 
 import javafx.scene.Node;
 import javafx.scene.control.Label;

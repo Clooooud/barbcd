@@ -1,4 +1,4 @@
-package io.github.clooooud.barbcd.gui.element;
+package io.github.clooooud.barbcd.gui.element.components;
 
 import io.github.clooooud.barbcd.gui.StageWrapper;
 import javafx.scene.control.TextField;

@@ -1,5 +1,7 @@
 package io.github.clooooud.barbcd.gui.element;
 
+import io.github.clooooud.barbcd.gui.element.components.FieldComponent;
+import io.github.clooooud.barbcd.gui.element.components.FormComponent;
 import io.github.clooooud.barbcd.gui.scenes.RootScene;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;

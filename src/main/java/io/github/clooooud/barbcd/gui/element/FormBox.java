@@ -1,5 +1,6 @@
 package io.github.clooooud.barbcd.gui.element;
 
+import io.github.clooooud.barbcd.gui.element.components.FormComponent;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -11,9 +12,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 
 import java.util.*;
 

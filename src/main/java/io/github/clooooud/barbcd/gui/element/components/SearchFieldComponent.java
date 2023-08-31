@@ -1,4 +1,4 @@
-package io.github.clooooud.barbcd.gui.element;
+package io.github.clooooud.barbcd.gui.element.components;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListCell;
@@ -17,7 +17,7 @@ public class SearchFieldComponent<E> extends FormComponent {
     }
 
     public E getSelected() {
-        return ((SearchField<E>) this.getCTA()).getSelectionModel().getSelectedItem();
+        return getSearchField().getSelectionModel().getSelectedItem();
     }
 
     public SearchField<E> getSearchField() {

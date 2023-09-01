@@ -8,6 +8,7 @@ import io.github.clooooud.barbcd.gui.element.components.FieldComponent;
 import io.github.clooooud.barbcd.gui.element.FormBox;
 import io.github.clooooud.barbcd.gui.element.components.SearchFieldComponent;
 import io.github.clooooud.barbcd.gui.scenes.admin.RootAdminScene;
+import io.github.clooooud.barbcd.gui.scenes.admin.oeuvre.OeuvresScene;
 import io.github.clooooud.barbcd.util.GuiUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,6 +21,11 @@ public class NewCategoryScene extends RootAdminScene {
 
     public NewCategoryScene(BarBCD app) {
         super(app);
+    }
+
+    @Override
+    protected Class<?> getParentClass() {
+        return CategoriesScene.class;
     }
 
     @Override

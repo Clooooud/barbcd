@@ -2,6 +2,7 @@ package io.github.clooooud.barbcd.gui.scenes.admin;
 
 import io.github.clooooud.barbcd.BarBCD;
 import io.github.clooooud.barbcd.gui.scenes.RootScene;
+import javafx.css.PseudoClass;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -85,12 +86,17 @@ public abstract class RootAdminScene extends RootScene {
 
         hBox.getChildren().addAll(imageView, label);
 
-        hBox.setOnMouseClicked(mouseEvent -> this.getApp().getStageWrapper().setContent(scene.getScene(this.getApp())));
+        RootAdminScene content = scene.getScene(this.getApp());
+        hBox.setOnMouseClicked(mouseEvent -> this.getApp().getStageWrapper().setContent(content));
+
+        hBox.pseudoClassStateChanged(PseudoClass.getPseudoClass("selected"), content.getClass().getSimpleName().equalsIgnoreCase(this.getParentClass().getSimpleName()));
 
         return hBox;
     }
 
     public abstract void initAdminContent(VBox vBox);
 
-
+    protected Class<?> getParentClass() {
+        return this.getClass();
+    }
 }

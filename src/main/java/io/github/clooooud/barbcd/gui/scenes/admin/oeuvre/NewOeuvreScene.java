@@ -40,6 +40,11 @@ public class NewOeuvreScene extends RootAdminScene {
     }
 
     @Override
+    protected Class<?> getParentClass() {
+        return OeuvresScene.class;
+    }
+
+    @Override
     public void initAdminContent(VBox vBox) {
         this.vBox = vBox;
 

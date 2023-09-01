@@ -35,6 +35,10 @@
     -fx-padding: 0 10 0 10;
 }
 
+.sidebox-button:selected {
+    -fx-background-color: derive(-header-color, 10%);
+}
+
 .sidebox-button:hover {
     -fx-background-color: derive(-header-color, 10%);
     -fx-cursor: hand;

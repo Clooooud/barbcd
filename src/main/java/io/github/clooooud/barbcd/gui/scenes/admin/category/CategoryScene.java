@@ -3,6 +3,7 @@ package io.github.clooooud.barbcd.gui.scenes.admin.category;
 import io.github.clooooud.barbcd.BarBCD;
 import io.github.clooooud.barbcd.data.model.document.Category;
 import io.github.clooooud.barbcd.gui.scenes.admin.RootAdminScene;
+import io.github.clooooud.barbcd.gui.scenes.admin.oeuvre.OeuvresScene;
 import javafx.scene.layout.VBox;
 
 public class CategoryScene extends RootAdminScene {
@@ -17,5 +18,10 @@ public class CategoryScene extends RootAdminScene {
     @Override
     public void initAdminContent(VBox vBox) {
 
+    }
+
+    @Override
+    protected Class<?> getParentClass() {
+        return CategoriesScene.class;
     }
 }

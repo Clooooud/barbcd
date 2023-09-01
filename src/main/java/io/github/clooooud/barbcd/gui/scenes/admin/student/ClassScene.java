@@ -92,4 +92,9 @@ public class ClassScene extends ListAdminScene<Student> {
     protected String getDeleteObjectsMessage() {
         return "Voulez-vous vraiment supprimer ces élèves ? Supprimer un élève supprime aussi ses emprunts.";
     }
+
+    @Override
+    protected java.lang.Class<?> getParentClass() {
+        return ClassesScene.class;
+    }
 }

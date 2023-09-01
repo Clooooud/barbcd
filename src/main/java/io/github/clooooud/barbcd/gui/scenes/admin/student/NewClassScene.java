@@ -50,6 +50,11 @@ public class NewClassScene extends RootAdminScene {
         vBox.getChildren().add(formBox);
     }
 
+    @Override
+    protected java.lang.Class<?> getParentClass() {
+        return ClassesScene.class;
+    }
+
     private void importFile() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Importer une classe");

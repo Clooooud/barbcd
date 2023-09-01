@@ -10,6 +10,7 @@ import io.github.clooooud.barbcd.gui.element.FormBox;
 import io.github.clooooud.barbcd.gui.element.components.SearchFieldComponent;
 import io.github.clooooud.barbcd.gui.element.components.ValidableFieldComponent;
 import io.github.clooooud.barbcd.gui.scenes.admin.RootAdminScene;
+import io.github.clooooud.barbcd.gui.scenes.admin.oeuvre.OeuvresScene;
 import io.github.clooooud.barbcd.util.GuiUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -72,5 +73,10 @@ public class NewBorrowingScene extends RootAdminScene {
         Borrowing borrowing = this.getLibrary().createBorrowing(document, student);
         this.getApp().getStageWrapper().setContent(new BorrowingScene(this.getApp(), borrowing));
         SaveRunnable.create(this.getApp()).run();
+    }
+
+    @Override
+    protected Class<?> getParentClass() {
+        return BorrowingsScene.class;
     }
 }

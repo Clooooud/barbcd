@@ -8,6 +8,7 @@ import io.github.clooooud.barbcd.data.model.document.ViewableDocument;
 import io.github.clooooud.barbcd.gui.element.FormBox;
 import io.github.clooooud.barbcd.gui.element.components.TextComponent;
 import io.github.clooooud.barbcd.gui.scenes.admin.RootAdminScene;
+import io.github.clooooud.barbcd.gui.scenes.admin.oeuvre.OeuvresScene;
 import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
 
@@ -43,5 +44,10 @@ public class BorrowingScene extends RootAdminScene {
         this.getLibrary().removeDocument(borrowing);
         this.getApp().getStageWrapper().setContent(new BorrowingsScene(this.getApp()));
         SaveRunnable.create(this.getApp()).run();
+    }
+
+    @Override
+    protected Class<?> getParentClass() {
+        return BorrowingsScene.class;
     }
 }

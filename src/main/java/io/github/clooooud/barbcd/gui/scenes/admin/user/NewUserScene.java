@@ -31,6 +31,11 @@ public class NewUserScene extends RootAdminScene {
         vBox.getChildren().add(formBox);
     }
 
+    @Override
+    protected Class<?> getParentClass() {
+        return UsersScene.class;
+    }
+
     private void consumeForm() {
         String name = formBox.getField("Nom d'utilisateur").getText();
         String password = formBox.getField("Mot de passe").getText();

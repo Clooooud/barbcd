@@ -88,6 +88,11 @@ public class UserScene extends RootAdminScene {
         vBox.getChildren().add(formBox);
     }
 
+    @Override
+    protected java.lang.Class<?> getParentClass() {
+        return UsersScene.class;
+    }
+
     private FormComponent getClassSelector() {
         CheckComboBox<Class> classList = new CheckComboBox<>();
         classList.setConverter(new StringConverter<>() {

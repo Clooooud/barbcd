@@ -6,6 +6,7 @@ import io.github.clooooud.barbcd.data.api.tasks.SaveRunnable;
 import io.github.clooooud.barbcd.data.model.document.Editor;
 import io.github.clooooud.barbcd.gui.element.SimpleFormBox;
 import io.github.clooooud.barbcd.gui.scenes.admin.RootAdminScene;
+import io.github.clooooud.barbcd.gui.scenes.admin.oeuvre.OeuvresScene;
 import io.github.clooooud.barbcd.util.GuiUtil;
 import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
@@ -18,6 +19,11 @@ public class NewEditorScene extends RootAdminScene {
     public NewEditorScene(BarBCD app) {
         super(app);
         this.formName = "Nouvel éditeur";
+    }
+
+    @Override
+    protected Class<?> getParentClass() {
+        return EditorsScene.class;
     }
 
     @Override

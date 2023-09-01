@@ -174,7 +174,7 @@ public class NewOeuvreScene extends RootAdminScene {
     private class AddCategoryPopup extends Popup {
 
         private String categoryName = "";
-        private SearchFieldComponent<Category> categorySearchField;
+        private Category parent;
         private Category createdCategory;
 
         public AddCategoryPopup() {
@@ -191,7 +191,7 @@ public class NewOeuvreScene extends RootAdminScene {
             FieldComponent categoryField = new FieldComponent("Nom de la catégorie");
 
             ObservableList<Category> categories = FXCollections.observableArrayList(NewOeuvreScene.this.getLibrary().getDocuments(SaveableType.CATEGORY).stream().map(document -> (Category) document).toList());
-            this.categorySearchField = new SearchFieldComponent<>("Catégorie parente (Non-obligatoire)", categories);
+            SearchFieldComponent<Category> categorySearchField = new SearchFieldComponent<>("Catégorie parente (Non-obligatoire)", categories);
 
             HBox buttonBox = new HBox();
             buttonBox.setSpacing(10);
@@ -210,13 +210,13 @@ public class NewOeuvreScene extends RootAdminScene {
 
             // JavaFX decided that this value won't change with TextField#getText, so I had to do this
             categoryField.getField().textProperty().addListener((observableValue, oldValue, newValue) -> categoryName = newValue);
+            // This one too??
+            categorySearchField.getSearchField().getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> parent = newValue);
 
             return new Scene(vBox);
         }
 
         private void consumeForm() {
-            Category parent = categorySearchField.getSelected();
-
             if (categoryName.isBlank()) {
                 GuiUtil.alertError("Veuillez remplir tous les champs obligatoires");
                 return;

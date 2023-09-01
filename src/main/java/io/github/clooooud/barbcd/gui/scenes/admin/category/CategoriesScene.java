@@ -65,6 +65,7 @@ public class CategoriesScene extends ListAdminScene<Category> {
     @Override
     protected String getListObjectDesc(Category category) {
         long count = this.getLibrary().getViewableDocuments().stream()
+                .filter(viewableDocument -> viewableDocument.getCategory() != null)
                 .filter(viewableDocument -> viewableDocument.getCategory().equals(category))
                 .count();
 

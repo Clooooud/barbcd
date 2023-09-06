@@ -15,9 +15,11 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
 
+import java.util.List;
+
 public class NewCategoryScene extends RootAdminScene {
 
-    private FormBox formBox;
+    protected FormBox formBox;
 
     public NewCategoryScene(BarBCD app) {
         super(app);
@@ -32,7 +34,9 @@ public class NewCategoryScene extends RootAdminScene {
     public void initAdminContent(VBox vBox) {
         vBox.setAlignment(Pos.CENTER);
 
-        ObservableList<Category> categories = FXCollections.observableArrayList(this.getLibrary().getDocuments(SaveableType.CATEGORY).stream().map(document -> (Category) document).toList());
+        ObservableList<Category> categories = FXCollections.observableArrayList(this.getLibrary().getDocuments(SaveableType.CATEGORY).stream()
+                .map(document -> (Category) document)
+                .toList());
 
         this.formBox = new FormBox.Builder("Nouvelle catégorie")
                 .addComponent("name", new FieldComponent("Nom"))
@@ -44,7 +48,7 @@ public class NewCategoryScene extends RootAdminScene {
         vBox.getChildren().add(this.formBox);
     }
 
-    private void consumeForm() {
+    protected void consumeForm() {
         String name = ((FieldComponent) this.formBox.getComponent("name")).getField().getText();
         Category parent = ((SearchFieldComponent<Category>) this.formBox.getComponent("parent")).getSelected();
 
@@ -53,10 +57,8 @@ public class NewCategoryScene extends RootAdminScene {
             return;
         }
 
-        System.out.println(parent);
-
         Category category = this.getLibrary().createCategory(name, parent);
-        this.getApp().getStageWrapper().setContent(new CategoryScene(this.getApp(), category));
+        this.getApp().getStageWrapper().setContent(new CategoriesScene(this.getApp()));
         SaveRunnable.create(this.getApp()).run();
     }
 }

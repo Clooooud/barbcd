@@ -63,6 +63,10 @@ public class GSheetApi {
     }
 
     public void initAdmin(String adminPassword) {
+        if (sheetsService != null && driveService != null) {
+            return;
+        }
+
         AESUtil aesUtil = new AESUtil(adminPassword);
         String credentials = aesUtil.decrypt(PRIVATE_CREDENTIAL_PATH_NAME);
 

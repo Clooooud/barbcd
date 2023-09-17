@@ -12,8 +12,8 @@ public class Category implements Saveable {
     public static Category MAGAZINE = new Category(1, "Périodique");
 
     private final int id;
-    private final String name;
-    private final int parentId;
+    private String name;
+    private int parentId;
 
     public Category(int id, String name) {
         this(id, name, -1);
@@ -44,6 +44,14 @@ public class Category implements Saveable {
         }
 
         return (Category) library.getDocumentById(SaveableType.CATEGORY, this.parentId);
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setParentId(int parentId) {
+        this.parentId = parentId;
     }
 
     public int getId() {

@@ -17,7 +17,7 @@ public class FormComponent extends VBox {
     public FormComponent(String componentLabel, Node ctaNode, String description) {
         super();
 
-        this.componentLabel = new Label(componentLabel);
+        this.componentLabel = !componentLabel.isBlank() ? new Label(componentLabel) : null;
         this.ctaNode = ctaNode;
         if (description != null) {
             this.descriptionLabel = new Label(description);
@@ -33,8 +33,10 @@ public class FormComponent extends VBox {
     private void initComponent() {
         this.setSpacing(3);
 
-        componentLabel.getStyleClass().add("form-component-label");
-        this.getChildren().add(componentLabel);
+        if (componentLabel != null) {
+            componentLabel.getStyleClass().add("form-component-label");
+            this.getChildren().add(componentLabel);
+        }
 
         if (descriptionLabel != null) {
             descriptionLabel.getStyleClass().add("form-component-description");

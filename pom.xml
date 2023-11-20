@@ -6,7 +6,7 @@
 
     <groupId>io.github.clooooud</groupId>
     <artifactId>barbcd</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <name>barbcd</name>
 
     <dependencies>

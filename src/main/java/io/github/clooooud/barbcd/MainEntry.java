@@ -1,9 +1,6 @@
 package io.github.clooooud.barbcd;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.URL;
 import java.nio.file.Files;
@@ -16,17 +13,19 @@ public class MainEntry {
         System.out.println("Version: " + MainEntry.class.getPackage().getImplementationVersion());
 
         if (hasInternet()) {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(new URL("https://github.com/Clooooud/barbcd/releases/latest/download/VERSION").openStream()));
+            InputStream in = new URL("https://github.com/Clooooud/barbcd/releases/latest/download/VERSION").openStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             String latestVersion = reader.readLine();
             reader.close();
 
+            System.out.println("Target Version: " + latestVersion);
             if (!new File("Updater.jar").exists()) {
                 Files.copy(new URL("https://github.com/Clooooud/barbcd/releases/latest/download/Updater.jar").openStream(), Paths.get("Updater.jar"), StandardCopyOption.REPLACE_EXISTING);
             }
 
             if (!latestVersion.equals(MainEntry.class.getPackage().getImplementationVersion())) {
                 System.out.println("An update has been found, please wait for the update to finish. The app will restart.");
-                ProcessBuilder processBuilder = new ProcessBuilder("java", "-jar", "Updater.jar", "https://github.com/Clooooud/barbcd/releases/latest/download/barbcd.jar:end:barbcd.jar");
+                ProcessBuilder processBuilder = new ProcessBuilder("./jre/bin/java.exe", "-jar", "-Dhttps.protocols=TLSv1.2,TLSv1.1,TLSv1", "Updater.jar", "https://github.com/Clooooud/barbcd/releases/latest/download/barbcd.jar:end:barbcd.jar");
                 processBuilder.inheritIO();
                 processBuilder.start();
                 System.exit(0);

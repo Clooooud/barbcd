@@ -1,4 +1,5 @@
 module io.github.clooooud.barbcd {
+    requires javafx.graphics;
     requires javafx.controls;
     requires javafx.fxml;
     requires com.google.gson;

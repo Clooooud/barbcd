@@ -26,7 +26,7 @@ public class AESUtil {
     }
 
     private final Cipher cipher;
-    private final SecretKey secretKey;
+    private SecretKey secretKey;
 
     public AESUtil(String password) {
         this.secretKey = getKeyFromPassword(password, "salt123+");
@@ -142,7 +142,7 @@ public class AESUtil {
                 content = sb.toString();
             }
 
-        } catch (IOException | InvalidKeyException | InvalidAlgorithmParameterException e) {
+        } catch (InvalidAlgorithmParameterException | InvalidKeyException | IOException e) {
             throw new RuntimeException(e);
         }
         return content;
